@@ -1,0 +1,10 @@
+<template>
+<div style="text-align:center;margin-top:100px;">
+  <p><router-link to="/form">表单</router-link></p>
+  <p><router-link to="/table">表格</router-link></p>
+  <p><router-link to="/modal">弹窗</router-link></p>
+  <p><router-link to="/tree">树</router-link></p>
+  <p><router-link to="/list">列表</router-link></p>
+  <p><router-link to="/desc">描述列表</router-link></p>
+</div>
+</template>
