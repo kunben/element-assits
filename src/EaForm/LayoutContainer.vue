@@ -18,7 +18,7 @@
       :offset="m.offset"
       :style="{marginBottom: (dense ? 0 : 9) + 'px'}">
       <template v-if="m.children && m.children.length">
-        <LayoutContainer :column="m.children" :title="m.title" />
+        <LayoutContainer :column="m.children" :title="m.title" :dense="dense" />
       </template>
       <FormItem v-else :column="m" />
     </el-col>
@@ -53,7 +53,7 @@ export default {
 </script>
 
 <style lang="scss">
-.ea-form.form-group-title {
+.ea-form .form-group-title {
   position: relative;
   height: 32px;
   margin-bottom: 22px;
