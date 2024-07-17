@@ -13,6 +13,7 @@ import EaDesc from './EaDesc'
 import EaScrollbar from './EaScrollbar'
 import EaNumber from './EaNumber'
 import EaRadio from './EaRadio'
+import EaCheckbox from './EaCheckbox'
 import EaFileUpload from './EaFileUpload'
 
 const install = Vue => {
@@ -31,6 +32,7 @@ const install = Vue => {
   Vue.component('EaScrollbar', EaScrollbar)
   Vue.component('EaNumber', EaNumber)
   Vue.component('EaRadio', EaRadio)
+  Vue.component('EaCheckbox', EaCheckbox)
   Vue.component('EaFileUpload', EaFileUpload)
   // 挂载异步加载组件的方法
   Vue.prototype.$asyncLoad = function asyncLoad (_importFunc, ...options) {
