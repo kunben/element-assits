@@ -9,10 +9,15 @@ export const column = [
   },
   {
     label: '用户中文名',
+    labelTooltip: '昵称',
     prop: 'userCnName'
   },
   {
     label: '密码',
+    labelTooltip: () => ({
+      content: '如无需修改密码，请勿更改此项',
+      placement: 'top'
+    }),
     prop: 'password'
   },
   {

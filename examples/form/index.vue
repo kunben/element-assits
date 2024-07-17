@@ -1,8 +1,8 @@
 <template>
-<div style="margin: 0 auto;width: 700px">
+<div style="margin: 15vh auto;width: 700px">
   <EaForm
     :model="form"
-    :column="formColumn"
+    :column="column"
     label-width="120px" />
   <div>
     <el-button type="primary" @click="handleConfirm">确定</el-button>

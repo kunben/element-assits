@@ -126,9 +126,11 @@ export default {
       const __bind = { clearable: true, placeholder: item.label }
       Object.assign(__bind, isFunction(item.bind) ? item.bind(...params) : item.bind)
       const __label = isFunction(item.label) ? item.label(...params) : item.label
+      const __labelTooltip = isFunction(item.labelTooltip) ? item.labelTooltip(...params) : item.labelTooltip
       return Object.assign({}, item, __item, {
         __key,
         __label,
+        __labelTooltip,
         __component,
         __rules,
         __on,

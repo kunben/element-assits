@@ -5,6 +5,14 @@
   :rules="column.__rules"
   :style="column.style"
   :class="{'hidden-label': top.labelWidth === '0'}">
+  <template #label>
+    {{ column.__label }}
+    <el-tooltip
+      v-if="column.__labelTooltip"
+      v-bind="tooltip(column.__labelTooltip)">
+      <i class="el-icon-warning-outline" />
+    </el-tooltip>
+  </template>
   <component
     :is="column.__component"
     v-model="top.model[column.prop]"
@@ -27,6 +35,11 @@ export default {
     column: {
       type: Object,
       required: true
+    }
+  },
+  methods: {
+    tooltip (content) {
+      return typeof content === 'string' ? { content } : content
     }
   }
 }
