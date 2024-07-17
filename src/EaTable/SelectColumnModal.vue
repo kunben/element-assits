@@ -25,7 +25,7 @@ export default {
   },
   data () {
     const { size } = this.$ELEMENT || { size: 'small' }
-    const treeData = this.column.filter(m => m.show !== false)
+    const treeData = this.column
     const defaultCheckedKeys = this.rawColumn.filter(m => m.show !== false).map(m => m.prop)
     return {
       visible: false,

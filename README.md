@@ -19,13 +19,13 @@ import ElementAssits from 'element-assits'
 import 'element-assits/lib/style.scss'
 
 Vue.use(Element)
-VUe.use(ElementAssits)
+Vue.use(ElementAssits)
 // ...
 ```
 使用：  
 默认全局注册了 `EaForm` `EaTable` `EaSelect` `EaModal` `EaPopover` 等组件  
+提供了 `uuid` `recursive` 两个工具函数
 Vue 原型上挂载了 `$asyncLoad` 方法  
-ElementAssits 还提供了 `uuid` `recursive` 两个工具函数
 
 ## 用法
 
