@@ -56,8 +56,12 @@ export default {
         if (!get(item, 'children.length')) return void(0)
         item.children = item.children.filter(m => {
           this.setValue(m)
-          if (isFunction(m.show)) return m.show(this.model, this)
-          return m.show !== false
+          const show = isFunction(m.show) ? m.show(this.model, this) : (m.show !== false)
+          const enable = isFunction(m.enable) ? m.enable(this.model, this) : (m.enable !== false)
+          if (!enable) {
+            this.$delete(this.model, m.prop)
+          }
+          return show && enable
         }).map(m => {
           return this.dealtItem(m, this.formKey)
         })
@@ -71,12 +75,8 @@ export default {
       handler (newColumn, oldColumn) {
         if (!isArray(newColumn)) return void(0)
         const cloneColumn = [...newColumn]
-        // 找到移除的column，并从model中删除它们
-        const deletedColumn = differenceBy(oldColumn, newColumn, m => m.prop)
-        deletedColumn.forEach(m => {
-          this.$delete(this.model, m.prop)
-        })
         this.rawColumn = cloneColumn
+        this.deleteLostProp(oldColumn, newColumn)
       }
     }
   },
@@ -136,6 +136,19 @@ export default {
         __on,
         __bind
       })
+    },
+    deleteLostProp (newColumn, oldColumn) {
+      const __newProps = this.flatTreeProp(newColumn)
+      const __oldProps = this.flatTreeProp(oldColumn)
+      const deletedColumn = differenceBy(__oldProps, __newProps)
+      deletedColumn.forEach(prop => this.$delete(this.model, prop))
+    },
+    flatTreeProp (tree) {
+      const result = []
+      recursive(isArray(tree) ? tree : [], item => {
+        result.push(item.prop)
+      })
+      return result.filter(m => m)
     }
   }
 }

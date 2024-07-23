@@ -1,6 +1,6 @@
 export const column = [
   {
-    label: 'id',
+    label: 'userId',
     prop: 'userId'
   },
   {
@@ -26,11 +26,13 @@ export const column = [
   },
   {
     label: '手机号',
-    prop: 'phone'
+    prop: 'phone',
+    show: theForm => theForm.lockFlag
   },
   {
     label: '角色',
-    prop: 'roleList'
+    prop: 'roleList',
+    enable: theForm => theForm.lockFlag
   },
   {
     label: '状态',
