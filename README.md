@@ -100,11 +100,14 @@ methods: {
 {
   label: '名称', // 必须，标签名 String | Function
   prop: 'name', // 必须，属性名 String
+  labelTooltip: '名称的tips', // 可选，名称描述tips String | Object
   required: true, // 可选（默认false），是否必填 Boolean
   component: 'el-input', // 可选（默认el-input），所用组件 String | Component
   rules: [], // 可选，校验规则 Array | Function
   bind: {}, // 可选，组件v-bind Object
   on: {}, // 可选，组件v-on Object
+  show: false, // 可选（默认true），控制表单项是否显示 Boolean | Function
+  enable: false, // 可选（默认true），控制表单项是否启用 Boolean | Function
   span: 12, // 可选（默认12），所占栅格
   pull: 12, // 可选，栅格偏移
   push: 12, // 可选，栅格偏移

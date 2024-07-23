@@ -251,10 +251,6 @@ td {
   }
 }
 
-.ea-number .el-input__inner {
-  text-align: left;
-}
-
 .ea-desc {
   font-size: 14px;
   &__title {
@@ -296,6 +292,10 @@ td {
       }
     }
   }
+}
+
+.ea-number .el-input__inner {
+  text-align: left;
 }
 
 .file-upload-dialog {
