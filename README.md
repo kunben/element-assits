@@ -69,6 +69,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | bottom-menu | 无 | 底部菜单
 | before-column | 无 | 表格内部列之前
 | after-column | 无 | 表格内部列之后
+| footer | bottom-menu&分页 | 表格底部
 
 ## column-attributes
 | 属性名 | 类型 | 默认值 | 说明 |

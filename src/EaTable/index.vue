@@ -62,20 +62,22 @@
       </el-table>
     </div>
   </slot>
-  <div class="ea-table__footer">
-    <slot name="bottom-menu" />
-    <el-pagination
-      v-if="thePagination.show && page.total"
-      class="ea-table__footer-right"
-      layout="total, sizes, prev, pager, next, jumper"
-      :page-size="page.pageSize"
-      :current-page="page.current"
-      :total="page.total"
-      :page-sizes="[10, 20, 50, 100]"
-      background
-      @size-change="handleSizeChange"
-      @current-change="handleCurrentChange" />
-  </div>
+  <slot name="footer">
+    <div class="ea-table__footer">
+      <div><slot name="bottom-menu" /></div>
+      <el-pagination
+        v-if="thePagination.show && page.total"
+        class="ea-table__footer-right"
+        layout="total, sizes, prev, pager, next, jumper"
+        :page-size="page.pageSize"
+        :current-page="page.current"
+        :total="page.total"
+        :page-sizes="[10, 20, 50, 100]"
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange" />
+    </div>
+  </slot>
 </div>
 </template>
 
@@ -397,6 +399,8 @@ export default {
         justify-content: flex-start;
         align-items: center;
       }
+      &.is-center .cell { justify-content: center }
+      &.is-right .cell { justify-content: flex-end }
     }
     td, th {
       .cell {
