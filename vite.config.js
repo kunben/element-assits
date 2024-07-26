@@ -30,6 +30,9 @@ export default defineConfig({
       }
     }
   },
+  server: {
+    host: 5174
+  },
   build: {
     lib: {
       entry: 'src/index.js',

@@ -407,10 +407,19 @@ export default {
         line-height: 1.2;
       }
     }
+    &.el-table--small {
+      td, th {
+        height: 48px;
+      }
+    }
     &.is-dense {
       td, th {
         height: 32px;
         padding: 2px 0;
+        .el-button {
+          padding-top: 0;
+          padding-bottom: 0;
+        }
       }
     }
   }
