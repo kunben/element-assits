@@ -18,7 +18,9 @@
 </template>
 
 <script>
+import EaModal from '../EaModal'
 export default {
+  components: { EaModal },
   props: {
     column: { type: Array, required: true },
     rawColumn: { type: Array, required: true }

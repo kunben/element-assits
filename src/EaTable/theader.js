@@ -31,7 +31,7 @@ export function middleRender (userRender) {
         on: {
           click: evt => {
             evt.stopPropagation()
-            this.$asyncLoad('EaPopover', {
+            this.$asyncLoad(() => import('../EaPopover'), {
               attrs: { popperClass: 'ea-popover-no-padding', placement: 'bottom-start' },
               props: { reference: evt.target, offset: -20 },
               scopedSlots: {

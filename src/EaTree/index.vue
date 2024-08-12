@@ -27,7 +27,9 @@
 
 <script>
 import isNil from 'lodash/isNil'
+import EaScrollbar from '../EaScrollbar'
 export default {
+  components: { EaScrollbar },
   inheritAttrs: false,
   props: {
     inputPlaceholder: {

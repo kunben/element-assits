@@ -1,4 +1,3 @@
-import isFunction from 'lodash/isFunction'
 import EaSelect from './EaSelect'
 import EaVirtualScroll from './EaSelect/VirtualScroll.vue'
 import EaForm from './EaForm'
@@ -15,6 +14,7 @@ import EaNumber from './EaNumber'
 import EaRadio from './EaRadio'
 import EaCheckbox from './EaCheckbox'
 import EaFileUpload from './EaFileUpload'
+import { uuid, recursive, asyncLoad } from './util'
 
 const install = Vue => {
   // 注册组件
@@ -34,47 +34,30 @@ const install = Vue => {
   Vue.component('EaRadio', EaRadio)
   Vue.component('EaCheckbox', EaCheckbox)
   Vue.component('EaFileUpload', EaFileUpload)
-  // 挂载异步加载组件的方法
-  Vue.prototype.$asyncLoad = function asyncLoad (_importFunc, ...options) {
-    const importFunc = (
-      isFunction(_importFunc)
-        ? _importFunc
-        : () => Promise.resolve({ default: _importFunc })
-    )
-    importFunc().then(mod => {
-        const TheClass = Vue.extend({
-        name: 'AsyncContainer',
-        parent: this,
-        render (h) {
-          return h(mod.default, ...options)
-        }
-      })
-      const theIns = new TheClass()
-      try {
-        theIns.$on('hook:mounted', () => {
-          const f = theIns.$children[0]
-          const dialog = theIns.$children[0].$children[0]
-          f.$on('closed', () => {
-            document.body.removeChild(theIns.$el)
-            theIns.$destroy()
-          })
-          dialog.$on('closed', () => {
-            document.body.removeChild(theIns.$el)
-            theIns.$destroy()
-          })
-        })
-      } catch (err) {
-        console.error(err)
-      }
-      // append
-      theIns.$mount()
-      document.body.appendChild(theIns.$el)
-    })
-  }
+  // 挂载原型方法
+  Vue.prototype.$asyncLoad = asyncLoad
 }
 
-export default {
-  install
+export {
+  EaSelect,
+  EaVirtualScroll,
+  EaForm,
+  EaTable,
+  EaPopover,
+  EaModal,
+  EaButton,
+  EaSplit,
+  EaTree,
+  EaList,
+  EaDesc,
+  EaScrollbar,
+  EaNumber,
+  EaRadio,
+  EaCheckbox,
+  EaFileUpload,
+  uuid,
+  recursive,
+  asyncLoad
 }
 
-export * from './util'
+export default install

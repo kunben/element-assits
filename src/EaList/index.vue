@@ -13,7 +13,10 @@
 </template>
 
 <script>
+import EaScrollbar from '../EaScrollbar'
+import EaVirtualScroll from '../EaSelect/VirtualScroll.vue'
 export default {
+  components: { EaScrollbar, EaVirtualScroll },
   props: {
     data: { type: Array, default: undefined },
     pageRequest: { type: Function, default: undefined },

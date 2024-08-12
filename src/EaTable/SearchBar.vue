@@ -32,7 +32,9 @@
 
 <script>
 import cloneDeep from 'lodash/cloneDeep'
+import EaForm from '../EaForm'
 export default {
+  components: { EaForm },
   inheritAttrs: false,
   props: {
     column: {
