@@ -37,8 +37,7 @@
 </template>
 
 <script>
-import isFunction from 'lodash/isFunction'
-import cloneDeep from 'lodash/cloneDeep'
+import { isFunction, cloneDeep } from 'lodash-es'
 import VirtualScroll from './VirtualScroll.vue'
 export default {
   components: { VirtualScroll },

@@ -31,8 +31,8 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep'
 import EaForm from '../EaForm'
+import { cloneDeep } from 'lodash-es'
 export default {
   components: { EaForm },
   inheritAttrs: false,

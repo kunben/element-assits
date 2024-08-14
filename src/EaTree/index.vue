@@ -26,7 +26,7 @@
 </template>
 
 <script>
-import isNil from 'lodash/isNil'
+import { isNil } from 'lodash-es'
 import EaScrollbar from '../EaScrollbar'
 export default {
   components: { EaScrollbar },

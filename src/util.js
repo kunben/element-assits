@@ -1,5 +1,4 @@
-import isFunction from 'lodash/isFunction'
-import isPlainObject from 'lodash/isPlainObject'
+import { isFunction } from 'lodash-es'
 
 // 随机 key
 export const uuid = () => Math.random().toString()
@@ -34,7 +33,6 @@ export async function asyncLoad (_importFunc, ...options) {
   )
   const msg = Message({
     message: '正在载入组件，请稍后...',
-    dangerouslyUseHTMLString: true,
     iconClass: 'el-icon-loading',
     customClass: 'async-load-component',
     type: 'info',
@@ -47,27 +45,44 @@ export async function asyncLoad (_importFunc, ...options) {
     msg.iconClass = undefined
     setTimeout(msg.close, 3000)
   })
-  msg.close()
+  const checkStyle = () => {
+    const hsId = '__async-load-component-css'
+    const hs = document.getElementById(hsId)
+    if (hs) return void(0)
+    const css = document.createElement('style')
+    css.id = hsId
+    css.innerHTML = `
+      .async-load-component { min-width: 212px; }
+      .async-load-component.el-message-fade-leave-active { transition: none !important; }
+      .async-load-component .el-message__content { margin-left: 8px; color: #666; }
+    `
+    document.head.appendChild(css)
+  }
   const TheClass = Vue.extend({
     name: 'AsyncContainer',
+    mounted () {
+      const end = () => {
+        document.body.removeChild(this.$el)
+        this.$destroy()
+      }
+      // 异步容器层
+      this.$on('closed', end)
+      this.$children.forEach(item => {
+        // 可能的封装层
+        item.$on('closed', end)
+        item.$children.forEach(m => {
+          // 可能的实际el-dialog组件层
+          m.$on('closed', end)
+        })
+      })
+    },
     render (h) {
-      const that = this
-      if (!isPlainObject(options[0])) {
-        options.unshift({})
-      }
-      options[0].on = {
-        ...options[0].on,
-        closed () {
-          const _closed = options[0].on && options[0].on.closed
-          isFunction(_closed) && _closed()
-          document.body.removeChild(that.$el)
-          that.$destroy()
-        }
-      }
       return h(asyncComponent, ...options)
     }
   })
   const TheIns = new TheClass()
+  checkStyle()
+  msg.close()
   TheIns.$mount()
   document.body.appendChild(TheIns.$el)
 }

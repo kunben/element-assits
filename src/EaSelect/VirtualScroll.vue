@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import get from 'lodash/get'
+import { get } from 'lodash-es'
 export default {
   props: {
     options: { type: Array, required: true },

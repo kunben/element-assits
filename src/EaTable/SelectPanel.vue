@@ -30,8 +30,7 @@
 </template>
 
 <script>
-import cloneDeep from 'lodash/cloneDeep'
-import isEmpty from 'lodash/isEmpty'
+import { cloneDeep, isEmpty } from 'lodash-es'
 export default {
   name: 'SelectPanel',
   props: {

@@ -40,7 +40,7 @@ export default defineConfig({
       fileName: 'index'
     },
     rollupOptions: {
-      external: ['element-ui'],
+      external: ['vue', 'element-ui'],
       output: {
         dir: 'lib',
         manualChunks () {

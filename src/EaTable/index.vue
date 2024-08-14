@@ -85,9 +85,7 @@
 import SearchBar from './SearchBar.vue'
 import { columnMenu, middleRender } from './theader'
 import { uuid } from '../util'
-import isPlainObject from 'lodash/isPlainObject'
-import isArray from 'lodash/isArray'
-import cloneDeep from 'lodash/cloneDeep'
+import { isArray, isPlainObject, cloneDeep } from 'lodash-es'
 export default {
   components: { SearchBar },
   inheritAttrs: false,

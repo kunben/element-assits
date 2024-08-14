@@ -101,14 +101,4 @@ export default {
     }
   }
 }
-.async-load-component {
-  min-width: 212px;
-  &.el-message-fade-leave-active {
-    transition: none !important;
-  }
-  .el-message__content {
-    margin-left: 8px;
-    color: #666;
-  }
-}
 </style>

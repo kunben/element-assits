@@ -17,13 +17,7 @@
 
 <script>
 import LayoutContainer from './LayoutContainer.vue'
-import isArray from 'lodash/isArray'
-import isNil from 'lodash/isNil'
-import get from 'lodash/get'
-import isFunction from 'lodash/isFunction'
-import isPlainObject from 'lodash/isPlainObject'
-import differenceBy from 'lodash/differenceBy'
-import cloneDeep from 'lodash/cloneDeep'
+import { isArray, isNil, get, isFunction, isPlainObject, differenceBy, cloneDeep } from 'lodash-es'
 import { recursive } from '../util'
 export default {
   components: { LayoutContainer },
