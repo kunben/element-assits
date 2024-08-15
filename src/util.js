@@ -24,13 +24,17 @@ export const findParentComponent = (ins, pName) => {
 
 // 异步载入组件
 export async function asyncLoad (_importFunc, ...options) {
+  // hash
+  asyncLoad.prevHashes = asyncLoad.prevHashes || []
+  const theHash = Function.prototype.toString.call(_importFunc)
+  if (asyncLoad.prevHashes.includes(theHash)) {
+    return void(0)
+  }
+  asyncLoad.prevHashes.push(theHash)
+  // dependence
   const { default: Vue } = await import('vue')
   const { Message } = await import('element-ui')
-  const importFunc = (
-    isFunction(_importFunc)
-    ? _importFunc
-    : () => Promise.resolve({ default: _importFunc })
-  )
+  // before load
   const msg = Message({
     message: '正在载入组件，请稍后...',
     iconClass: 'el-icon-loading',
@@ -38,13 +42,22 @@ export async function asyncLoad (_importFunc, ...options) {
     type: 'info',
     duration: 0
   })
+  const importFunc = (
+    isFunction(_importFunc)
+    ? _importFunc
+    : () => Promise.resolve({ default: _importFunc })
+  )
+  // async load
   const { default: asyncComponent } = await importFunc().catch(() => {
     msg.type = 'error'
     msg.message = '组件载入失败'
     msg.showClose = true
     msg.iconClass = undefined
     setTimeout(msg.close, 3000)
+  }).finally(() => {
+    asyncLoad.prevHashes = asyncLoad.prevHashes.filter(m => m !== theHash)
   })
+  // style
   const checkStyle = () => {
     const hsId = '__async-load-component-css'
     const hs = document.getElementById(hsId)
@@ -58,14 +71,16 @@ export async function asyncLoad (_importFunc, ...options) {
     `
     document.head.appendChild(css)
   }
+  // create component
   const TheClass = Vue.extend({
     name: 'AsyncContainer',
+    parent: this, // bind context. if it exists
     mounted () {
       const end = () => {
         document.body.removeChild(this.$el)
         this.$destroy()
       }
-      // 异步容器层
+      // async container
       this.$on('closed', end)
       this.$children.forEach(item => {
         // 可能的封装层
@@ -83,6 +98,7 @@ export async function asyncLoad (_importFunc, ...options) {
   const TheIns = new TheClass()
   checkStyle()
   msg.close()
+  // mount component
   TheIns.$mount()
   document.body.appendChild(TheIns.$el)
 }
