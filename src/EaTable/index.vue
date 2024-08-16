@@ -145,6 +145,7 @@ export default {
       asyncPageCurrent: 1,
       page,
       originalData,
+      refreshTimer: null,
       searchForm: {}
     }
   },
@@ -337,9 +338,12 @@ export default {
     },
     // 隐式刷新表格
     hideRefresh () {
-      if (this.data.length <= 0) return void(0)
-      const [one] = this.data.splice(0, 1)
-      this.$nextTick(() => this.data.unshift(one))
+      clearTimeout(this.refreshTimer)
+      this.refreshTimer = setTimeout(() => {
+        if (this.data.length <= 0) return void(0)
+        const [one] = this.data.splice(0, 1)
+        this.$nextTick(() => this.data.unshift(one))
+      }, 0)
     },
     // 表格搜索
     handleSearch () {

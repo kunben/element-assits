@@ -15,6 +15,7 @@
       :data="options || data"
       :empty-text="endEmptyText"
       :filter-node-method="filterNodeMethod || defaultFilterNodeMethod"
+      :props="endProps"
       v-bind="$attrs"
       v-on="$listeners">
       <template v-if="$scopedSlots.default || $slots.default" #default="attrs">
