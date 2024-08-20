@@ -52,7 +52,8 @@
           v-if="theOperation.show"
           v-bind="{ label: '操作', align: 'center', fixed: 'right', ...theOperation.attrs }">
           <template #default="scope">
-            <slot name="row-menu" v-bind="scope" />
+            <component :is="theOperation.render" v-if="theOperation.render" :scope="scope" />
+            <slot v-else name="row-menu" v-bind="scope" />
           </template>
         </el-table-column>
         <slot name="after-column" />
@@ -73,6 +74,7 @@
         :current-page="page.current"
         :total="page.total"
         :page-sizes="[10, 20, 50, 100]"
+        v-bind="thePagination.attrs"
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange" />
@@ -85,7 +87,8 @@
 import SearchBar from './SearchBar.vue'
 import { columnMenu, middleRender } from './theader'
 import { uuid } from '../util'
-import { isArray, isPlainObject, cloneDeep } from 'lodash-es'
+import { omit, isArray, isPlainObject, cloneDeep } from 'lodash-es'
+import { innerToThe, checkOperation } from './operation'
 export default {
   components: { SearchBar },
   inheritAttrs: false,
@@ -110,20 +113,6 @@ export default {
       total: 0
     }
 
-    // inner to the
-    const i_common =  (innerValue, callback = (e => e)) => {
-      if (isPlainObject(innerValue)) return {
-        show: innerValue.show !== false,
-        attrs: callback(innerValue)
-      }
-      return { show: Boolean(innerValue) }
-    }
-    const thePagination = i_common(this.innerPagination)
-    const theOperation = i_common(this.innerOperation)
-    if (this.innerOperation === undefined) theOperation.show = true
-    const theIndex = i_common(this.innerIndex)
-    const theSelection = i_common(this.innerSelection)
-
     // local page
     let originalData = []
     if (this.pageRequest) {
@@ -135,10 +124,6 @@ export default {
     }
     return {
       rawColumn: [],
-      theIndex,
-      theSelection,
-      thePagination,
-      theOperation,
       columnMenu,
       innerLoading: false,
       errMsg: undefined,
@@ -151,20 +136,49 @@ export default {
   },
   computed: {
     theForm () {
-      if (!isPlainObject(this.innerForm)) return {
-        show: Boolean(this.innerForm),
-        attrs: {
-          model: {}
-        }
-      }
-      return {
-        show: this.innerForm.show !== false,
-        attrs: {
+      let show, attrs
+      if (!isPlainObject(this.innerForm)) {
+        show = Boolean(this.innerForm)
+        attrs = { model: {} }
+      } else {
+        show = this.innerForm.show !== false
+        attrs = {
           column: [],
           model: this.searchForm,
-          ...this.innerForm
+          ...omit(this.innerForm, 'show')
         }
       }
+      return { show, attrs }
+    },
+    theOperation () {
+      let show, attrs = { width: 180 }, render
+      if (this.innerOperation === undefined) {
+        // 没有显示设置operation (是否显示操作栏由插槽决定)
+        const { showAction, collapseBtnRender } = checkOperation.bind(this)()
+        show = showAction
+        render = collapseBtnRender
+      } else if(!isPlainObject(this.innerOperation)) {
+        // 显式地设置为其他值 (由设置的值决定)
+        show = Boolean(this.innerOperation)
+      } else {
+        // 显式设置为对象
+        const maxNumOfBtn = this.innerOperation.maxNumOfBtn
+        const { showAction, collapseBtnRender } = checkOperation.bind(this)(maxNumOfBtn)
+        const _show = this.innerOperation.show
+        show = _show === undefined ? showAction : Boolean(_show)
+        render = collapseBtnRender
+        Object.assign(attrs, omit(this.innerOperation, ['show', 'maxNumOfBtn']))
+      }
+      return { show, render, attrs }
+    },
+    thePagination () {
+      return innerToThe(this.innerPagination)
+    },
+    theIndex () {
+      return innerToThe(this.innerIndex)
+    },
+    theSelection () {
+      return innerToThe(this.innerSelection)
     }
   },
   watch: {
@@ -177,20 +191,6 @@ export default {
   },
   mounted () {
     this.initRequest && this.handleSearch()
-    const showAction = () => {
-      try {
-        let a = this.$slots['row-menu']
-        let b = this.$scopedSlots['row-menu']
-        a = Array.isArray(a) ? a : (a && a()) || []
-        b = Array.isArray(b) ? b : (b && b()) || []
-        return [...a, ...b].some(m => m.tag)
-      } catch {
-        return true
-      }
-    }
-    if (this.innerOperation === undefined) {
-      this.theOperation.show = showAction()
-    }
   },
   methods: {
     middleRender,
@@ -462,11 +462,32 @@ export default {
   .el-button > i {
     min-width: 12px;
   }
+
+  .more-btn > i{
+    transform: rotate(-90deg);
+  }
 }
 
 // table - popover
 .el-popover.ea-popover-no-padding {
   padding: 8px 0;
   min-width: 100px;
+  &.dense {
+    margin-top: 0px;
+    min-width: 70px;
+  }
+}
+
+.more-btn-panel {
+  &__item {
+    &:hover {
+      background-color: $--color-border-lighter;
+    }
+    > .el-button {
+      padding: 8px 12px;
+      width: 100%;
+      text-align: left;
+    }
+  }
 }
 </style>

@@ -57,6 +57,9 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | innerPagination | 内部 - 分页 | Boolean \| Object | undefined
 | innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined
 
+> `innerSelection` 可以绑定 `{ data: selectedRows }` 接收选中的行  
+> `innerOperation` 可以绑定 `{ maxNumOfBtn: 3 }` 设置操作栏最大显示的按钮数，超出将被折叠
+
 ## methods
 
 | 方法名 | 说明 | 参数 |

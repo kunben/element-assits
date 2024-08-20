@@ -22,7 +22,8 @@ export default {
     offset: {
       type: Number,
       default: 0
-    }
+    },
+    mountedCallback: undefined
   },
   data () {
     const listenClick = () => {
@@ -35,6 +36,7 @@ export default {
       this.$refs.pop.referenceElm = this.reference
       this.visible = true
       document.addEventListener('click', listenClick)
+      this.mountedCallback && this.mountedCallback(this)
     })
     return {
       visible: false
