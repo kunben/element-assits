@@ -55,9 +55,11 @@
             <component
               :is="theOperation.render"
               v-if="theOperation.render"
-              :key="scope && scope.row && scope.row.id || uuid()"
+              :key="uuid()"
               :scope="scope" />
-            <slot v-else name="row-menu" v-bind="scope" />
+            <div v-else :key="uuid()">
+              <slot name="row-menu" v-bind="scope" />
+            </div>
           </template>
         </el-table-column>
         <slot name="after-column" />
@@ -127,6 +129,7 @@ export default {
       page.total = originalData.length
     }
     return {
+      uuid,
       rawColumn: [],
       columnMenu,
       innerLoading: false,
