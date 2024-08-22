@@ -18,7 +18,7 @@ export function checkOperation (maxNumOfBtn = 3) {
   const that = this
   let showAction, collapseBtnRender
   try {
-    const nodes = flatSlots.bind(this)()
+    const nodes = flatSlots.bind(this)({})
     showAction = nodes.some(m => m.tag)
     // 有关按钮限制
     // 1. 如果不能大于0，则返回空渲染函数，将会使用插槽，渲染全部按钮
