@@ -52,7 +52,11 @@
           v-if="theOperation.show"
           v-bind="{ label: '操作', align: 'center', fixed: 'right', ...theOperation.attrs }">
           <template #default="scope">
-            <component :is="theOperation.render" v-if="theOperation.render" :scope="scope" />
+            <component
+              :is="theOperation.render"
+              v-if="theOperation.render"
+              :key="scope && scope.row && scope.row.id || uuid()"
+              :scope="scope" />
             <slot v-else name="row-menu" v-bind="scope" />
           </template>
         </el-table-column>
@@ -485,7 +489,7 @@ export default {
     &:hover {
       background-color: $--color-border-lighter;
     }
-    > .el-button {
+    .el-button {
       padding: 8px 12px;
       width: 100%;
       text-align: left;
