@@ -114,29 +114,53 @@ export default {
     init () {
       const container = this.$refs.eform && this.$refs.eform.$el
       if (!container) return void(0)
+      const goodWidth = 180
       // 容器可用宽度
       const containerWidth = this.getWidth(container)
       // 搜索按钮宽度
       const saWidth = this.getWidth(this.$refs.sa.$el) + 10
       // 顶部插槽内容宽度
       const tmWidth = this.getWidth(this.$refs.tm.$el)
-      // 每行数量
-      const oneRowCount = Math.floor(containerWidth / 180)
-      // 根据每行数量计算得到单个适应宽度
-      const fitWidth = (containerWidth - ((oneRowCount - 1) * 10)) / oneRowCount
-
-      if (this.limit === 'auto') {
-        // 默认显示的数量，最少显示一个，如果连一个都无法显示，直接显示一行（顶部插槽自动换行）
-        let defaultCount = Math.floor((containerWidth - saWidth - tmWidth) / (fitWidth + 10))
-        if (defaultCount < 1) {
-          defaultCount = Math.floor((containerWidth - saWidth) / (fitWidth + 10))
-        }
-        this.defaultCount = defaultCount
-      }
+      // (1) 假设一行啥都不带
+      const oneRowCount = Math.floor(containerWidth / goodWidth)
+      // (2) 假设携带搜索栏
+      const oneRowWithSearchCount = Math.floor((containerWidth - saWidth) / goodWidth)
+      // (3) 假设携带搜索栏和插槽
+      const oneRowWithSearchAndSlotCount = Math.floor((containerWidth - saWidth - tmWidth) / goodWidth)
+      // 默认情况下，需要显示的搜索条件数量
+      this.defaultCount = this.limit === 'all' ? this.allColumn.length : (
+        typeof this.limit === 'number' ? Math.min(this.limit, this.allColumn.length) : (
+          oneRowWithSearchAndSlotCount >= 1 ? oneRowWithSearchAndSlotCount : (
+            oneRowWithSearchCount >= 1 ? oneRowWithSearchCount : oneRowCount
+          )
+        )
+      )
+      // 最终需要显示的搜索条件数量
+      const endShowCount = this.showAll ? this.allColumn.length : this.defaultCount
+      // 按照需要显示的数量，计算宽度
+      const fitWidth = (
+        endShowCount <= oneRowWithSearchAndSlotCount
+          ? (containerWidth - saWidth - tmWidth) / endShowCount - 10
+          : (
+            endShowCount <= oneRowWithSearchCount
+              ? (containerWidth - saWidth) / endShowCount - 10
+              : (
+                endShowCount < oneRowCount
+                  ? (containerWidth - (endShowCount - 1) * 10) / endShowCount
+                  : (containerWidth - (oneRowCount - 1) * 10) / oneRowCount
+              )
+          )
+      )
+      // 需要计算边距的行数量
+      const rowEndCount = (
+        endShowCount > oneRowWithSearchCount && endShowCount < oneRowCount
+          ? endShowCount
+          : oneRowCount
+      )
 
       this.allColumn.forEach((m, i) => {
-        m.style.width = fitWidth + 'px'
-        if ((i + 1) % oneRowCount === 0) {
+        m.style.width = Math.min(fitWidth, 300) + 'px'
+        if ((i + 1) % rowEndCount === 0) {
           m.style.marginRight = 0
         } else {
           m.style.marginRight = '10px'

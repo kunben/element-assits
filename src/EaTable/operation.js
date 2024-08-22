@@ -86,7 +86,11 @@ function handlePopover (evt, h, nodes) {
   timer2 = setTimeout(() => {
     this.$asyncLoad(() => import('../EaPopover'), {
       class: 'ea-select-container',
-      attrs: { popperClass: 'ea-popover-no-padding dense', placement: 'bottom' },
+      attrs: {
+        popperClass: 'ea-popover-no-padding dense',
+        placement: 'bottom',
+        transition: 'ea-zoom-in-top'
+      },
       props: {
         reference: evt.target,
         offset: -20,

@@ -309,6 +309,7 @@ export default {
               column,
               value: row[column.prop],
               _column,
+              that: this,
               hideRefresh: () => this.hideRefresh()
             }
           )
@@ -474,6 +475,7 @@ export default {
   min-width: 100px;
   &.dense {
     margin-top: 0px;
+    margin-bottom: 0px;
     min-width: 70px;
   }
 }
@@ -489,5 +491,18 @@ export default {
       text-align: left;
     }
   }
+}
+
+.ea-zoom-in-top-enter-active,
+.ea-zoom-in-top-leave-active {
+  opacity: 1;
+  transform: scaleY(1);
+  transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
+  transform-origin: center top;
+}
+.ea-zoom-in-top-enter,
+.ea-zoom-in-top-leave-active {
+  opacity: 0;
+  transform: scaleY(0);
 }
 </style>
