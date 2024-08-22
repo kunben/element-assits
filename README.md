@@ -57,8 +57,10 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | innerPagination | 内部 - 分页 | Boolean \| Object | undefined
 | innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined
 
-> `innerSelection` 可以绑定 `{ data: selectedRows }` 接收选中的行  
-> `innerOperation` 可以绑定 `{ maxNumOfBtn: 3 }` 设置操作栏最大显示的按钮数，超出将被折叠
+> `innerForm` 可以绑定 `{ limit: 'auto', referenceItemWidth: 180, maxItemWidth: 240 }`  
+`limit` 限制默认显示的搜索条件数量，`referenceItemWidth` 单项参考宽度，`maxItemWidth` 单项最大宽度。  
+> `innerSelection` 可以绑定 `{ data: selectedRows }` 接收选中的行。  
+> `innerOperation` 可以绑定 `{ maxNumOfBtn: 3 }` 设置操作栏最大显示的按钮数，超出将被折叠。
 
 ## methods
 

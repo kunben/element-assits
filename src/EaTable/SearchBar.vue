@@ -53,6 +53,14 @@ export default {
     limit: {
       type: [Number, String],
       default: 'auto'
+    },
+    referenceItemWidth: {
+      type: Number,
+      default: 180
+    },
+    maxItemWidth: {
+      type: Number,
+      default: 240
     }
   },
   data () {
@@ -114,7 +122,6 @@ export default {
     init () {
       const container = this.$refs.eform && this.$refs.eform.$el
       if (!container) return void(0)
-      const goodWidth = 180
       // 容器可用宽度
       const containerWidth = this.getWidth(container)
       // 搜索按钮宽度
@@ -122,11 +129,11 @@ export default {
       // 顶部插槽内容宽度
       const tmWidth = this.getWidth(this.$refs.tm.$el)
       // (1) 假设一行啥都不带
-      const oneRowCount = Math.floor(containerWidth / goodWidth)
+      const oneRowCount = Math.floor(containerWidth / this.referenceItemWidth)
       // (2) 假设携带搜索栏
-      const oneRowWithSearchCount = Math.floor((containerWidth - saWidth) / goodWidth)
+      const oneRowWithSearchCount = Math.floor((containerWidth - saWidth) / this.referenceItemWidth)
       // (3) 假设携带搜索栏和插槽
-      const oneRowWithSearchAndSlotCount = Math.floor((containerWidth - saWidth - tmWidth) / goodWidth)
+      const oneRowWithSearchAndSlotCount = Math.floor((containerWidth - saWidth - tmWidth) / this.referenceItemWidth)
       // 默认情况下，需要显示的搜索条件数量
       this.defaultCount = this.limit === 'all' ? this.allColumn.length : (
         typeof this.limit === 'number' ? Math.min(this.limit, this.allColumn.length) : (
@@ -159,7 +166,7 @@ export default {
       )
 
       this.allColumn.forEach((m, i) => {
-        m.style.width = Math.min(fitWidth, 300) + 'px'
+        m.style.width = Math.min(fitWidth, this.maxItemWidth) + 'px'
         if ((i + 1) % rowEndCount === 0) {
           m.style.marginRight = 0
         } else {
