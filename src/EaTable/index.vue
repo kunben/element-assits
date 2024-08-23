@@ -35,7 +35,7 @@
         </el-table-column>
         <el-table-column
           v-if="theSelection.show"
-          v-bind="{ align: 'center', fixed: true, ...theSelection.attrs }"
+          v-bind="{ align: 'center', fixed: true, width: 50, ...theSelection.attrs }"
           type="selection" />
         <el-table-column
           v-for="item in rawColumn.filter(m => m.show !== false)"
