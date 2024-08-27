@@ -146,7 +146,7 @@ export default {
       let show, attrs
       if (!isPlainObject(this.innerForm)) {
         show = Boolean(this.innerForm)
-        attrs = { model: {} }
+        attrs = { model: this.searchForm }
       } else {
         show = this.innerForm.show !== false
         attrs = {
