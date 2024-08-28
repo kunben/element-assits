@@ -1,11 +1,11 @@
 <template>
-<div style="width: 1200px;margin:0 auto;">
+<div style="margin:0 auto;">
   <EaTable
     :column="column"
     :data="data"
     :inner-form="{ column: searchColumn, model: searchForm }"
     :inner-pagination="true"
-    :inner-operation="{maxNumOfBtn: 2 }"
+    :inner-operation="{maxNumOfBtn: 3 }"
     :inner-selection="{data: selectedRows}">
     <template #top-menu>
       <el-button type="primary" icon="el-icon-plus">新增</el-button>

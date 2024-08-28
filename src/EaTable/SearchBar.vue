@@ -77,6 +77,9 @@ export default {
     }
   },
   computed: {
+    allLength () {
+      return this.allColumn.reduce((acc, m) => acc += (m.exclusiveDoubleCells ? 2 : 1), 0)
+    },
     moreIcon () {
       return (
         this.loading
@@ -86,7 +89,7 @@ export default {
     },
     moreTooltip () {
       return (
-        (this.limit !== 'all') && (this.allColumn.length > this.defaultCount)
+        (this.limit !== 'all') && (this.allLength > this.defaultCount)
           ? (this.showAll ? '收起搜索条件' : '展开更多搜索条件')
           : '没有更多搜索条件了'
       )
@@ -135,15 +138,15 @@ export default {
       // (3) 假设携带搜索栏和插槽
       const oneRowWithSearchAndSlotCount = Math.floor((containerWidth - saWidth - tmWidth) / this.referenceItemWidth)
       // 默认情况下，需要显示的搜索条件数量
-      this.defaultCount = this.limit === 'all' ? this.allColumn.length : (
-        typeof this.limit === 'number' ? Math.min(this.limit, this.allColumn.length) : (
+      this.defaultCount = this.limit === 'all' ? this.allLength : (
+        typeof this.limit === 'number' ? Math.min(this.limit, this.allLength) : (
           oneRowWithSearchAndSlotCount >= 1 ? oneRowWithSearchAndSlotCount : (
             oneRowWithSearchCount >= 1 ? oneRowWithSearchCount : oneRowCount
           )
         )
       )
       // 最终需要显示的搜索条件数量
-      const endShowCount = this.showAll ? this.allColumn.length : this.defaultCount
+      const endShowCount = this.showAll ? this.allLength : this.defaultCount
       // 按照需要显示的数量，计算宽度
       const fitWidth = (
         endShowCount <= oneRowWithSearchAndSlotCount
@@ -165,14 +168,18 @@ export default {
           : oneRowCount
       )
 
-      this.allColumn.forEach((m, i) => {
-        m.style.width = Math.min(fitWidth, this.maxItemWidth) + 'px'
-        if ((i + 1) % rowEndCount === 0) {
-          m.style.marginRight = 0
+      let i = 0
+      for (let item of this.allColumn) {
+        i += (item.exclusiveDoubleCells ? 2 : 1)
+        const cellWidth = Math.min(fitWidth, this.maxItemWidth)
+        const endWidth = item.exclusiveDoubleCells ? (cellWidth * 2 + 10) : cellWidth
+        item.style.width = endWidth + 'px'
+        if (i % rowEndCount === 0) {
+          item.style.marginRight = 0
         } else {
-          m.style.marginRight = '10px'
+          item.style.marginRight = '10px'
         }
-      })
+      }
 
       this.resetSearchCount()
     },
@@ -186,7 +193,18 @@ export default {
         this.rawColumn = this.allColumn
         return void(0)
       }
-      this.rawColumn = this.showAll ? this.allColumn : this.allColumn.slice(0, this.defaultCount)
+      if (this.showAll) {
+        this.rawColumn = this.allColumn
+      } else {
+        const newColumn = []
+        let i = this.defaultCount
+        for (let item of this.allColumn) {
+          i -= (item.exclusiveDoubleCells ? 2 : 1)
+          newColumn.push(item)
+          if (i <= 0) break
+        }
+        this.rawColumn = newColumn
+      }
     },
     handleSearch () {
       this.$emit('search')
@@ -199,7 +217,7 @@ export default {
     },
     handleMore () {
       if (this.limit === 'all') return void(0)
-      if (this.allColumn.length <= this.defaultCount) return void(0)
+      if (this.allLength <= this.defaultCount) return void(0)
       this.showAll = !this.showAll
       this.resetSearchCount()
     },

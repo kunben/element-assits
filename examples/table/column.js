@@ -18,6 +18,11 @@ export const searchColumn = [
     prop: 'username'
   },
   {
+    label: '日期',
+    prop: 'date',
+    exclusiveDoubleCells: true
+  },
+  {
     label: '用户中文名',
     prop: 'userCnName'
   },
