@@ -9,12 +9,6 @@
     :no-data-text="originalOptions.length ? noMatchText : noDataText"
     v-bind="$attrs"
     v-on="{...$listeners, input: handleInput, 'visible-change': handleVisibleChange}">
-    <el-option
-      v-for="item in cachedOptions"
-      :key="item[endProps.value]"
-      :label="item[endProps.label]"
-      :value="item[endProps.value]"
-      style="display:none;" />
     <VirtualScroll ref="vs" :options="options" :item-size="34">
       <template #item="{item}">
         <el-option
@@ -44,7 +38,7 @@
 </template>
 
 <script>
-import { isFunction, cloneDeep } from 'lodash-es'
+import { isNil, isFunction, cloneDeep } from 'lodash-es'
 import VirtualScroll from './VirtualScroll.vue'
 export default {
   components: { VirtualScroll },
@@ -66,8 +60,7 @@ export default {
       checkAll: false,
       indeterminate: false,
       loading: false,
-      options: [],
-      cachedOptions: []
+      options: []
     }
   },
   computed: {
@@ -96,8 +89,8 @@ export default {
         this.init(n, o)
       }
     },
-    'options.length' (n) {
-      if (n === 0) this.cachedOptions = []
+    value () {
+      this.cacheCurrent()
     }
   },
   mounted () {
@@ -113,6 +106,7 @@ export default {
         result.then(list => {
           this.options = list
           this.originalOptions = cloneDeep(list)
+          this.cacheCurrent()
         }).finally(() => {
           this.loading = false
         })
@@ -120,19 +114,28 @@ export default {
     },
     filterMethod (text) {
       this.options = cloneDeep(this.originalOptions).filter(m => {
-        return m.label.indexOf(text) > -1
+        if (!text) return true
+        const props = this.endProps
+        const label = isNil(m[props.label]) ? '' : String(m[props.label])
+        const value = isNil(m[props.value]) ? '' : String(m[props.value])
+        return label.indexOf(text) > -1 || value.indexOf(text) > -1
       })
     },
     cacheCurrent () {
       const found = this.options.find(m => m[this.endProps.value] === this.value)
-      const cachedFound = this.cachedOptions.find(m => m[this.endProps.value] === this.value)
-      if (found && !cachedFound) this.cachedOptions.push(found)
+      const cachedOptions = this.$refs.sel.cachedOptions
+      const cachedFound = cachedOptions.find(m => m.value === this.value)
+      if (found && !cachedFound) {
+        cachedOptions.push({
+          currentLabel: found[this.endProps.label],
+          label: found[this.endProps.label],
+          currentValue: found[this.endProps.value],
+          value: found[this.endProps.value]
+        })
+      }
     },
     handleInput (evt) {
       this.$emit('input', evt)
-      this.$nextTick(() => {
-        this.cacheCurrent()
-      })
       if (this.label !== undefined || this.$listeners['obj-change']) {
         const found = this.options.find(m => m[this.endProps.value] === evt)
         if (found) {

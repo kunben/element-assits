@@ -200,26 +200,40 @@ export default {
         let i = this.defaultCount
         for (let item of this.allColumn) {
           i -= (item.exclusiveDoubleCells ? 2 : 1)
+          if (i < 0) break
           newColumn.push(item)
-          if (i <= 0) break
         }
         this.rawColumn = newColumn
       }
     },
-    handleSearch () {
-      this.$emit('search')
+    async handleSearch () {
+      await this.$refs.eform.clearValidate()
+      this.$refs.eform.validate(valid => {
+        if (!valid) return void(0)
+        this.$emit('search')
+      })
     },
     handleReset () {
-      this.$emit('reset', () => {
-        this.$refs.eform.resetFields()
-        this.handleSearch()
+      this.$emit('reset', {
+        callback: (isResetMore) => {
+          this.$refs.eform.resetFields()
+          this.handleSearch()
+          if (isResetMore) this.showAll = false
+        },
+        reset: (isResetMore) => {
+          this.$refs.eform.resetFields()
+          if (isResetMore) this.showAll = false
+        },
+        search: () => {
+          this.handleSearch()
+        }
       })
     },
     handleMore () {
       if (this.limit === 'all') return void(0)
       if (this.allLength <= this.defaultCount) return void(0)
       this.showAll = !this.showAll
-      this.resetSearchCount()
+      this.init()
     },
     handleRefresh () {
       this.$emit('refresh')

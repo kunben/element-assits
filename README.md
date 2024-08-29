@@ -57,9 +57,12 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | innerPagination | 内部 - 分页 | Boolean \| Object | undefined
 | innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined
 
-> `innerForm` 可以绑定 `{ limit: 'auto', referenceItemWidth: 180, maxItemWidth: 240 }`  
-`limit` 限制默认显示的搜索条件数量，`referenceItemWidth` 单项参考宽度，`maxItemWidth` 单项最大宽度。  
-`column[].exclusiveDoubleCells` 允许某一项独占两格  
+> `innerForm` 额外属性（其余将绑定至EaForm）：  
+$~~~~$`limit` 限制默认显示的搜索条件数量  
+$~~~~$`referenceItemWidth` 单项参考宽度  
+$~~~~$`maxItemWidth` 单项最大宽度  
+$~~~~$`loading` 控制更多按钮的加载状态  
+$~~~~$`column[].exclusiveDoubleCells` 允许某一项独占两格  
 > `innerSelection` 可以绑定 `{ data: selectedRows }` 接收选中的行。  
 > `innerOperation` 可以绑定 `{ maxNumOfBtn: 3 }` 设置操作栏最大显示的按钮数，超出将被折叠。
 
@@ -81,6 +84,13 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | before-column | 无 | 表格内部列之前
 | after-column | 无 | 表格内部列之后
 | footer | bottom-menu&分页 | 表格底部
+
+## events
+`search-reset` 搜索重置事件，默认重置搜索表单并搜索。  
+一旦监听该事件，则阻止默认行为，参数为三项回调：  
+$~~~~$ `callback` 执行默认行为  
+$~~~~$ `reset` 仅执行重置  
+$~~~~$ `search` 仅执行搜索  
 
 ## column-attributes
 | 属性名 | 类型 | 默认值 | 说明 |

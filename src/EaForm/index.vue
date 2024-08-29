@@ -70,7 +70,7 @@ export default {
         if (!isArray(newColumn)) return void(0)
         const cloneColumn = [...newColumn]
         this.rawColumn = cloneColumn
-        this.deleteLostProp(oldColumn, newColumn)
+        this.deleteLostProp(newColumn, oldColumn)
       }
     }
   },

@@ -8,7 +8,7 @@
     :inner-operation="{maxNumOfBtn: 3 }"
     :inner-selection="{data: selectedRows}">
     <template #top-menu>
-      <el-button type="primary" icon="el-icon-plus">新增</el-button>
+      <el-button type="primary" @click="handleTest">测试</el-button>
       <el-button type="primary" icon="el-icon-plus">新增</el-button>
     </template>
     <template #row-menu="scope">
@@ -43,6 +43,9 @@ export default {
     }
   },
   methods: {
+    handleTest () {
+      this.searchForm.deptId = 999
+    },
     handleEdit (scope) {
       console.log(scope)
     },

@@ -61,6 +61,7 @@ export default {
       // 看似滚动了，其实没有滚动
       // 元素没变，但是数据变了
       clearTimeout(this.timer)
+      if (!container) return void(0)
       this.timer = setTimeout(() => {
         this.current = Math.floor(container.scrollTop / this.itemSize)
       }, 100)

@@ -3,20 +3,24 @@ export const searchColumn = [
     label: '所属部门',
     prop: 'deptId',
     component: 'EaSelect',
-    defaultValue: 9999999999,
     bind: form => ({
       props: { desc: 'desc' },
       filterable: true,
-      asyncParams: form.username,
-      asyncData: (p) => {
-        console.log('run asyncData', p)
-        if (p === '1') return Promise.resolve([])
-        return new Array(1000).fill(0).map((m, i) => ({
-          label: '某某银行' + i,
-          value: i,
-          desc: '比较长的描述' + i
-        }))
-      }
+      data: new Array(1000).fill(0).map((m, i) => ({
+        label: '某某银行' + i,
+        value: i,
+        desc: '比较长的描述' + i
+      }))
+      // asyncParams: form.username,
+      // asyncData: (p) => {
+      //   console.log('run asyncData', p)
+      //   if (p === '1') return Promise.resolve([])
+      //   return new Array(1000).fill(0).map((m, i) => ({
+      //     label: '某某银行' + i,
+      //     value: i,
+      //     desc: '比较长的描述' + i
+      //   }))
+      // }
     })
   },
   {
