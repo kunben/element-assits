@@ -6,6 +6,7 @@
     :loading="loading"
     :filter-method="filterMethod"
     :popper-class="'ea-select-popover' + (popperClass ? (' ' + popperClass) : '')"
+    :no-data-text="originalOptions.length ? noMatchText : noDataText"
     v-bind="$attrs"
     v-on="{...$listeners, input: handleInput, 'visible-change': handleVisibleChange}">
     <el-option
@@ -56,7 +57,9 @@ export default {
     asyncData: { type: Function, default: undefined },
     props: { type: Object, default: undefined },
     itemMaxWidth: { type: [Number, Array], default: 150 },
-    popperClass: { type: String, default: undefined }
+    popperClass: { type: String, default: undefined },
+    noDataText: { type: String, default: '无数据' },
+    noMatchText: { type: String, default: '无匹配数据' }
   },
   data () {
     return {
@@ -92,6 +95,9 @@ export default {
       handler (n, o) {
         this.init(n, o)
       }
+    },
+    'options.length' (n) {
+      if (n === 0) this.cachedOptions = []
     }
   },
   mounted () {
@@ -102,7 +108,9 @@ export default {
     init (newParams, oldParams) {
       if (isFunction(this.asyncData)) {
         this.loading = true
-        this.asyncData(newParams, oldParams).then(list => {
+        let result = this.asyncData(newParams, oldParams)
+        if (Array.isArray(result)) result = Promise.resolve(result)
+        result.then(list => {
           this.options = list
           this.originalOptions = cloneDeep(list)
         }).finally(() => {
@@ -136,6 +144,11 @@ export default {
     handleVisibleChange (evt) {
       this.$emit('visible-change', evt)
       this.$refs.vs && this.$refs.vs.$emit('visible-change', evt)
+      if (evt === false) {
+        setTimeout(() => {
+          this.options = cloneDeep(this.originalOptions)
+        }, 280)
+      }
     }
   }
 }

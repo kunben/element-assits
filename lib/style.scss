@@ -158,6 +158,24 @@ $--color-border-extralight: #F2F6FC !default;
   transform: scaleY(0);
 }
 
+.el-dialog.ea-modal {
+  &.is-closing {
+    margin: 0 !important;
+  }
+  &.is-fullscreen {
+    border-radius: 0;
+    margin: 0;
+  }
+  .el-dialog__header {
+    color: #555;
+    font-size: 18px;
+    .el-dialog__title {
+      color: inherit;
+      font-size: inherit;
+    }
+  }
+}
+
 .ea-button-tooltip + .ea-button-tooltip {
   margin-left: 10px;
 }
@@ -223,24 +241,6 @@ td {
   }
 }
 
-.el-dialog.ea-modal {
-  &.is-closing {
-    margin: 0 !important;
-  }
-  &.is-fullscreen {
-    border-radius: 0;
-    margin: 0;
-  }
-  .el-dialog__header {
-    color: #555;
-    font-size: 18px;
-    .el-dialog__title {
-      color: inherit;
-      font-size: inherit;
-    }
-  }
-}
-
 .ea-split-container {
   display: flex;
   &.is-down {
@@ -278,14 +278,6 @@ td {
   }
 }
 
-.ea-list {
-  .loading-text {
-    color: $--color-secondary-text;
-    text-align: center;
-    font-size: inherit;
-  }
-}
-
 .ea-tree {
   .ea-tree-real {
     .el-tree-node > .el-tree-node__content{
@@ -295,6 +287,18 @@ td {
       color: $--color-primary;
       background-color: rgba($--color-primary, 0.1);
     }
+  }
+}
+
+.ea-number .el-input__inner {
+  text-align: left;
+}
+
+.ea-list {
+  .loading-text {
+    color: $--color-secondary-text;
+    text-align: center;
+    font-size: inherit;
   }
 }
 
@@ -339,10 +343,6 @@ td {
       }
     }
   }
-}
-
-.ea-number .el-input__inner {
-  text-align: left;
 }
 
 .file-upload-dialog {
