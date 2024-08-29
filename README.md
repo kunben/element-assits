@@ -192,6 +192,7 @@ props: {
   value: { type: [String, Array, Number], default: undefined },
   label: { type: String, default: undefined },
   data: { type: Array, default: () => [] },
+  asyncParams: undefined,
   asyncData: { type: Function, default: undefined },
   props: { type: Object, default: undefined },
   itemMaxWidth: { type: [Number, Array], default: 150 },

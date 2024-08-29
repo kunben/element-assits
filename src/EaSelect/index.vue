@@ -21,10 +21,16 @@
           :label="item[endProps.label]"
           :value="item[endProps.value]">
           <template v-if="endProps.desc">
-            <span class="select-item-value" :style="{maxWidth: endItemMaxWidth[0] + 'px'}">
+            <span
+              class="select-item-value"
+              :style="{maxWidth: endItemMaxWidth[0] + 'px'}"
+              :title="item[endProps.label]">
               {{ item[endProps.label] }}
             </span>
-            <span class="select-item-desc" :style="{maxWidth: endItemMaxWidth[1] + 'px'}">
+            <span
+              class="select-item-desc"
+              :style="{maxWidth: endItemMaxWidth[1] + 'px'}"
+              :title="item[endProps.desc]">
               {{ item[endProps.desc] }}
             </span>
           </template>
@@ -46,6 +52,7 @@ export default {
     value: { type: [String, Array, Number], default: undefined },
     label: { type: String, default: undefined },
     data: { type: Array, default: () => [] },
+    asyncParams: undefined,
     asyncData: { type: Function, default: undefined },
     props: { type: Object, default: undefined },
     itemMaxWidth: { type: [Number, Array], default: 150 },
@@ -79,21 +86,30 @@ export default {
         this.options = n
         this.originalOptions = cloneDeep(n)
       }
+    },
+    asyncParams: {
+      deep: true,
+      handler (n, o) {
+        this.init(n, o)
+      }
     }
   },
   mounted () {
     this.cacheCurrent()
-    if (isFunction(this.asyncData)) {
-      this.loading = true
-      this.asyncData().then(list => {
-        this.options = list
-        this.originalOptions = cloneDeep(list)
-      }).finally(() => {
-        this.loading = false
-      })
-    }
+    this.init()
   },
   methods: {
+    init (newParams, oldParams) {
+      if (isFunction(this.asyncData)) {
+        this.loading = true
+        this.asyncData(newParams, oldParams).then(list => {
+          this.options = list
+          this.originalOptions = cloneDeep(list)
+        }).finally(() => {
+          this.loading = false
+        })
+      }
+    },
     filterMethod (text) {
       this.options = cloneDeep(this.originalOptions).filter(m => {
         return m.label.indexOf(text) > -1
@@ -142,6 +158,7 @@ export default {
 .ea-select-popover {
   .el-select-dropdown__item {
     display: flex;
+    justify-content: space-between;
     .select-item-value {
       overflow: hidden;
       text-overflow: ellipsis;
