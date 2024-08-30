@@ -74,6 +74,11 @@ export default {
         destroyDP()
         destroyDS()
       })
+      const dgDom = this.$el.querySelector('.el-dialog')
+      const pla = document.createElement('div')
+      pla.style.height = '75px'
+      pla.style.marginBottom = '75px'
+      dgDom.parentElement.appendChild(pla)
     },
     handleClosed () {
       this.$emit('closed')
@@ -86,7 +91,7 @@ export default {
 <style lang="scss">
 .el-dialog.ea-modal {
   &.is-closing {
-    margin: 0 !important;
+    margin: 0 0 50px !important;
   }
   &.is-fullscreen {
     border-radius: 0;

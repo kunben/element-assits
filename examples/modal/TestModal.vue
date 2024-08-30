@@ -6,7 +6,7 @@
   custom-class="abc"
   append-to-body>
   <div>
-    123
+    <p v-for="m in 20">123</p>
   </div>
 </EaModal>
 </template>

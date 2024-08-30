@@ -125,6 +125,7 @@ export default {
   }
   .item-value {
     word-break: break-all;
+    overflow: hidden;
     .value-no-wrap {
       height: 48px;
       overflow: hidden;

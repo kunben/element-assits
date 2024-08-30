@@ -1,6 +1,7 @@
 export function addDragPosition (el) {
   const dialog = el.querySelector('.el-dialog')
   const header = el.querySelector('.el-dialog__header')
+  dialog.style.overflow = 'auto'
   header.style.cursor = 'all-scroll'
   // 状态 - 弹窗初始位置
   let initX = dialog.offsetLeft
