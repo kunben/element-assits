@@ -34,8 +34,6 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 
 ## 用法
 
-> 详细文档有时间再补全
-
 ### 表格组件 EaTable
 此组件扩展了 el-table 组件。不同的是：
 - 它完全使用对象数组来控制表格列
@@ -52,19 +50,17 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | loading | 表格加载状态 | Boolean | undefined |
 | initRequest | 是否初始化发送请求 | Boolean | true |
 | innerForm | 内部 - 表单（搜索栏） | Boolean \| Object | undefined |
-| innerIndex | 内部 - 索引 | Boolean \| Object | true
-| innerSelection | 内部 - 选中列 | Boolean \| Object | undefined
-| innerPagination | 内部 - 分页 | Boolean \| Object | undefined
-| innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined
-
-> `innerForm` 额外属性（其余将绑定至EaForm）：  
-$~~~~$`limit` 限制默认显示的搜索条件数量  
-$~~~~$`referenceItemWidth` 单项参考宽度  
-$~~~~$`maxItemWidth` 单项最大宽度  
-$~~~~$`loading` 控制更多按钮的加载状态  
-$~~~~$`column[].exclusiveDoubleCells` 允许某一项独占两格  
-> `innerSelection` 可以绑定 `{ data: selectedRows }` 接收选中的行。  
-> `innerOperation` 可以绑定 `{ maxNumOfBtn: 3 }` 设置操作栏最大显示的按钮数，超出将被折叠。
+| innerForm.limit|限制默认显示的搜索条件数量|Number \| auto \| all|auto|
+| innerForm.referenceItemWidth|单项参考宽度|Number|180|
+| innerForm.maxItemWidth|单项最大宽度|Number|240|
+| innerForm.loading|控制更多按钮加载状态|Boolean|false|
+| innerForm.column[].exclusiveDoubleCells|允许某一项独占两格|Boolean|false|
+| innerIndex | 内部 - 索引 | Boolean \| Object | true|
+| innerSelection | 内部 - 选中列 | Boolean \| Object | undefined|
+| innerSelection.data|选中的行|Array| [] |
+| innerPagination | 内部 - 分页 | Boolean \| Object | undefined|
+| innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined|
+| innerOperation.maxNumOfBtn|最大显示的按钮数，溢出折叠|Number|3|
 
 ## methods
 
@@ -86,11 +82,9 @@ $~~~~$`column[].exclusiveDoubleCells` 允许某一项独占两格
 | footer | bottom-menu&分页 | 表格底部
 
 ## events
-`search-reset` 搜索重置事件，默认重置搜索表单并搜索。  
-一旦监听该事件，则阻止默认行为，参数为三项回调：  
-$~~~~$ `callback` 执行默认行为  
-$~~~~$ `reset` 仅执行重置  
-$~~~~$ `search` 仅执行搜索  
+| 事件名  | 说明 | 参数 |
+|:---|:---|:---|
+|search-reset| 搜索重置事件|callback 重置表单并搜索（不监听时默认行为） <br> reset 仅重置表单<br> search 仅搜索 |
 
 ## column-attributes
 | 属性名 | 类型 | 默认值 | 说明 |
@@ -103,39 +97,32 @@ $~~~~$ `search` 仅执行搜索
 ---
 
 ### 表单组件 EaForm
-```
-// form
-props: {
-  model: { type: Object, default: () => ({}) },
-  rules: { type: Object, default: () => ({}) },
-  column: { type: Array, default: () => ([]) },
-  labelWidth: { type: String, default: undefined },
-  inline: { type: Boolean, default: false },
-  dense: { type: Boolean, default: false }
-},
-methods: {
-  setData (row) {
-    // 设置表单值
-  }
-}
-// form-item
-{
-  label: '名称', // 必须，标签名 String | Function
-  prop: 'name', // 必须，属性名 String
-  labelTooltip: '名称的tips', // 可选，名称描述tips String | Object
-  required: true, // 可选（默认false），是否必填 Boolean
-  component: 'el-input', // 可选（默认el-input），所用组件 String | Component
-  rules: [], // 可选，校验规则 Array | Function
-  bind: {}, // 可选，组件v-bind Object
-  on: {}, // 可选，组件v-on Object
-  show: false, // 可选（默认true），控制表单项是否显示 Boolean | Function
-  enable: false, // 可选（默认true），控制表单项是否启用 Boolean | Function
-  span: 12, // 可选（默认12），所占栅格
-  pull: 12, // 可选，栅格偏移
-  push: 12, // 可选，栅格偏移
-  offset: 12, // 可选，栅格偏移
-}
-```
+
+## props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|model|表单数据对象|Object|
+|rules|表单验证规则对象|Object|
+|dense|是否紧凑模式|Boolean|false|
+|column|表单项信息组|Array|必填|
+|column[].label|标签名|String \| Function|必填|
+|column[].prop|属性名|String|必填|
+|column[].labelTooltip|名称描述tips|String \| Object|
+|column[].required|是否必填|Boolean|false|
+|column[].component|所用组件|String \| Component|el-input|
+|column[].rules|校验规则|Array \| Function|
+|column[].bind|组件v-bind|Object|
+|column[].on|组件v-on|Object|
+|column[].show|控制表单项是否显示|Boolean \| Function|true|
+|column[].enable|控制表单项是否启用|Boolean \| Function|true|
+|column[].span|所占栅格|Number|12|
+|column[].pull|栅格偏移|Number|
+|column[].push|栅格偏移|Number|
+|column[].offset|栅格偏移|Number|
+## methods
+| 方法 | 说明 | 参数 |
+|:---|:---|:---|
+|setData|设置表单数据对象的值|要设置的数据对象|
 
 ### 按钮 EaButton
 ```
@@ -273,27 +260,29 @@ props: {
 ```
 
 ### 描述列表 EaDesc
-```
-props: {
-  title: { type: String, default: undefined },
-  data: { type: Object, required: true },
-  column: { type: Array, required: true },
-  labelWidth: { type: [Number, String], default: 100 },
-  split: { type: Number, default: 2 },
-  diff: { type: Array, default: undefined },
-  gutter: { type: Number, default: 0 }
-},
-```
+
+## props
+| 属性名 | 含义 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|title|标题|String|undefined|
+|data|数据|Object|必填|
+|column|列信息|Array|必填|
+|column[].bind.class|单独设置类|Object|undefined|
+|column[].bind.style|单独设置样式|Object|undefined|
+|labelWidth|标签宽度|Number \| String|100|
+|split|分割数量|Number|2|
+|diff|有差异的列信息|Array|undefined|
+|gutter|间隔|Number|0|
 
 ### 弹窗文件上传 EaFileUpload
-```
-props: {
-  title: { type: String, default: '文件上传' },
-  multiple: { type: Boolean, default: false },
-  limit: { type: Number, default: 1 },
-  suffix: { type: String, default: 'xlsx,xls' },
-  httpRequest: { type: Function, required: true },
-  httpTemplate: { type: Function, default: undefined },
-  httpFinally: { type: Function, default: undefined }
-},
-```
+
+## props
+| 属性名 | 含义 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|title|标题|String|文件上传|
+|multiple|是否多选|Boolean|false|
+|limit|最大数量限制|Number|1|
+|suffix|允许的文件后缀|String|xlsx,xls|
+|httpRequest|文件上传|Function|必填|
+|httpTemplate|模板下载|Function|undefined|
+|httpFinally|请求完成|Function|undefined|

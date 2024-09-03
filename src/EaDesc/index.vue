@@ -7,8 +7,8 @@
     <div
       v-for="m in initColumn"
       :key="m.prop"
-      :class="{ 'item': 1, 'has-diff': m.__hasDiff }"
-      :style="m.__style">
+      :class="{ 'item': 1, 'has-diff': m.__hasDiff, ...(m.bind && m.bind.class) }"
+      :style="{...m.__style, ...(m.bind && m.bind.style)}">
       <div class="item-label" :style="{ width: rawLabelWidth }">{{ m.label }}</div>
       <div class="item-value" :style="{ marginLeft: rawLabelWidth }">
         <slot :name="m.prop" :row="data[m.prop]">
