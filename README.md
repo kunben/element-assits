@@ -185,6 +185,16 @@ props: {
 },
 ```
 
+### 虚拟滚动 EaVirtualScroll
+
+## props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|enableVirtualScroll|是否开启虚拟滚动|Boolean \| String|auto|
+|options|选项列表|Array| [] |
+|itemSize|单项高度|Number|30|
+|redundancy|渲染总数，影响流畅度|Number|60|
+
 ### 下拉框 EaSelect
 ```
 // 允许异步数据，允许大数据量虚拟滚动
