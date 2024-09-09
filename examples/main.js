@@ -43,6 +43,14 @@ new Vue({
       {
         path: '/desc',
         component: () => import('./desc/index.vue')
+      },
+      {
+        path: '/virtual-scroll',
+        component: () => import('./virtual-scroll/index.vue')
+      },
+      {
+        path: '/json-schema',
+        component: () => import('./json-schema/index.vue')
       }
     ]
   })

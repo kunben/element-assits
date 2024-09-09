@@ -4,12 +4,12 @@
     v-if="!root"
     ref="div"
     class="ea-select-container"
-    :class="{[size]: 1}" />
+    :class="{[endSize]: 1}" />
   <li
     v-for="item in cloneOptions"
     :key="item.value"
     class="ea-select-panel__item"
-    :class="{ active: item.show }"
+    :class="{ active: !notActive && item.show, [item.colorClass || '']: 1 }"
     @click="handleSelect(item)"
     @mouseenter="handleEnter(item)">
     <span>
@@ -41,14 +41,22 @@ export default {
     root: {
       type: HTMLElement,
       default: undefined
+    },
+    size: {
+      type: String,
+      default: 'small'
+    },
+    notActive: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
     const cloneOptions = cloneDeep(this.options)
     cloneOptions.forEach(m => m.show = false)
-    const { size } = this.$ELEMENT || { size: 'small' }
+    const { size: endSize } = { size: this.size } || this.$ELEMENT
     return {
-      size,
+      endSize,
       cloneOptions
     }
   },

@@ -195,6 +195,21 @@ props: {
 |itemSize|单项高度|Number|30|
 |redundancy|渲染总数，影响流畅度|Number|60|
 
+### JsonSchema编辑器 EaJsonSchema
+
+## props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|data|json-schema 数据|Object|{}|
+|height|组件高度|Number| 500 |
+
+## methods
+| 方法名 | 说明 | 参数 |
+|:---|:---|:---|
+| validate | 数据验证，仅验证prop不能为空 | 无 |
+| getData | 获取数据（配置结果） | 无 |
+
+
 ### 下拉框 EaSelect
 ```
 // 允许异步数据，允许大数据量虚拟滚动

@@ -6,5 +6,7 @@
   <p><router-link to="/tree">树</router-link></p>
   <p><router-link to="/list">列表</router-link></p>
   <p><router-link to="/desc">描述列表</router-link></p>
+  <p><router-link to="/virtual-scroll">虚拟滚动</router-link></p>
+  <p><router-link to="/json-schema">json-schema</router-link></p>
 </div>
 </template>

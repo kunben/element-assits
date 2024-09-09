@@ -14,6 +14,7 @@ import EaNumber from './EaNumber'
 import EaRadio from './EaRadio'
 import EaCheckbox from './EaCheckbox'
 import EaFileUpload from './EaFileUpload'
+import EaJsonSchema from './EaJsonSchema'
 import { uuid, recursive, asyncLoad } from './util'
 
 const install = Vue => {
@@ -34,6 +35,7 @@ const install = Vue => {
   Vue.component('EaRadio', EaRadio)
   Vue.component('EaCheckbox', EaCheckbox)
   Vue.component('EaFileUpload', EaFileUpload)
+  Vue.component('EaJsonSchema', EaJsonSchema)
   // 挂载原型方法
   Vue.prototype.$asyncLoad = asyncLoad
 }
@@ -55,6 +57,7 @@ export {
   EaRadio,
   EaCheckbox,
   EaFileUpload,
+  EaJsonSchema,
   uuid,
   recursive,
   asyncLoad

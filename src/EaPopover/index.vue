@@ -6,7 +6,7 @@
   trigger="manual"
   v-bind="$attrs">
   <template #default>
-    <slot :refresh="() => $refs.pop.updatePopper()" :close="() => visible = false" />
+    <slot :refresh="() => $refs.pop.updatePopper()" :close="handleClose" />
   </template>
 </el-popover>
 </template>
@@ -26,9 +26,12 @@ export default {
     mountedCallback: undefined
   },
   data () {
-    const listenClick = () => {
+    const handleClose = () => {
       this.visible = false
       this.$emit('closed')
+    }
+    const listenClick = () => {
+      handleClose()
       document.removeEventListener('click', listenClick)
     }
     this.$on('hook:mounted', () => {
@@ -39,7 +42,8 @@ export default {
       this.mountedCallback && this.mountedCallback(this)
     })
     return {
-      visible: false
+      visible: false,
+      handleClose
     }
   }
 }
