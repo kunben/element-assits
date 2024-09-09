@@ -174,6 +174,9 @@ props: {
 },
 ```
 
+### 开关 EaSwitch
+额外支 size="mini" 尺寸
+
 ### 滚动容器 EaScroll
 ```
 // el-scrollbar 衍生，优化样式
