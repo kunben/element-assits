@@ -135,7 +135,7 @@ export function translateSchema (
 // TODO: 需优化
 // list to schema
 export function translateList (list, result = {}) {
-  list.forEach(item => {
+  list.filter(m => !m.__state.isTemp).forEach(item => {
     const realPrefix = item.__state.prefix.split('.').reduce((acc, m) => {
       const found = list.find(n => n.__state.uuid === m)
       acc.push(found.prop)

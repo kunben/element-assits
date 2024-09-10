@@ -60,7 +60,7 @@
               :is-tag="i === 0 && item.__state.virtualArrayItems"
               :is-disabled="m.bind && m.bind.virtualArrayItemsDisabled && item.__state.virtualArrayItems"
               :row="item"
-              @input="handleInput(item)" />
+              @input="handleInput(item, m.prop)" />
             <span v-else>{{ item[m.prop] }}</span>
           </span>
           <span class="vjs-cell">
@@ -86,13 +86,13 @@ import EaVirtualScroll from '../EaSelect/VirtualScroll.vue'
 export default {
   components: { EaScrollbar, EaVirtualScroll, CellAction },
   props: {
-    data: { type: Object, required: true },
+    value: { type: Object, required: true },
     height: { type: Number, default: 500 },
     allowEdit: { type: Boolean, default: true }
   },
   data () {
     // 当前显示的数据（为折叠服务）
-    const list = translateSchema(this.data)
+    const list = translateSchema(this.value)
     // 背后的真实数据（全数据）
     const rawList = [...list]
     return {
@@ -129,59 +129,48 @@ export default {
       this.syncUpdate()
     },
     // 用户输入
-    handleInput (item) {
-      const ind = this.rawList.findIndex(m => m.__state.prefix === item.__state.prefix)
-      const found = this.rawList[ind]
-      if (!found) return void(0)
-      const range = getRange(found, ind, this.rawList)
-      const uuid = createUUID()
-
-      // (1) 修改项 的类型为 object，并且它没有子项时
-      const isNullObject = item.type === 'object' && (range[1] - range[0] === 0)
-      // 或者子项是 items 时
-      const isNextItems = item.type === 'object' && this.rawList[ind + 1] && this.rawList[ind + 1].__state.virtualArrayItems
-      // 添加临时行，帮助用户添加子项
-      if (isNullObject || isNextItems) {
-        const prefix = item.__state.prefix + '.' + uuid
-        const level = item.__state.level + 1
-        const state = new ItemState(level, uuid, prefix)
-        state.isTemp = true
-        found.__state.hasChildren = true
-        found.__state.isExpanded = true
-        this.rawList.splice(ind + 1, Number(isNextItems), { type: 'string', __state: state })
+    handleInput (item, prop) {
+      if (prop === 'type') {
+        const ind = this.rawList.findIndex(m => m.__state.prefix === item.__state.prefix)
+        const found = this.rawList[ind]
+        if (found) {
+          const range = getRange(found, ind, this.rawList)
+          const uuid = createUUID()
+          // (1) 修改为对象时
+          if (item.type === 'object') {
+            const prefix = item.__state.prefix + '.' + uuid
+            const level = item.__state.level + 1
+            const state = new ItemState(level, uuid, prefix)
+            state.isTemp = true
+            found.__state.hasChildren = true
+            found.__state.isExpanded = true
+            this.rawList.splice(ind + 1, range[1] - range[0], { type: 'string', __state: state })
+          }
+          // (2) 修改为数组时
+          else if (item.type === 'array') {
+            const prefix = item.__state.prefix + '.' + uuid
+            const level = item.__state.level + 1
+            const state = new ItemState(level, uuid, prefix)
+            found.__state.hasChildren = true
+            found.__state.isExpanded = true
+            state.virtualArrayItems = true
+            this.rawList.splice(ind + 1, range[1] - range[0], { prop: 'items', type: 'string', __state: state })
+          }
+          // (3) 修改项 的类型不为 object|array，但它可能有包含其它项(以前是object|array)
+          else {
+            item.__state.hasChildren = false
+            this.rawList.splice(ind + 1, range[1] - range[0])
+          }
+          this.syncUpdate()
+        }
       }
-
-      // (2) 修改项 的类型为 array，并且它没有子项时，或者为临时子项时
-      const isNullArray = item.type === 'array' && (range[1] - range[0] === 0)
-      // 或者子项是 临时项时
-      const isNextTemp = item.type === 'array' && this.rawList[ind + 1] && this.rawList[ind + 1].__state.isTemp
-      // 添加 items 行
-      if (isNullArray || isNextTemp) {
-        const prefix = item.__state.prefix + '.' + uuid
-        const level = item.__state.level + 1
-        const state = new ItemState(level, uuid, prefix)
-        found.__state.hasChildren = true
-        found.__state.isExpanded = true
-        state.virtualArrayItems = true
-        this.rawList.splice(ind + 1, Number(isNextTemp), {
-          prop: 'items',
-          type: 'string',
-          __state: state
-        })
-      }
-
-      // (3) 修改项 的类型不为 object|array，但它有包含其它项(以前是object|array)
-      // 删除其它项
-      if (item.type !== 'object' && item.type !== 'array') {
-        item.__state.hasChildren = false
-        this.rawList.splice(ind + 1, range[1] - range[0])
-      }
-
-      this.syncUpdate()
+      // 无论如何
+      this.schemaChange()
     },
     // 从临时行添加一行
     handleTempAdd (item) {
       item.__state.isTemp = false
+      this.schemaChange()
     },
     // 添加相邻节点，子节点，删除节点，高级配置
     handleRowEdit ({ type, evt }, item, index) {
@@ -200,6 +189,7 @@ export default {
         const prefix = item.__state.prefix.replace(/([^.]+)$/, uuid)
         const level = item.__state.level
         this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix) })
+        this.schemaChange()
       }
       // 添加子节点
       else if (type === 'sub') {
@@ -211,11 +201,13 @@ export default {
         } else {
           this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix) })
         }
+        this.schemaChange()
       }
       // 删除节点
       else if (type === 'remove') {
         const num = lastIndex - ind
         this.rawList.splice(ind, num)
+        this.schemaChange()
       }
       // 高级配置
       else if (type === 'conf') {
@@ -234,6 +226,7 @@ export default {
                     item.__state.prefix = item.__state.prefix.replace(item.__state.uuid, uuid)
                     item.__state.uuid = uuid
                     this.showAdvancedConfRow = undefined
+                    this.schemaChange()
                   }
                 }
               })
@@ -248,6 +241,10 @@ export default {
     handleScrollRecalc () {
       if (!this.showAdvancedConfRow) return void(0)
       this.showAdvancedConfRow.close()
+    },
+    // json-schema changed
+    schemaChange () {
+      this.$emit('input', this.getData())
     },
     // expose 1 校验，基本校验prop不能为空
     validate () {

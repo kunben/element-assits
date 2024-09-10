@@ -7,7 +7,7 @@
     type="primary"
     style="margin-bottom:20px"
     @click="handleGetResult">获取结果</el-button>
-  <EaJsonSchema ref="ejs" :data="data" />
+  <EaJsonSchema ref="ejs" v-model="data" @input="handleInput" />
 </div>
 </template>
 
@@ -26,6 +26,9 @@ export default {
     },
     handleGetResult () {
       console.log(this.$refs.ejs.getData())
+    },
+    handleInput (e) {
+      console.log(e)
     }
   }
 }
