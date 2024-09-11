@@ -415,7 +415,7 @@ export default {
       color: transparent;
       background-color: transparent;
     }
-    &.is-required {
+    &.is-required, &.is-required:hover {
       color: red;
       background-color: rgba(0, 0, 0, 0.08);
     }
