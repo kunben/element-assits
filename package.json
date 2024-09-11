@@ -1,6 +1,6 @@
 {
   "name": "element-assits",
-  "version": "0.0.29",
+  "version": "0.0.30",
   "description": "element-ui 的扩展组件库",
   "main": "lib/index.js",
   "type": "module",
@@ -8,7 +8,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vite",
-    "build": "vite build"
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "author": "tk",
   "license": "ISC",

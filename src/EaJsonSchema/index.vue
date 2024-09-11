@@ -234,6 +234,7 @@ export default {
       }
       // 高级配置
       else if (type === 'conf') {
+        evt.stopPropagation()
         this.$asyncLoad(() => import('../EaPopover'), {
           attrs: { popperClass: 'ea-popover-no-margin', placement: 'right' },
           props: { reference: evt.target },

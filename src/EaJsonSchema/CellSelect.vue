@@ -26,6 +26,7 @@ export default {
   methods: {
     async handleClick (evt) {
       if (!this.allowEdit) return void(0)
+      evt.stopPropagation()
       this.$asyncLoad(() => import('../EaPopover'), {
         attrs: { popperClass: 'ea-popover-no-padding', placement: 'right' },
         props: { reference: evt.target, offset: -20 },
