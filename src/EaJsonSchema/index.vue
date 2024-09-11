@@ -1,6 +1,9 @@
 <template>
 <div class="vjs-table">
   <div class="vjs-row odd vjs-header">
+    <span v-if="checkbox" class="vjs-cell">
+      <el-checkbox v-model="globalChecked" @change="handleGlobalCheckChange" />
+    </span>
     <span
       v-for="(m, i) in column"
       :key="i"
@@ -11,25 +14,30 @@
     </span>
     <span class="vjs-cell" />
   </div>
-  <EaScrollbar class="vjs-body" :style="{height: height + 'px'}">
+  <EaScrollbar class="vjs-body" :style="{height: endHeight + 'px'}">
     <EaVirtualScroll
       ref="evs"
       :enable-virtual-scroll="true"
       :options="list"
-      :item-size="32"
+      :item-size="itemSize"
       @scroll-recalc="handleScrollRecalc">
       <div
         v-show="Object.values(item.__state.show).every(Boolean)"
         slot="item"
         slot-scope="{item, index}"
         :class="{'vjs-row': 1, 'odd': index % 2}">
+        <span v-if="checkbox" class="vjs-cell">
+          <el-checkbox
+            v-model="item.__state.checked"
+            :disabled="item.__state.isRoot || item.__state.isTemp || item.__state.virtualArrayItems" />
+        </span>
         <i
           v-if="item.__state.hasChildren"
           :class="{
             'vjs-icon': 1,
             ['el-icon-caret-' + ['right', 'bottom'][Number(item.__state.isExpanded)]]: 1
           }"
-          :style="{left: item.__state.level * 20 - 20 + 'px'}"
+          :style="{left: item.__state.level * 20 - 20 + (checkbox ? 30 : 0) + 'px'}"
           @click="handleCollapse(item, index)" />
         <span
           v-if="item.__state.isTemp"
@@ -59,14 +67,16 @@
               :is-root="i === 0 && item.__state.isRoot"
               :is-tag="i === 0 && item.__state.virtualArrayItems"
               :is-disabled="m.bind && m.bind.virtualArrayItemsDisabled && item.__state.virtualArrayItems"
+              :allow-edit="allowEdit"
               :row="item"
               @input="handleInput(item, m.prop)" />
             <span v-else>{{ item[m.prop] }}</span>
           </span>
           <span class="vjs-cell">
             <CellAction
-              :key="item.__state.uuid"
+              :key="item.__state.actionKey"
               :row="item"
+              :allow-edit="allowEdit"
               @edit="handleRowEdit($event, item, index)" />
           </span>
         </template>
@@ -86,9 +96,12 @@ import EaVirtualScroll from '../EaSelect/VirtualScroll.vue'
 export default {
   components: { EaScrollbar, EaVirtualScroll, CellAction },
   props: {
-    value: { type: Object, required: true },
-    height: { type: Number, default: 500 },
-    allowEdit: { type: Boolean, default: true }
+    value: { type: Object, default: () => ({}), required: true },
+    height: { type: [Number, String], default: 'auto' },
+    maxHeight: { type: Number, default: 400 },
+    itemSize: { type: Number, default: 32 },
+    allowEdit: { type: Boolean, default: true },
+    checkbox: { type: Boolean, default: false }
   },
   data () {
     // 当前显示的数据（为折叠服务）
@@ -99,7 +112,14 @@ export default {
       column,
       rawList,
       list,
-      showAdvancedConfRow: undefined
+      showAdvancedConfRow: undefined,
+      globalChecked: false
+    }
+  },
+  computed: {
+    endHeight () {
+      if (typeof this.height === 'number') return this.height
+      return Math.min(this.maxHeight, this.list.length * this.itemSize)
     }
   },
   methods: {
@@ -199,6 +219,9 @@ export default {
         if (nextNode && nextNode.__state.isTemp) {
           nextNode.__state.isTemp = false
         } else {
+          if (item.__state.isExpanded === false) this.handleCollapse(item)
+          item.__state.hasChildren = true
+          item.__state.isExpanded = true
           this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix) })
         }
         this.schemaChange()
@@ -222,9 +245,7 @@ export default {
                 on: {
                   done: form => {
                     Object.assign(item, form)
-                    const uuid = createUUID()
-                    item.__state.prefix = item.__state.prefix.replace(item.__state.uuid, uuid)
-                    item.__state.uuid = uuid
+                    item.__state.actionKey = createUUID()
                     this.showAdvancedConfRow = undefined
                     this.schemaChange()
                   }
@@ -241,6 +262,17 @@ export default {
     handleScrollRecalc () {
       if (!this.showAdvancedConfRow) return void(0)
       this.showAdvancedConfRow.close()
+    },
+    // 操作全选按钮
+    handleGlobalCheckChange (evt) {
+      this.rawList.forEach(item => {
+        if (
+          item.__state.isRoot
+          || item.__state.virtualArrayItems
+          || item.__state.isTemp
+        ) return void(0)
+        item.__state.checked = evt
+      })
     },
     // json-schema changed
     schemaChange () {
@@ -263,16 +295,16 @@ export default {
 .vjs-table {
   position: relative;
   overflow: hidden;
-  border: 1px solid #DDD;
 }
 .vjs-header {
   position: absolute;
   top: 0;
   left: 0;
-  border-bottom: 1px solid #EEE;
+  border: 1px solid $--color-border-light;
+  border-bottom: 0;
 }
 .vjs-body {
-  height: 400px;
+  border: 1px solid $--color-border-light;
 }
 
 .vjs-row {
@@ -282,13 +314,16 @@ export default {
   justify-content: flex-start;
   position: relative;
   &.odd { background-color: #F8F8F8; }
-  &:hover { background-color: #EBEEF5; }
+  &:not(.vjs-header):hover { background-color: #EBEEF5; }
   .vjs-cell {
     flex: 0 0 auto;
     height: 100%;
     font-size: 14px;
     box-sizing: border-box;
     padding: 0 8px;
+    & > .el-tag {
+      vertical-align: 2px;
+    }
     &.vjs-last-cell {
       flex-grow: 1;
     }
@@ -342,10 +377,13 @@ export default {
 
 .cell-select {
   cursor: pointer;
-  &:hover {
+  &:not(.is-disabled):hover {
     border-width: 0;
     border-bottom-width: 1.5px;
     border-style: solid;
+  }
+  &.is-disabled {
+    cursor: default;
   }
 }
 
@@ -367,9 +405,14 @@ export default {
     padding-top: 4px;
     color: #DDD;
     background-color: rgba(0, 0, 0, 0.02);
-    &:hover {
+    &:not(.is-disabled):hover {
       color: #999;
       background-color: rgba(0, 0, 0, 0.05);
+    }
+    &.is-disabled {
+      cursor: default;
+      color: transparent;
+      background-color: transparent;
     }
     &.is-required {
       color: red;
@@ -382,6 +425,7 @@ export default {
   width: 80px;
   i {
     cursor: pointer;
+    font-size: 16px;
     padding: 4px;
     border-radius: 4px;
     &:hover {
@@ -408,6 +452,9 @@ export default {
 .ea-info {
   color: $--color-info;
 }
+.ea-placeholder {
+  color: $--color-placeholder-text !important;
+}
 
 .ea-popover-no-margin {
   margin: 0 !important;
@@ -420,6 +467,7 @@ export default {
 .eafont {
   font-family: eafont;
   font-style: normal;
+  font-size: 16px;
   color: #909399;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;

@@ -1,13 +1,13 @@
 <template>
 <el-tag v-if="isTag" :disable-transitions="true">{{ value }}</el-tag>
 <el-tag v-else-if="isRoot" :disable-transitions="true">根节点</el-tag>
-<i v-else-if="isDisabled" class="eafont ea-icon-disabled" />
+<i v-else-if="isDisabled" class="eafont ea-icon-disabled ea-placeholder" />
 <div
   v-else-if="!row.__state.isEdit[uuid]"
   class="cell-text"
   :title="value"
   @click="handleClick">
-  <span v-if="value === undefined" class="cell-placeholder">{{ $attrs.placeholder }}</span>
+  <span v-if="value === undefined && allowEdit" class="cell-placeholder">{{ $attrs.placeholder }}</span>
   <span v-else>{{ value }}</span>
 </div>
 <el-input
@@ -28,7 +28,8 @@ export default {
     row: { type: Object, default: undefined },
     isTag: { type: Boolean, default: false },
     isRoot: { type: Boolean, default: false },
-    isDisabled: { type: Boolean, default: false }
+    isDisabled: { type: Boolean, default: false },
+    allowEdit: { type: Boolean, default: true }
   },
   data () {
     return {
@@ -38,6 +39,7 @@ export default {
   methods: {
     async handleClick (evt) {
       if (this.isTag) return void(0)
+      if (!this.allowEdit) return void(0)
       const parent = evt.target.parentElement.parentElement
       this.$set(this.row.__state.isEdit, this.uuid, true)
       await this.$nextTick()

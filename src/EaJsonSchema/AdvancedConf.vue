@@ -33,7 +33,15 @@ export default {
     }
   },
   mounted () {
-    this.$refs.eform.setData(this.row)
+    // 特别地
+    if (this.row) {
+      const _row = { ...this.row }
+      if (Array.isArray(_row.enum)) {
+        _row.enableEnum = _row.enableEnum === undefined ? true : _row.enableEnum
+        _row.enum = _row.enum.join('\n')
+      }
+      this.$refs.eform.setData(_row)
+    }
     this.$parent.$parent.$on('closed', this.parentLeave)
   },
   destroyed () {
@@ -41,7 +49,12 @@ export default {
   },
   methods: {
     parentLeave () {
-      this.$emit('done', this.form)
+      // 特别地
+      const _form = { ...this.form }
+      if (typeof _form.enum === 'string') {
+        _form.enum = _form.enum.split('\n').filter(Boolean)
+      }
+      this.$emit('done', _form)
     }
   }
 }

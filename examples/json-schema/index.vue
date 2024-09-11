@@ -7,7 +7,12 @@
     type="primary"
     style="margin-bottom:20px"
     @click="handleGetResult">获取结果</el-button>
-  <EaJsonSchema ref="ejs" v-model="data" @input="handleInput" />
+  <EaJsonSchema
+    ref="ejs"
+    v-model="data"
+    :allow-edit="false"
+    :checkbox="true"
+    @input="handleInput" />
 </div>
 </template>
 

@@ -1,6 +1,7 @@
-import { get, set, omit, isPlainObject } from 'lodash-es'
+import { get, set, omit, isPlainObject, isEmpty } from 'lodash-es'
 import { uuid as createUUID } from '@/util'
 import EaSwitch from '../EaSwitch'
+import EaNumber from '../EaNumber'
 import CellInput from './CellInput.vue'
 import CellSelect from './CellSelect.vue'
 import CellRequired from './CellRequired.vue'
@@ -18,14 +19,14 @@ export const column = [
   {
     label: '字段',
     prop: 'prop',
-    width: 300,
+    width: 280,
     component: CellInput,
     bind: { placeholder: '字段' }
   },
   {
     label: '是否必填',
     prop: 'required',
-    width: 100,
+    width: 80,
     component: CellRequired
   },
   {
@@ -75,6 +76,10 @@ export class ItemState {
     this.virtualArrayItems = false
     // 当前行校验错误的字段
     this.error = {}
+    // 当前行 操作栏key
+    this.actionKey = createUUID()
+    // 当前行 是否选中
+    this.checked = false
   }
 }
 
@@ -115,7 +120,7 @@ export function translateSchema (
   item.__state.isRoot = isRoot
   result.push(item)
   if (data.type === 'object') {
-    if (isPlainObject(data.properties)) {
+    if (isPlainObject(data.properties) && !isEmpty(data.properties)) {
       item.__state.hasChildren = true
       item.__state.isExpanded = true
       for (let [k, v] of Object.entries(data.properties)) {
@@ -177,8 +182,8 @@ class TypesColumn {
   constructor () {
     this.string = [
       { label: '默认值', prop: 'default', span: 24 },
-      { label: '最小长度', prop: 'minLength' },
-      { label: '最大长度', prop: 'maxLength' },
+      { label: '最小长度', prop: 'minLength', component: EaNumber },
+      { label: '最大长度', prop: 'maxLength', component: EaNumber },
       {
         label: '是否启用枚举',
         prop: 'enableEnum',
@@ -204,8 +209,8 @@ class TypesColumn {
     ]
     this.number = [
       { label: '默认值', prop: 'default', span: 24 },
-      { label: '最小值', prop: 'minimum' },
-      { label: '最大值', prop: 'maximum' },
+      { label: '最小值', prop: 'minimum', component: EaNumber },
+      { label: '最大值', prop: 'maximum', component: EaNumber },
       {
         label: '是否启用枚举',
         prop: 'enableEnum',
@@ -242,15 +247,15 @@ class TypesColumn {
       {
         label: '是否允许为空',
         prop: 'notEmpty',
-        defaultValue: false,
+        defaultValue: true,
         span: 24,
         component: EaSwitch,
         bind: { size: 'mini' }
       }
     ]
     this.array = [
-      { label: '最小元素个数', prop: 'minItems' },
-      { label: '最大元素个数', prop: 'maxItems' }
+      { label: '最小元素个数', prop: 'minItems', component: EaNumber },
+      { label: '最大元素个数', prop: 'maxItems', component: EaNumber }
     ]
   }
   matchType (type) {

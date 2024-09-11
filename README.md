@@ -200,8 +200,12 @@ props: {
 ## props
 | 属性名 | 说明 | 类型 | 默认值 |
 |:---|:---|:---|:---|
-|data|json-schema 数据|Object|{}|
-|height|组件高度|Number| 500 |
+|value / v-model|json-schema 数据|Object|{}|
+|height|组件高度|Number \| String| auto |
+|maxHeight|当自动高度时，限制最大高度|Number| 500 |
+|itemSize|单项高度|Number|32|
+|allowEdit|是否允许编辑|Boolean|true|
+|checkbox|是否开启多选列|Boolean|false|
 
 ## methods
 | 方法名 | 说明 | 参数 |
