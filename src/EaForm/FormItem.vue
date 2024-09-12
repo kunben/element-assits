@@ -16,7 +16,6 @@
   <component
     :is="column.__component"
     v-model="top.model[column.prop]"
-    :placeholder="column.__label"
     v-bind="column.__bind"
     v-on="column.__on"
     @keyup.native.enter="top.$emit('enter')" />

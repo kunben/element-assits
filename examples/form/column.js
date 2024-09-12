@@ -5,7 +5,10 @@ export const column = [
   },
   {
     label: '用户名',
-    prop: 'username'
+    prop: 'username',
+    bind: {
+      placeholder: '123123123123yonghuming'
+    }
   },
   {
     label: '用户中文名',
