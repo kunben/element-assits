@@ -12,6 +12,7 @@
 </div>
 <el-input
   v-else
+  ref="inp"
   class="cell-input"
   :value="value"
   v-bind="$attrs"
@@ -37,19 +38,15 @@ export default {
     }
   },
   methods: {
-    async handleClick (evt) {
+    async handleClick () {
       if (this.isTag) return void(0)
       if (!this.allowEdit) return void(0)
-      const parent = evt.target.parentElement.parentElement
       this.$set(this.row.__state.isEdit, this.uuid, true)
       await this.$nextTick()
       try {
-        parent.querySelector('input').focus()
+        this.$refs.inp.$el.querySelector('input').focus()
       } catch (err) {
-        this.uuid = uuid()
-        this.$set(this.row.__state.isEdit, this.uuid, true)
-        await this.$nextTick()
-        parent.querySelector('input').focus()
+        console.log(err)
       }
     },
     handleInput (evt) {

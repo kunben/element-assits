@@ -53,7 +53,7 @@ export const column = [
 ]
 
 export class ItemState {
-  constructor (level, uuid, prefix) {
+  constructor (level, uuid, prefix, parent) {
     // 随机的唯一ID
     this.uuid = uuid
     // 当前行 树的层级数
@@ -80,6 +80,10 @@ export class ItemState {
     this.actionKey = createUUID()
     // 当前行 是否选中
     this.checked = false
+    // 当前行 是否半选
+    this.indeterminate = false
+    // 当前行 的父节点
+    this.parent = parent
   }
 }
 
@@ -91,7 +95,8 @@ export function translateSchema (
   result = [], // 结果
   path = [], // 路径
   isRoot = true, // 是否根节点
-  parent // 父节点
+  parent, // 父数据
+  parentNode // 父节点
 ) {
   const uuid = createUUID()
   const prop = k || 'root'
@@ -111,7 +116,7 @@ export function translateSchema (
     ...omit(data, ['properties', 'required']),
     prop,
     required,
-    __state: new ItemState(level, uuid, prefix)
+    __state: new ItemState(level, uuid, prefix, parentNode)
   }
   item.__state.virtualArrayItems = false
   if (parent && parent.type === 'array' && prop === 'items') {
@@ -124,14 +129,14 @@ export function translateSchema (
       item.__state.hasChildren = true
       item.__state.isExpanded = true
       for (let [k, v] of Object.entries(data.properties)) {
-        translateSchema(v, k, level, result, [...path], false, data)
+        translateSchema(v, k, level, result, [...path], false, data, item)
       }
     }
   } else if (data.type === 'array') {
     if (isPlainObject(data.items)) {
       item.__state.hasChildren = true
       item.__state.isExpanded = true
-      translateSchema(data.items, 'items', level, result, [...path], false, data)
+      translateSchema(data.items, 'items', level, result, [...path], false, data, item)
     }
   }
   return result

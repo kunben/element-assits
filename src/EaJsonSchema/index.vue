@@ -2,7 +2,11 @@
 <div class="vjs-table">
   <div class="vjs-row odd vjs-header">
     <span v-if="checkbox" class="vjs-cell">
-      <el-checkbox v-model="globalChecked" @change="handleGlobalCheckChange" />
+      <el-checkbox
+        v-model="globalChecked"
+        class="vjs-checkbox"
+        :indeterminate="indeterminate"
+        @change="handleGlobalCheckChange" />
     </span>
     <span
       v-for="(m, i) in column"
@@ -26,18 +30,13 @@
         slot="item"
         slot-scope="{item, index}"
         :class="{'vjs-row': 1, 'odd': index % 2}">
-        <span v-if="checkbox" class="vjs-cell">
-          <el-checkbox
-            v-model="item.__state.checked"
-            :disabled="item.__state.isRoot || item.__state.isTemp || item.__state.virtualArrayItems" />
-        </span>
         <i
           v-if="item.__state.hasChildren"
           :class="{
             'vjs-icon': 1,
             ['el-icon-caret-' + ['right', 'bottom'][Number(item.__state.isExpanded)]]: 1
           }"
-          :style="{left: item.__state.level * 20 - 20 + (checkbox ? 30 : 0) + 'px'}"
+          :style="{left: item.__state.level * 20 - 20 + 'px'}"
           @click="handleCollapse(item, index)" />
         <span
           v-if="item.__state.isTemp"
@@ -57,11 +56,24 @@
             }"
             :style="{
               width: m.width + 'px',
-              ...(i === 0 && { paddingLeft: item.__state.level * 20 + 'px' })
+              ...(i === 0 && { paddingLeft: item.__state.level * 20 + (checkbox ? 24 : 0) + 'px' })
             }">
+            <span
+              v-if="i === 0 && checkbox"
+              class="vjs-checkbox"
+              :style="{left: item.__state.level * 20 + 'px'}">
+              <el-checkbox
+                v-if="!(item.__state.isRoot || item.__state.isTemp || item.__state.virtualArrayItems)"
+                :key="item.__state.uuid"
+                v-model="item.__state.checked"
+                class="vjs-checkbox"
+                :indeterminate="item.__state.indeterminate"
+                @change="handleItemCheckChange($event, item)" />
+            </span>
             <component
               :is="m.component"
               v-if="m.component"
+              :key="item.__state.uuid + m.prop"
               v-model="item[m.prop]"
               v-bind="m.bind"
               :is-root="i === 0 && item.__state.isRoot"
@@ -89,6 +101,7 @@
 <script>
 import { uuid as createUUID } from '@/util'
 import { column, ItemState, translateSchema, translateList, getRange } from './util'
+import { translateSelection, getSubNodes, isContinuousPath, setItemChecked } from './selection'
 import CellAction from './CellAction.vue'
 import AdvancedConf from './AdvancedConf.vue'
 import EaScrollbar from '../EaScrollbar'
@@ -103,6 +116,7 @@ export default {
     allowEdit: { type: Boolean, default: true },
     checkbox: { type: Boolean, default: false }
   },
+  emits: ['input', 'selection-change'],
   data () {
     // 当前显示的数据（为折叠服务）
     const list = translateSchema(this.value)
@@ -113,7 +127,8 @@ export default {
       rawList,
       list,
       showAdvancedConfRow: undefined,
-      globalChecked: false
+      globalChecked: false,
+      indeterminate: false
     }
   },
   computed: {
@@ -160,7 +175,7 @@ export default {
           if (item.type === 'object') {
             const prefix = item.__state.prefix + '.' + uuid
             const level = item.__state.level + 1
-            const state = new ItemState(level, uuid, prefix)
+            const state = new ItemState(level, uuid, prefix, item.__state.parent)
             state.isTemp = true
             found.__state.hasChildren = true
             found.__state.isExpanded = true
@@ -170,7 +185,7 @@ export default {
           else if (item.type === 'array') {
             const prefix = item.__state.prefix + '.' + uuid
             const level = item.__state.level + 1
-            const state = new ItemState(level, uuid, prefix)
+            const state = new ItemState(level, uuid, prefix, item.__state.parent)
             found.__state.hasChildren = true
             found.__state.isExpanded = true
             state.virtualArrayItems = true
@@ -208,7 +223,7 @@ export default {
       if (type === 'next') {
         const prefix = item.__state.prefix.replace(/([^.]+)$/, uuid)
         const level = item.__state.level
-        this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix) })
+        this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix, item.__state.parent) })
         this.schemaChange()
       }
       // 添加子节点
@@ -222,7 +237,7 @@ export default {
           if (item.__state.isExpanded === false) this.handleCollapse(item)
           item.__state.hasChildren = true
           item.__state.isExpanded = true
-          this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix) })
+          this.rawList.splice(lastIndex, 0, { type: 'string', __state: new ItemState(level, uuid, prefix, item) })
         }
         this.schemaChange()
       }
@@ -266,14 +281,27 @@ export default {
     },
     // 操作全选按钮
     handleGlobalCheckChange (evt) {
+      this.indeterminate = false
       this.rawList.forEach(item => {
         if (
           item.__state.isRoot
           || item.__state.virtualArrayItems
           || item.__state.isTemp
         ) return void(0)
+        if (item.__state.checked === evt) return void(0)
+        item.__state.indeterminate = false
         item.__state.checked = evt
+        const _item = translateSelection([item], this.rawList)[0]
+        this.$emit('selection-change', _item)
       })
+      this.syncUpdate()
+    },
+    // 操作单选
+    handleItemCheckChange (evt, item) {
+      setItemChecked(this, item, evt, this.rawList)
+      this.syncUpdate()
+      const _item = translateSelection([item], this.rawList)[0]
+      this.$emit('selection-change', _item)
     },
     // json-schema changed
     schemaChange () {
@@ -287,6 +315,57 @@ export default {
     // expose 2 获取最终数据
     getData () {
       return translateList(this.rawList)
+    },
+    // expose 3 获取选中的节点数据 containIndeterminate 是否包含半选
+    getChecked (containIndeterminate) {
+      const selectedRows = this.rawList.filter(item => {
+        return !(
+          item.__state.isRoot
+          || item.__state.virtualArrayItems
+          || item.__state.isTemp
+        ) && (
+          item.__state.checked
+          || (containIndeterminate ? item.__state.indeterminate : false)
+        )
+      })
+      return translateSelection(selectedRows, this.rawList)
+    },
+    // expose 4 设置选中的节点 force 是否强制设置（反之仅设置符合关联关系的节点）
+    setChecked (paths, force = false) {
+      const mapping = this.rawList.filter(m => !m.__state.isTemp).reduce((pacc, item) => {
+        const realPrefix = item.__state.prefix.split('.').reduce((acc, m) => {
+          const found = this.rawList.find(n => n.__state.uuid === m)
+          acc.push(found.prop)
+          if (found.type === 'object') acc.push('properties')
+          return acc
+        }, [])
+        if (realPrefix[realPrefix.length - 1] === 'properties') {
+          realPrefix.pop()
+        }
+        realPrefix.shift()
+        if (!realPrefix.length) return pacc
+        pacc[realPrefix.join('.')] = item
+        return pacc
+      }, {})
+
+      if (force) {
+        paths.forEach(path => {
+          const item = mapping[path]
+          this.handleItemCheckChange(true, item)
+        })
+      } else {
+        // 过滤为连续的项（符合关联关系的，只设置叶子节点）
+        const continuousPaths = paths.filter(m => isContinuousPath(m, paths))
+        const continuousList = continuousPaths.map(m => mapping[m])
+        continuousList.filter(m => {
+          if (m.type === 'array') {
+            if (getSubNodes(m, this.rawList).length <= 1) return true
+          }
+          return !m.__state.hasChildren
+        }).forEach(item => {
+          this.handleItemCheckChange(true, item)
+        })
+      }
     }
   }
 }
@@ -322,14 +401,19 @@ export default {
     font-size: 14px;
     box-sizing: border-box;
     padding: 0 8px;
+    position: relative;
     & > .el-tag {
-      vertical-align: 2px;
+      vertical-align: 1px;
     }
     &.vjs-last-cell {
       flex-grow: 1;
     }
     &.error {
       border: 1px solid red;
+    }
+    & > .vjs-checkbox {
+      position: absolute;
+      top: 0;
     }
   }
   .vjs-icon {
@@ -339,6 +423,7 @@ export default {
     color: #CCC;
     display: flex;
     align-items: center;
+    z-index: 1;
     &:hover {
       color: #333;
     }
@@ -346,6 +431,11 @@ export default {
   .vjs-temp {
     color: #909399;
   }
+}
+
+.vjs-checkbox .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: $--color-secondary-text;
+  border-color: $--color-secondary-text;
 }
 
 .cell-text {
