@@ -51,6 +51,7 @@ export default {
     multiple: { type: Boolean, default: false },
     limit: { type: Number, default: 1 },
     suffix: { type: String, default: 'xlsx,xls' },
+    maxSize: { type: Number, default: 100 },
     httpRequest: { type: Function, required: true },
     httpTemplate: { type: Function, default: undefined },
     httpFinally: { type: Function, default: undefined }
@@ -63,6 +64,11 @@ export default {
       httpResponse: []
     }
   },
+  computed: {
+    suffixReg () {
+      return new RegExp(`\\.(${this.suffix.split(',').join('|')})$`)
+    }
+  },
   mounted () {
     this.visible = true
   },
@@ -71,16 +77,6 @@ export default {
       if (this.fileList.length === 0) {
         return this.$message.info('请选择要上传的文件')
       }
-      const strToRegexp = str => {
-        if (!str) return new RegExp()
-        const arr = str.split(',').filter(m => m).map(m => m.trim())
-        return new RegExp('\\.(' + arr.join('|') + ')$')
-      }
-      const reg = strToRegexp(this.suffix)
-      const valid = this.fileList.every(m => reg.test(m.name))
-      if (!valid) {
-        return this.$message.info('仅支持' + this.suffix + '格式的文件')
-      }
       this.$refs.upload.submit()
       this.loading = true
     },
@@ -88,10 +84,25 @@ export default {
       this.fileList = fileList
     },
     handleChange (file, fileList) {
+      let errMsg = null
+      if (!this.suffixReg.test(file.name)) {
+        errMsg = `仅支持${this.suffix}格式的文件`
+      } else if (/[\\/:*?"<>|]/.test(file.name)) {
+        errMsg = '文件名包含非法字符，请检查'
+      } else if (file.size > this.maxSize * 1024 * 1024) {
+        errMsg = `不允许文件大小超过${this.maxSize}M`
+      }
+      if (errMsg) {
+        const ind = this.fileList.findIndex(m => {
+          return m.name === file.name && m.size === file.size && m.type === file.name
+        })
+        fileList.splice(ind, 1)
+        this.$message.error(errMsg)
+      }
       this.fileList = fileList
     },
     handleExceed (file, fileList) {
-      this.$message.info('单次仅允许上传' + this.limit + '个文件，如需更换文件请先移除一项')
+      this.$message.info('单次仅允许上传' + this.limit + '个文件')
     },
     httpRequestMiddleware (params) {
       return this.httpRequest(params)
