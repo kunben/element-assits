@@ -206,6 +206,8 @@ props: {
 |itemSize|单项高度|Number|32|
 |allowEdit|是否允许编辑|Boolean|true|
 |checkbox|是否开启多选列|Boolean|false|
+|disableCheckbox|是否禁用选择（只读）|Boolean|false|
+|columnFormat|对原有的column进行过滤|Function|column => column|
 
 ## methods
 | 方法名 | 说明 | 参数 |
@@ -315,6 +317,7 @@ props: {
 |multiple|是否多选|Boolean|false|
 |limit|最大数量限制|Number|1|
 |suffix|允许的文件后缀|String|xlsx,xls|
+|maxSize|允许的文件大小，单位M|Number|100|
 |httpRequest|文件上传|Function|必填|
 |httpTemplate|模板下载|Function|undefined|
 |httpFinally|请求完成|Function|undefined|

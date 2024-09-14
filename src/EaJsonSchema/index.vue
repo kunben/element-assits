@@ -1,17 +1,18 @@
 <template>
 <div class="vjs-table">
-  <div class="vjs-row odd vjs-header">
+  <div class="vjs-row odd vjs-header" :style="{minWidth: endWidth + 'px', left: headerLeft + 'px'}">
     <span v-if="checkbox" class="vjs-cell">
       <el-checkbox
         v-model="globalChecked"
         class="vjs-checkbox"
         :indeterminate="indeterminate"
+        :disabled="disableCheckbox"
         @change="handleGlobalCheckChange" />
     </span>
     <span
       v-for="(m, i) in column"
       :key="i"
-      class="vjs-cell"
+      :class="{'vjs-cell': 1, 'vjs-cell-flex': m.flex }"
       :style="{width: m.width + 'px', ...(i === 0 && { paddingLeft: '20px' })}">
       <component :is="{render: m.renderHeader}" v-if="m.renderHeader" />
       <span v-else>{{ m.label }}</span>
@@ -29,6 +30,7 @@
         v-show="Object.values(item.__state.show).every(Boolean)"
         slot="item"
         slot-scope="{item, index}"
+        :style="{minWidth: endWidth + 'px'}"
         :class="{'vjs-row': 1, 'odd': index % 2}">
         <i
           v-if="item.__state.hasChildren"
@@ -51,7 +53,7 @@
             :key="i"
             :class="{
               'vjs-cell': 1,
-              'vjs-last-cell': i === (column.length - 1),
+              'vjs-cell-flex': m.flex,
               'error': item.__state.error[m.prop]
             }"
             :style="{
@@ -68,6 +70,7 @@
                 v-model="item.__state.checked"
                 class="vjs-checkbox"
                 :indeterminate="item.__state.indeterminate"
+                :disabled="disableCheckbox"
                 @change="handleItemCheckChange($event, item)" />
             </span>
             <component
@@ -100,7 +103,7 @@
 
 <script>
 import { uuid as createUUID } from '@/util'
-import { column, ItemState, translateSchema, translateList, getRange } from './util'
+import { column as rawColumn, ItemState, translateSchema, translateList, getRange } from './util'
 import { translateSelection, getSubNodes, isContinuousPath, setItemChecked } from './selection'
 import CellAction from './CellAction.vue'
 import AdvancedConf from './AdvancedConf.vue'
@@ -114,7 +117,9 @@ export default {
     maxHeight: { type: Number, default: 400 },
     itemSize: { type: Number, default: 32 },
     allowEdit: { type: Boolean, default: true },
-    checkbox: { type: Boolean, default: false }
+    checkbox: { type: Boolean, default: false },
+    disableCheckbox: { type: Boolean, default: false },
+    columnFormat: { type: Function, default: e => e }
   },
   emits: ['input', 'selection-change'],
   data () {
@@ -122,16 +127,24 @@ export default {
     const list = translateSchema(this.value)
     // 背后的真实数据（全数据）
     const rawList = [...list]
+    // 列信息
+    const column = this.columnFormat(rawColumn)
     return {
       column,
       rawList,
       list,
+      headerLeft: 0,
       showAdvancedConfRow: undefined,
       globalChecked: false,
       indeterminate: false
     }
   },
   computed: {
+    endWidth () {
+      return this.column.reduce((acc, item) => {
+        return acc += (item.flex ? 100 : item.width)
+      }, 0) + 16
+    },
     endHeight () {
       if (typeof this.height === 'number') return this.height
       return Math.min(this.maxHeight, this.list.length * this.itemSize)
@@ -275,7 +288,8 @@ export default {
       this.syncUpdate()
     },
     // 滚动计算事件节点 滚动时每100毫秒执行一次
-    handleScrollRecalc () {
+    handleScrollRecalc ({ container }) {
+      this.headerLeft = - container.scrollLeft
       if (!this.showAdvancedConfRow) return void(0)
       this.showAdvancedConfRow.close()
     },
@@ -379,7 +393,6 @@ export default {
 .vjs-header {
   position: absolute;
   top: 0;
-  left: 0;
   border: 1px solid $--color-border-light;
   border-bottom: 0;
 }
@@ -405,7 +418,7 @@ export default {
     & > .el-tag {
       vertical-align: 1px;
     }
-    &.vjs-last-cell {
+    &.vjs-cell-flex {
       flex-grow: 1;
     }
     &.error {

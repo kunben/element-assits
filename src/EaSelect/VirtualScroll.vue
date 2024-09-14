@@ -40,7 +40,10 @@ export default {
       // 元素没变，但是数据变了
       if (!container) return void(0)
       this.current = Math.floor(container.scrollTop / this.itemSize)
-      this.$emit('scroll-recalc', this.current)
+      this.$emit('scroll-recalc', {
+        container,
+        current: this.current
+      })
     }
     const throttleFunc = throttle(scrollFunc, 100)
     return {

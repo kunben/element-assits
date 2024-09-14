@@ -48,6 +48,7 @@ export const column = [
     prop: 'description',
     width: 100,
     component: CellInput,
+    flex: true,
     bind: { placeholder: '描述' }
   }
 ]

@@ -32,8 +32,10 @@ export function checkIndeterminateStatus (that, item, rawList) {
       item.__state.checked = false
     } else {
       item.__state.indeterminate = true
-      item.__state.checked = true
+      item.__state.checked = false
     }
+    const _item = translateSelection([item], rawList)[0]
+    that.$emit('selection-change', _item)
     checkIndeterminateStatus(that, item.__state.parent, rawList)
   } else {
     const allList = filterCanChecked(rawList)
@@ -82,7 +84,8 @@ export function translateSelection (selectedRows, rawList) {
     return {
       ...omit(item, ['required', '__state']),
       realPrefix,
-      checked: item.__state.checked
+      checked: item.__state.checked,
+      indeterminate: item.__state.indeterminate
     }
   })
 }
