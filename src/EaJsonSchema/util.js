@@ -91,6 +91,7 @@ export class ItemState {
 // schema to list
 export function translateSchema (
   data, // 值
+  rootAlias, // 根节点别名
   k, // 键
   level = 0, // 树层级
   result = [], // 结果
@@ -100,7 +101,7 @@ export function translateSchema (
   parentNode // 父节点
 ) {
   const uuid = createUUID()
-  const prop = k || 'root'
+  const prop = k || rootAlias
   level ++
   path.push(uuid)
   const prefix = path.join('.')
@@ -130,14 +131,14 @@ export function translateSchema (
       item.__state.hasChildren = true
       item.__state.isExpanded = true
       for (let [k, v] of Object.entries(data.properties)) {
-        translateSchema(v, k, level, result, [...path], false, data, item)
+        translateSchema(v, rootAlias, k, level, result, [...path], false, data, item)
       }
     }
   } else if (data.type === 'array') {
     if (isPlainObject(data.items)) {
       item.__state.hasChildren = true
       item.__state.isExpanded = true
-      translateSchema(data.items, 'items', level, result, [...path], false, data, item)
+      translateSchema(data.items, rootAlias, 'items', level, result, [...path], false, data, item)
     }
   }
   return result
@@ -166,6 +167,26 @@ export function translateList (list, result = {}) {
     }
   })
   return result.root
+}
+
+// prefix to realPath
+export function prefixToRealPath (prefix, rawList) {
+  const realPath = prefix.split('.').reduce((acc, item) => {
+    const found = rawList.find(m => m.__state.uuid === item)
+    acc.push(found.prop)
+    if (found.type === 'object') acc.push('properties')
+    return acc
+  }, [])
+  if (realPath[realPath.length - 1] === 'properties') realPath.pop()
+  return realPath
+}
+// prefix to dataPath
+export function prefixToDataPath (prefix, rawList) {
+  return prefix.split('.').reduce((acc, item) => {
+    const found = rawList.find(m => m.__state.uuid === item)
+    acc.push(found.prop)
+    return acc
+  }, [])
 }
 
 export function getRange (item, index, list) {

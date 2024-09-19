@@ -58,14 +58,14 @@
             }"
             :style="{
               width: m.width + 'px',
-              ...(i === 0 && { paddingLeft: item.__state.level * 20 + (checkbox ? 24 : 0) + 'px' })
+              ...(i === 0 && { paddingLeft: item.__state.level * 20 + (showCheckbox(item) ? 24 : 0) + 'px' })
             }">
             <span
               v-if="i === 0 && checkbox"
               class="vjs-checkbox"
               :style="{left: item.__state.level * 20 + 'px'}">
               <el-checkbox
-                v-if="!(item.__state.isRoot || item.__state.isTemp || item.__state.virtualArrayItems)"
+                v-if="showCheckbox(item)"
                 :key="item.__state.uuid"
                 v-model="item.__state.checked"
                 class="vjs-checkbox"
@@ -103,8 +103,9 @@
 
 <script>
 import { uuid as createUUID } from '@/util'
-import { column as rawColumn, ItemState, translateSchema, translateList, getRange } from './util'
+import { column as rawColumn, ItemState, translateSchema, translateList, getRange, prefixToRealPath, prefixToDataPath } from './util'
 import { translateSelection, getSubNodes, isContinuousPath, setItemChecked } from './selection'
+import { cloneDeep } from 'lodash-es'
 import CellAction from './CellAction.vue'
 import AdvancedConf from './AdvancedConf.vue'
 import EaScrollbar from '../EaScrollbar'
@@ -119,16 +120,17 @@ export default {
     allowEdit: { type: Boolean, default: true },
     checkbox: { type: Boolean, default: false },
     disableCheckbox: { type: Boolean, default: false },
-    columnFormat: { type: Function, default: e => e }
+    columnFormat: { type: Function, default: e => e },
+    rootAlias: { type: String, default: 'root' }
   },
   emits: ['input', 'selection-change'],
   data () {
     // 当前显示的数据（为折叠服务）
-    const list = translateSchema(this.value)
+    const list = translateSchema(this.value, this.rootAlias)
     // 背后的真实数据（全数据）
     const rawList = [...list]
     // 列信息
-    const column = this.columnFormat(rawColumn)
+    const column = this.columnFormat(cloneDeep(rawColumn))
     return {
       column,
       rawList,
@@ -293,6 +295,14 @@ export default {
       if (!this.showAdvancedConfRow) return void(0)
       this.showAdvancedConfRow.close()
     },
+    // 是否显示checkbox
+    showCheckbox (item) {
+      return this.checkbox && !(
+        item.__state.isRoot
+        || item.__state.isTemp
+        || item.__state.virtualArrayItems
+      )
+    },
     // 操作全选按钮
     handleGlobalCheckChange (evt) {
       this.indeterminate = false
@@ -380,6 +390,14 @@ export default {
           this.handleItemCheckChange(true, item)
         })
       }
+    },
+    // expose 5 转换prefix为真实的schema路径
+    getSchemaPath (prefix) {
+      return prefixToRealPath(prefix, this.rawList)
+    },
+    // expose 6 转换prefix为真实的data路径
+    getDataPath (prefix) {
+      return prefixToDataPath(prefix, this.rawList)
     }
   }
 }
@@ -415,6 +433,10 @@ export default {
     box-sizing: border-box;
     padding: 0 8px;
     position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
     & > .el-tag {
       vertical-align: 1px;
     }

@@ -40,8 +40,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 - 封装了搜索栏，动态宽度，动态折叠等
 - 封装了分页组件，自动分页
 - 各个位置留有菜单栏插槽，合理布局
-
-## props
+#### props
 | 属性名 | 含义 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 | column | 列信息数组| Array | [] |
@@ -61,16 +60,12 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | innerPagination | 内部 - 分页 | Boolean \| Object | undefined|
 | innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined|
 | innerOperation.maxNumOfBtn|最大显示的按钮数，溢出折叠|Number|3|
-
-## methods
-
+#### methods
 | 方法名 | 说明 | 参数 |
 |:---|:---|:---|
 | handleSearch | 执行搜索 | 无 |
 | handleRefresh | 执行刷新 | 无 |
-
-
-## slots
+#### slots
 | 插槽名  | 默认值 | 说明 |
 |:---|:---|:---|
 | table | 表格 | 如果不想用表格来渲染数据，此处可自定义渲染数据的方式
@@ -80,13 +75,11 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | before-column | 无 | 表格内部列之前
 | after-column | 无 | 表格内部列之后
 | footer | bottom-menu&分页 | 表格底部
-
-## events
+#### events
 | 事件名  | 说明 | 参数 |
 |:---|:---|:---|
 |search-reset| 搜索重置事件|callback 重置表单并搜索（不监听时默认行为） <br> reset 仅重置表单<br> search 仅搜索 |
-
-## column-attributes
+#### column-attributes
 | 属性名 | 类型 | 默认值 | 说明 |
 |:---|:---|:---|:---|
 | label | String | undefined | 列名
@@ -94,11 +87,8 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 | show | Boolean | undefined | 是否显示，非 false 即显示
 | bind | Object | undefined | v-bind 至对应的 el-table-column 组件
 
----
-
 ### 表单组件 EaForm
-
-## props
+#### props
 | 属性名 | 说明 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 |model|表单数据对象|Object|
@@ -119,85 +109,82 @@ Vue 原型上挂载了 `$asyncLoad` 方法
 |column[].pull|栅格偏移|Number|
 |column[].push|栅格偏移|Number|
 |column[].offset|栅格偏移|Number|
-## methods
+#### methods
 | 方法 | 说明 | 参数 |
 |:---|:---|:---|
 |setData|设置表单数据对象的值|要设置的数据对象|
 
 ### 按钮 EaButton
-```
-props: {
-  customType: { type: String, default: undefined },
-  tooltip: { type: String, default: undefined },
-  disabled: { type: Boolean, default: false },
-  feat: { type: String, default: undefined },
-  type: { type: String, default: undefined },
-  icon: { type: String, default: undefined }
-}
-// 示例
-<EaButton feat="primary|el-icon-plus|添加" />
-```
+继承el-button, 简化按钮配置
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|customType|自定义类型，将启用小方格按钮|String|undefined|
+|tooltip|按钮提示文本，为空则禁用|String|undefined|
+|feat|按钮配置简写<br>例如：feat="primary\|el-icon-plus\|新增"|String|undefined|
+
 ### 弹窗 EaModal
-```
-// 允许拖拽，允许少量修改布局，简化按钮
-// 绑定confirm事件，出现确定按钮
-// 绑定cancel事件，出现取消按钮
-props: {
-  customClass: { type: String, default: undefined },
-  confirmLoading: { type: Boolean, default: false },
-  margin: { type: String, default: undefined },
-  bodyPadding: { type: String, default: undefined },
-  bodyMinHeight: { type: String, default: undefined },
-  allowDrag: { type: Boolean, default: true }
-}
-```
+继承 el-dialog，允许拖拽，允许少量修改布局，简化按钮  
+绑定confirm事件，出现确定按钮；绑定cancel事件，出现取消按钮
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|customClass|自定义css类|String|undefined|
+|confirmLoading|确定按钮的加载状态|Boolean|false|
+|margin|弹窗 margin|String|undefined|
+|bodyPadding|内容 padding|String|undefined|
+|bodyMinHeight|内容最小高度|String|undefined|
+|allowDrag|是否允许拖拽|Boolean|true|
+
 ### 数字输入框 EaNumber
-```
-// 定制样式
-```
+使样式与 el-input 相似
 
 ### 气泡框 EaPopover
-```
-// 函数式Popover，允许异步调用
-```
+函数式Popover，允许异步调用
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|reference|参考dom节点|HTMLElement|undefined|
+|offset|偏移|Number|0|
+|mountedCallback|加载后回调，方便使用|Function|undefined|
+#### slots
+| 插槽名  | 默认值 | 说明 |
+|:---|:---|:---|
+| default | 无 | 内容插槽 <br> (refresh, close) 允许刷新和关闭气泡框 |
 
 ### 单选框 EaRadio
-```
-// 允许绑定数据和异步数据，允许默认选中
-props: {
-  data: { type: Array, default: undefined },
-  asyncData: { type: Function, default: undefined },
-  props: { type: Object, default: undefined },
-  defaultFirst: { type: Boolean, default: false },
-  innerRadio: { type: Object, default: undefined },
-  type: { type: String, default: undefined }
-},
-```
+允许绑定数据和异步数据，允许默认选中
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|data|数据|Array|undefined|
+|asyncData|异步数据|Function|undefined|
+|props|配置选项|Object|undefined|
+|defaultFirst|是否默认选中第一项|Boolean|false|
+|innerRadio|绑定至内部-radio|Object|undefined|
+|type|radio类型|String|undefined|
 
 ### 开关 EaSwitch
 额外支 size="mini" 尺寸
 
 ### 滚动容器 EaScroll
-```
-// el-scrollbar 衍生，优化样式
-props: {
-  wrapStyle: { type: String, default: '' }
-},
-```
+el-scrollbar 衍生，优化样式
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|wrapStyle|wrap样式|String|undefined|
 
 ### 虚拟滚动 EaVirtualScroll
-
-## props
+#### props
 | 属性名 | 说明 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 |enableVirtualScroll|是否开启虚拟滚动|Boolean \| String|auto|
 |options|选项列表|Array| [] |
 |itemSize|单项高度|Number|30|
-|redundancy|渲染总数，影响流畅度|Number|60|
+|redundancy|渲染总数，影响流畅度和性能|Number|60|
 
 ### JsonSchema编辑器 EaJsonSchema
-
-## props
+#### props
 | 属性名 | 说明 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 |value / v-model|json-schema 数据|Object|{}|
@@ -208,94 +195,93 @@ props: {
 |checkbox|是否开启多选列|Boolean|false|
 |disableCheckbox|是否禁用选择（只读）|Boolean|false|
 |columnFormat|对原有的column进行过滤|Function|column => column|
-
-## methods
+|rootAlias|根节点别名|String|root|
+#### methods
 | 方法名 | 说明 | 参数 |
 |:---|:---|:---|
 | validate | 数据验证，仅验证prop不能为空 | 无 |
 | getData | 获取数据（配置结果） | 无 |
+| getChecked | 获取选中项 | 无 |
+| setChecked | 设置选中项 | 选中项schema路径列表 |
+| getSchemaPath | 获取schema路径 | __state.prefix |
+| getDataPath | 获取data路径 | __state.prefix |
 
 
 ### 下拉框 EaSelect
-```
-// 允许异步数据，允许大数据量虚拟滚动
-props: {
-  value: { type: [String, Array, Number], default: undefined },
-  label: { type: String, default: undefined },
-  data: { type: Array, default: () => [] },
-  asyncParams: undefined,
-  asyncData: { type: Function, default: undefined },
-  props: { type: Object, default: undefined },
-  itemMaxWidth: { type: [Number, Array], default: 150 },
-  popperClass: { type: String, default: undefined }
-},
-```
+允许异步数据，允许大数据量虚拟滚动
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|value / v-model|绑定值|String \| Number \| Array|undefined|
+|label|额外名称绑定，允许.sync|String|undefined|
+|data|选项数据|Array|[]|
+|asyncParams|异步参数|undefined|undefined|
+|asyncData|异步数据，允许异步参数|Function|undefined|
+|props|配置选项|Object|undefined|
+|itemMaxWidth|单项[label,value]最大宽度|Number \| Array|150|
+|popperClass|弹出框自定义css类|String|undefined|
 
 ### 分割面板 EaSplit
-```
-// 分割面板，允许拖拽
-props: {
-  default: { type: Number, default: 0.2 },
-  min: { type: Number, default: 0.2 },
-  max: { type: Number, default: 0.5 }
-},
-<slot name="left" />
-<slot name="center" />
-<slot name="right" />
-```
+分割面板，允许拖拽
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|default|默认分割比例|Number|0.2
+|min|最小分割比例|Number|0.2
+|max|最大分割比例|Number|0.5
+#### slots
+| 插槽名  | 默认值 | 说明 |
+|:---|:---|:---|
+| left | 无 |左侧面板|
+| center | 默认手柄 |中间分割手柄 |
+| right | 无 |右侧面板 |
 
 ### 树 EaTree
-```
-// 与el-tree相比，带搜索框和搜索方法，带scrollbar，允许设置剩余高度，异步数据
-props: {
-  inputPlaceholder: {
-    type: String,
-    default: '请输入关键字搜索'
-  },
-  remainingHeight: {
-    type: Number,
-    default: 200
-  },
-  props: {
-    type: Object,
-    default: undefined
-  },
-  data: {
-    type: Array,
-    default: undefined
-  },
-  asyncData: {
-    type: Function,
-    default: undefined
-  },
-  filterNodeMethod: {
-    type: Function,
-    default: undefined
-  },
-  emptyText: {
-    type: String,
-    default: '暂无数据'
-  }
-},
-```
+与el-tree相比，带搜索框和搜索方法，带scrollbar，允许设置剩余高度，异步数据
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|inputPlaceholder|搜索框的占位内容|String|请输入关键字搜索|
+|remainingHeight|剩余高度|Number|200|
+|props|配置选项|Object|undefined|
+|data|数据|Array|undefined|
+|asyncData|异步数据|Function|undefined|
+|filterNodeMethod|过滤方法|Function|undefined|
+|emptyText|空数据时文字描述|String|暂无数据|
 
 ### 列表 EaList
-```
-// 允许pageRequest分页无限滚动，允许虚拟滚动，允许剩余高度
-props: {
-  data: { type: Array, default: undefined },
-  pageRequest: { type: Function, default: undefined },
-  initRequest: { type: Boolean, default: true },
-  itemSize: { type: Number, default: 30 },
-  remainingHeight: { type: Number, default: 200 },
-  page: { type: Object, default: undefined },
-  redundancy: { type: Number, default: undefined }
-},
-```
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|data|数据|Array|undefined|
+|pageRequest|分页请求|Function|undefined|
+|initRequest|是否初始化请求|Boolean|true|
+|itemSize|单项高度|Number|30|
+|remainingHeight|剩余高度|Number|200|
+|page|分页信息|Object|undefined|
+|redundancy|渲染总数，影响流畅度和性能|Number|60|
+#### slots
+| 插槽名  | 默认值 | 说明 |
+|:---|:---|:---|
+| default | 单项（行） | 自定义行内容 |
+
+### 虚拟数据表格 EaDataTable
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|data|数据|Array|undefined|
+|column|列信息|Array|undefined|
+|pageRequest|分页请求|Function|undefined|
+|initRequest|是否初始化请求|Boolean|true|
+|itemSize|单项高度|Number|30|
+|maxHeight|最大高度|Number|300|
+|page|分页信息|Object|undefined|
+|redundancy|渲染总数，影响流畅度和性能|Number|undefined|
+|border|是否显示边框|Boolean|false|
+
 
 ### 描述列表 EaDesc
-
-## props
+#### props
 | 属性名 | 含义 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 |title|标题|String|undefined|
@@ -309,8 +295,7 @@ props: {
 |gutter|间隔|Number|0|
 
 ### 弹窗文件上传 EaFileUpload
-
-## props
+#### props
 | 属性名 | 含义 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 |title|标题|String|文件上传|

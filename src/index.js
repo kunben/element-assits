@@ -2,6 +2,7 @@ import EaSelect from './EaSelect'
 import EaVirtualScroll from './EaSelect/VirtualScroll.vue'
 import EaForm from './EaForm'
 import EaTable from './EaTable'
+import EaDataTable from './EaDataTable'
 import EaPopover from './EaPopover'
 import EaModal from './EaModal'
 import EaButton from './EaButton'
@@ -21,6 +22,7 @@ const install = Vue => {
   // 注册组件
   Vue.component('EaForm', EaForm)
   Vue.component('EaTable', EaTable)
+  Vue.component('EaDataTable', EaDataTable)
   Vue.component('EaSelect', EaSelect)
   Vue.component('EaVirtualScroll', EaVirtualScroll)
   Vue.component('EaPopover', EaPopover)
@@ -45,6 +47,7 @@ export {
   EaVirtualScroll,
   EaForm,
   EaTable,
+  EaDataTable,
   EaPopover,
   EaModal,
   EaButton,
