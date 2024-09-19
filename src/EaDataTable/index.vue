@@ -2,7 +2,7 @@
 <div :class="{'ea-data-table': 1, 'ea-data-table--border': border}">
   <div
     class="edt-row edt-header"
-    :style="{height: itemSize + 'px'}">
+    :style="{height: itemSize + 'px', lineHeight: itemSize + 'px'}">
     <template v-for="m in realColumn">
       <span
         v-if="!m.renderHeader"
@@ -24,12 +24,8 @@
       <template #item="attrs">
         <slot v-bind="attrs">
           <div
-            v-if="!realColumn"
-            :style="{height: itemSize + 'px'}">{{ attrs.item }}</div>
-          <div
-            v-else
             class="edt-row"
-            :style="{height: itemSize + 'px'}">
+            :style="{height: itemSize + 'px', lineHeight: itemSize + 'px'}">
             <template v-for="m in realColumn">
               <span
                 v-if="!m.render"
@@ -69,7 +65,7 @@ export default {
   components: { EaScrollbar, EaVirtualScroll },
   props: {
     data: { type: Array, default: undefined },
-    column: { type: Array, default: undefined },
+    column: { type: Array, default: undefined, required: true },
     pageRequest: { type: Function, default: undefined },
     initRequest: { type: Boolean, default: true },
     itemSize: { type: Number, default: 30 },
@@ -212,7 +208,6 @@ export default {
 .ea-data-table {
   .edt-row {
     display: flex;
-    line-height: 30px;
     .edt-cell {
       padding: 0 8px;
       flex: 0 0 auto;
