@@ -1,19 +1,21 @@
 <template>
 <div class="vjs-table">
   <div class="vjs-row odd vjs-header" :style="{minWidth: endWidth + 'px', left: headerLeft + 'px'}">
-    <span v-if="checkbox" class="vjs-cell">
-      <el-checkbox
-        v-model="globalChecked"
-        class="vjs-checkbox"
-        :indeterminate="indeterminate"
-        :disabled="disableCheckbox"
-        @change="handleGlobalCheckChange" />
-    </span>
     <span
       v-for="(m, i) in column"
       :key="i"
       :class="{'vjs-cell': 1, 'vjs-cell-flex': m.flex }"
-      :style="{width: m.width + 'px', ...(i === 0 && { paddingLeft: '20px' })}">
+      :style="{width: m.width + 'px', ...(i === 0 && { paddingLeft: 20 + (checkbox ? 20 : 0) + 'px' })}">
+      <span
+        v-if="i === 0 && checkbox"
+        class="vjs-checkbox"
+        :style="{left: 20 + 'px'}">
+        <el-checkbox
+          v-model="globalChecked"
+          :indeterminate="indeterminate"
+          :disabled="disableCheckbox"
+          @change="handleGlobalCheckChange" />
+      </span>
       <component :is="{render: m.renderHeader}" v-if="m.renderHeader" />
       <span v-else>{{ m.label }}</span>
     </span>
@@ -68,7 +70,6 @@
                 v-if="showCheckbox(item)"
                 :key="item.__state.uuid"
                 v-model="item.__state.checked"
-                class="vjs-checkbox"
                 :indeterminate="item.__state.indeterminate"
                 :disabled="disableCheckbox"
                 @change="handleItemCheckChange($event, item)" />
