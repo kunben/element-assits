@@ -280,6 +280,26 @@ td {
   }
 }
 
+.ea-list {
+  .loading-text {
+    color: $--color-secondary-text;
+    text-align: center;
+    font-size: inherit;
+  }
+}
+
+.ea-tree {
+  .ea-tree-real {
+    .el-tree-node > .el-tree-node__content{
+      border-radius: 4px;
+    }
+    .el-tree-node.is-current > .el-tree-node__content {
+      color: $--color-primary;
+      background-color: rgba($--color-primary, 0.1);
+    }
+  }
+}
+
 .ea-split-container {
   display: flex;
   &.is-down {
@@ -313,30 +333,6 @@ td {
       height: 1px;
       background: rgba(23, 35, 61, .25);
       margin-top: 3px;
-    }
-  }
-}
-
-.ea-list {
-  .loading-text {
-    color: $--color-secondary-text;
-    text-align: center;
-    font-size: inherit;
-  }
-}
-
-.ea-number .el-input__inner {
-  text-align: left;
-}
-
-.ea-tree {
-  .ea-tree-real {
-    .el-tree-node > .el-tree-node__content{
-      border-radius: 4px;
-    }
-    .el-tree-node.is-current > .el-tree-node__content {
-      color: $--color-primary;
-      background-color: rgba($--color-primary, 0.1);
     }
   }
 }
@@ -382,6 +378,37 @@ td {
         user-select: none;
       }
     }
+  }
+}
+
+.ea-number .el-input__inner {
+  text-align: left;
+}
+
+.file-upload-dialog {
+  // 拖拽区域铺满
+  .el-upload,
+  .el-upload .el-upload-dragger {
+    width: 100%;
+  }
+  // 文件列表项边框
+  .el-upload-list {
+    .el-upload-list__item {
+      border: 1px dashed #aaa;
+      .el-icon-close {
+        display: inline-block;
+      }
+    }
+  }
+  // 清除文件列表变动过渡动画
+  .el-list-enter,
+  .el-list-enter-active,
+  .el-list-enter-to,
+  .el-list-leave,
+  .el-list-leave-active,
+  .el-list-leave-to {
+    -webkit-transition: none !important;
+    transition: none !important;
   }
 }
 
@@ -584,33 +611,6 @@ td {
 .ea-icon-more:before { content: "\e60e" }
 .eafont.ea-icon-conf.has { color: #000 }
 
-.file-upload-dialog {
-  // 拖拽区域铺满
-  .el-upload,
-  .el-upload .el-upload-dragger {
-    width: 100%;
-  }
-  // 文件列表项边框
-  .el-upload-list {
-    .el-upload-list__item {
-      border: 1px dashed #aaa;
-      .el-icon-close {
-        display: inline-block;
-      }
-    }
-  }
-  // 清除文件列表变动过渡动画
-  .el-list-enter,
-  .el-list-enter-active,
-  .el-list-enter-to,
-  .el-list-leave,
-  .el-list-leave-active,
-  .el-list-leave-to {
-    -webkit-transition: none !important;
-    transition: none !important;
-  }
-}
-
 .ea-form .form-group-title {
   position: relative;
   height: 32px;
@@ -718,21 +718,6 @@ td {
   }
 }
 
-.ea-switch-mini {
-  .el-switch__core {
-    width: 30px !important;
-    height: 16px;
-    &::after {
-      width: 12px;
-      height: 12px;
-      left: 2px;
-    }
-  }
-  &.is-checked .el-switch__core::after {
-    margin-left: -13px;
-  }
-}
-
 .ea-select-container {
   display: flex;
   justify-content: flex-start;
@@ -770,5 +755,20 @@ td {
         font-weight: bold;
       }
     }
+  }
+}
+
+.ea-switch-mini {
+  .el-switch__core {
+    width: 30px !important;
+    height: 16px;
+    &::after {
+      width: 12px;
+      height: 12px;
+      left: 2px;
+    }
+  }
+  &.is-checked .el-switch__core::after {
+    margin-left: -13px;
   }
 }

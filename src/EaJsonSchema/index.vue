@@ -339,7 +339,7 @@ export default {
     },
     // expose 2 获取最终数据
     getData () {
-      return translateList(this.rawList)
+      return translateList(this.rawList, this.rootAlias)
     },
     // expose 3 获取选中的节点数据 containIndeterminate 是否包含半选
     getChecked (containIndeterminate) {

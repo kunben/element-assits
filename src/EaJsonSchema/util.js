@@ -146,8 +146,8 @@ export function translateSchema (
 
 // TODO: 需优化
 // list to schema
-export function translateList (list, result = {}) {
-  list.filter(m => !m.__state.isTemp).forEach(item => {
+export function translateList (list, rootAlias, result = {}) {
+  list.filter(m => !m.__state.isTemp && m.prop).forEach(item => {
     const realPrefix = item.__state.prefix.split('.').reduce((acc, m) => {
       const found = list.find(n => n.__state.uuid === m)
       acc.push(found.prop)
@@ -166,7 +166,7 @@ export function translateList (list, result = {}) {
       parent.required.push(item.prop)
     }
   })
-  return result.root
+  return result[rootAlias]
 }
 
 // prefix to realPath
