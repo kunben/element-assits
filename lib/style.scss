@@ -215,6 +215,43 @@ $--color-border-extralight: #F2F6FC !default;
   }
 }
 
+.ea-split-container {
+  display: flex;
+  &.is-down {
+    user-select: none;
+  }
+  .sc-left {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  .sc-right {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+  .sc-bamboo {
+    flex-grow: 0;
+    flex-shrink: 0;
+    width: 8px;
+    border: 1px solid #DCDEE2;
+    border-top: none;
+    border-bottom: none;
+    background-color: #F8F8F9;
+    cursor: col-resize;
+    user-select: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 0 16px;
+    .sc-texture {
+      width: 4px;
+      height: 1px;
+      background: rgba(23, 35, 61, .25);
+      margin-top: 3px;
+    }
+  }
+}
+
 .ea-button-tooltip + .ea-button-tooltip {
   margin-left: 10px;
 }
@@ -280,14 +317,6 @@ td {
   }
 }
 
-.ea-list {
-  .loading-text {
-    color: $--color-secondary-text;
-    text-align: center;
-    font-size: inherit;
-  }
-}
-
 .ea-tree {
   .ea-tree-real {
     .el-tree-node > .el-tree-node__content{
@@ -300,41 +329,16 @@ td {
   }
 }
 
-.ea-split-container {
-  display: flex;
-  &.is-down {
-    user-select: none;
+.ea-list {
+  .loading-text {
+    color: $--color-secondary-text;
+    text-align: center;
+    font-size: inherit;
   }
-  .sc-left {
-    flex-grow: 1;
-    flex-shrink: 1;
-  }
-  .sc-right {
-    flex-grow: 1;
-    flex-shrink: 1;
-  }
-  .sc-bamboo {
-    flex-grow: 0;
-    flex-shrink: 0;
-    width: 8px;
-    border: 1px solid #DCDEE2;
-    border-top: none;
-    border-bottom: none;
-    background-color: #F8F8F9;
-    cursor: col-resize;
-    user-select: none;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: 0 16px;
-    .sc-texture {
-      width: 4px;
-      height: 1px;
-      background: rgba(23, 35, 61, .25);
-      margin-top: 3px;
-    }
-  }
+}
+
+.ea-number .el-input__inner {
+  text-align: left;
 }
 
 .ea-desc {
@@ -379,10 +383,6 @@ td {
       }
     }
   }
-}
-
-.ea-number .el-input__inner {
-  text-align: left;
 }
 
 .file-upload-dialog {

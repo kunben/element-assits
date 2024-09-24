@@ -16,7 +16,7 @@ import EaRadio from './EaRadio'
 import EaCheckbox from './EaCheckbox'
 import EaFileUpload from './EaFileUpload'
 import EaJsonSchema from './EaJsonSchema'
-import { uuid, recursive, asyncLoad } from './util'
+import { uuid, recursive, asyncLoad, renderCell } from './util'
 
 const install = Vue => {
   // 注册组件
@@ -63,7 +63,8 @@ export {
   EaJsonSchema,
   uuid,
   recursive,
-  asyncLoad
+  asyncLoad,
+  renderCell
 }
 
 export default install

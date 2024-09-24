@@ -24,8 +24,8 @@ Vue.use(ElementAssits)
 ```
 使用：  
 默认全局注册了 `EaForm` `EaTable` `EaSelect` `EaModal` `EaPopover` 等组件  
-提供了 `uuid` `recursive` 两个工具函数  
-Vue 原型上挂载了 `$asyncLoad` 方法  
+提供了 `uuid` `recursive`, `asyncLoad`, `renderCell` 四个工具函数  
+Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）  
 > 如果单独引入 asyncLoad 方法，并且没有挂载在Vue原型上  
 > 那么，asyncLoad 方法载入的组件将游离在vueApp实例树之外  
 > 副作用是无法访问$parent,$router,$store等等  

@@ -1,3 +1,5 @@
+import { renderCell } from '../../src'
+
 export const searchColumn = [
   {
     label: '所属部门',
@@ -53,6 +55,11 @@ export const searchColumn = [
     prop: 'lockFlag'
   }
 ]
+
+const statusList = [
+  { label: '第零个', value: 0 },
+  { label: '第一个', value: 1 }
+]
 export const column = [
   {
     label: 'id',
@@ -87,6 +94,8 @@ export const column = [
   {
     label: '状态',
     prop: 'lockFlag',
-    component: 'el-switch'
+    render: renderCell(statusList, (h, { label, value }) => {
+      return label ? h('el-tag', label) : h('span', value)
+    })
   }
 ]

@@ -1,4 +1,4 @@
-import { isFunction } from 'lodash-es'
+import { isArray, isFunction } from 'lodash-es'
 
 // 随机 key
 export const uuid = (max = 16) => {
@@ -113,4 +113,55 @@ export async function asyncLoad (_importFunc, ...options) {
   // mount component
   TheIns.$mount()
   document.body.appendChild(TheIns.$el)
+}
+
+// 渲染单元格（需要与EaTable搭配使用）
+// promise 可以是【数组】或【resolve数组的promise对象】或【返回\1的函数】或【返回\2的函数】
+// props label/value 配置项
+// callback 回调函数，返回要渲染的内容
+//   h 渲染方法
+//   info 解析对象
+//   info.value 原值
+//   info.label 列表中value对应的label, 可能为空
+//   info.item 列表中value对应的项, 可能为空
+export function renderCell (promise, props, callback) {
+  if (isArray(promise)) promise = Promise.resolve(promise)
+  if (isFunction(promise)) promise = promise()
+  if (isArray(promise)) promise = Promise.resolve(promise)
+  if (!isPromise(promise)) promise = Promise.resolve([])
+
+  const defaultProps = { label: 'label', value: 'value' }
+  if (isFunction(props)) {
+    callback = props
+    props = defaultProps
+  } else {
+    props = { ...defaultProps, ...props }
+  }
+
+  return (h, { column, value, that, hideRefresh }) => {
+    if (!column.__mapping && !column.__fetch) {
+      column.__fetch = promise.then(list => {
+        const __mapping = {}
+        recursive(list, (item, path) => {
+          __mapping[item[props.value]] = { ...item, __path: [...path, item] }
+        })
+        that.$set(column, '__mapping', __mapping)
+        hideRefresh && hideRefresh()
+      })
+    } else if (column.__mapping) {
+      const __label = column.__mapping[value] && column.__mapping[value][props.label]
+      if (callback) return callback(h, {
+        label: __label,
+        value,
+        item: column.__mapping[value]
+      })
+      return h('span', __label || value)
+    }
+    if (callback) return callback(h, { value })
+    return h('span', value)
+  }
+}
+
+function isPromise (o) {
+  return Object.prototype.toString.call(o) === '[object Promise]'
 }
