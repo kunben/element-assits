@@ -12,7 +12,7 @@
       <el-button type="primary" icon="el-icon-plus">新增</el-button>
     </template>
     <template #row-menu="scope">
-      <el-button type="text" icon="el-icon-view">查看</el-button>
+      <el-button v-if="scope.row.show" type="text" icon="el-icon-view">查看</el-button>
       <el-button type="text" icon="el-icon-edit" @click="handleEdit(scope)">编辑</el-button>
       <el-button type="text" icon="el-icon-delete" @click="handleDel(scope)">删除</el-button>
       <el-button type="text" icon="el-icon-reading">比较</el-button>

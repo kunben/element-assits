@@ -28,7 +28,7 @@ export function checkOperation (maxNumOfBtn = 3) {
     collapseBtnRender = {
       props: { scope: { type: Object, default: undefined } },
       data () {
-        const usedNodes = flatSlots.bind(that)(this.scope)
+        const usedNodes = flatSlots.bind(that)(this.scope).filter(m => m.tag)
         const children = usedNodes.slice(0, maxNumOfBtn - 1)
         const moreChildren = usedNodes.slice(maxNumOfBtn - 1)
         return {
