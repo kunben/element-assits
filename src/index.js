@@ -16,7 +16,8 @@ import EaRadio from './EaRadio'
 import EaCheckbox from './EaCheckbox'
 import EaFileUpload from './EaFileUpload'
 import EaJsonSchema from './EaJsonSchema'
-import { uuid, recursive, asyncLoad, renderCell } from './util'
+import EaDataTree from './EaDataTree'
+import { uuid, recursive, recursiveFilter, asyncLoad, renderCell } from './util'
 
 const install = Vue => {
   // 注册组件
@@ -38,6 +39,7 @@ const install = Vue => {
   Vue.component('EaCheckbox', EaCheckbox)
   Vue.component('EaFileUpload', EaFileUpload)
   Vue.component('EaJsonSchema', EaJsonSchema)
+  Vue.component('EaDataTree', EaDataTree)
   // 挂载原型方法
   Vue.prototype.$asyncLoad = asyncLoad
 }
@@ -61,8 +63,10 @@ export {
   EaCheckbox,
   EaFileUpload,
   EaJsonSchema,
+  EaDataTree,
   uuid,
   recursive,
+  recursiveFilter,
   asyncLoad,
   renderCell
 }

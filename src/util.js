@@ -27,6 +27,22 @@ export const recursive = (data, callback, childrenProp = 'children', path = []) 
   path.pop()
 }
 
+export const recursiveFilter = (data, callback, childrenProp = 'children') => {
+  const result = [{ [childrenProp]: data, __root: true }]
+  recursive(result, (item, path) => {
+    if (item.__root) return void(0)
+    if (callback(item)) {
+      [...path, item].forEach(m => m.__show = true)
+    }
+  }, childrenProp)
+  recursive(result, (item) => {
+    if (!isArray(item[childrenProp])) return void(0)
+    item[childrenProp] = item[childrenProp].filter(m => m.__show)
+    item[childrenProp].forEach(m => delete m.__show)
+  }, childrenProp)
+  return result[0][childrenProp]
+}
+
 // 递归查找指定父组件
 export const findParentComponent = (ins, pName) => {
   if (!ins || !pName) return void(0)

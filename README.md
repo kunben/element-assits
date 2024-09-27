@@ -24,7 +24,7 @@ Vue.use(ElementAssits)
 ```
 使用：  
 默认全局注册了 `EaForm` `EaTable` `EaSelect` `EaModal` `EaPopover` 等组件  
-提供了 `uuid` `recursive`, `asyncLoad`, `renderCell` 四个工具函数  
+提供了 `uuid` `recursive` `recursiveFilter` `asyncLoad` `renderCell` 五个工具函数  
 Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）  
 > 如果单独引入 asyncLoad 方法，并且没有挂载在Vue原型上  
 > 那么，asyncLoad 方法载入的组件将游离在vueApp实例树之外  
@@ -248,6 +248,24 @@ el-scrollbar 衍生，优化样式
 |asyncData|异步数据|Function|undefined|
 |filterNodeMethod|过滤方法|Function|undefined|
 |emptyText|空数据时文字描述|String|暂无数据|
+
+### 虚拟树 EaDataTree
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|data|(树)数据|Array|[]|
+|props|配置项|Object|`{ label: 'label', value: 'value', children: 'children' }`|
+|height|组件高度|Number \| String| auto |
+|maxHeight|当自动高度时，限制最大高度|Number| 500 |
+|itemSize|单项高度|Number|32|
+|checkbox|是否显示多选框|Boolean|false|
+|disableCheckbox|是否禁止多选框|Boolean|false|
+|noDataText|无数据时的文本|String|暂无数据|
+#### methods
+| 方法名 | 说明 | 参数 |
+|:---|:---|:---|
+| getChecked | 获取选中项 | 无 |
+| setChecked | 设置选中项 | (树)数据（以`props.value`匹配） |
 
 ### 列表 EaList
 #### props

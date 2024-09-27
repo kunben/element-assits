@@ -5,17 +5,22 @@
   @mousemove="handleMousemove"
   @mouseup="isDown = false"
   @mouseleave="isDown = false">
-  <div class="sc-left" :style="{width: leftRate * 100 + '%'}">
+  <div class="sc-left" :style="{width: `calc(${leftRate * 100}% - ${centerWidth / 2}px)`}">
     <slot name="left" />
   </div>
-  <div class="sc-bamboo" @mousedown="handleMousedown">
-    <slot name="center">
-      <i v-for="m in 8" :key="m" class="sc-texture" />
-    </slot>
-  </div>
-  <div class="sc-right" :style="{width: `calc(${(1 - leftRate) * 100}% - 40px)`}">
-    <slot name="right" />
-  </div>
+  <template v-if="defaultAlias !== 1">
+    <div ref="scc" class="sc-center">
+      <div class="sc-bamboo" @mousedown="handleMousedown">
+        <i v-for="m in 8" :key="m" class="sc-texture" />
+      </div>
+      <div v-if="$slots.center" class="sc-on-bamboo" @mousedown.stop>
+        <slot name="center" />
+      </div>
+    </div>
+    <div class="sc-right" :style="{width: `calc(${(1 - leftRate) * 100}% - ${centerWidth / 2}px)`}">
+      <slot name="right" />
+    </div>
+  </template>
 </div>
 </template>
 
@@ -32,13 +37,22 @@ export default {
       isDown: false,
       domPageX: 0,
       domWidth: 0,
-      leftRate
+      leftRate,
+      centerWidth: 0
+    }
+  },
+  computed: {
+    defaultAlias () {
+      return this.default
     }
   },
   mounted () {
     const scContainer = this.$refs.sc_container
     this.domPageX = getDomPageX(scContainer)
     this.domWidth = getDomWidth(scContainer)
+    if (this.$refs.scc) {
+      this.centerWidth = getDomWidth(this.$refs.scc)
+    }
   },
   methods: {
     handleMousedown (evt) {
@@ -81,10 +95,14 @@ function getDomWidth (dom) {
     flex-grow: 1;
     flex-shrink: 1;
   }
-  .sc-bamboo {
+  .sc-center {
     flex-grow: 0;
     flex-shrink: 0;
+    position: relative;
+  }
+  .sc-bamboo {
     width: 8px;
+    height: 100%;
     border: 1px solid #DCDEE2;
     border-top: none;
     border-bottom: none;
@@ -102,6 +120,16 @@ function getDomWidth (dom) {
       background: rgba(23, 35, 61, .25);
       margin-top: 3px;
     }
+  }
+  .sc-on-bamboo {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: #FFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
 </style>

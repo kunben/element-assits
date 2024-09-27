@@ -51,6 +51,10 @@ new Vue({
       {
         path: '/json-schema',
         component: () => import('./json-schema/index.vue')
+      },
+      {
+        path: '/virtual-tree',
+        component: () => import('./virtual-tree/index.vue')
       }
     ]
   })
