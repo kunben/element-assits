@@ -343,6 +343,14 @@ td {
   }
 }
 
+.ea-list {
+  .loading-text {
+    color: $--color-secondary-text;
+    text-align: center;
+    font-size: inherit;
+  }
+}
+
 .ea-desc {
   font-size: 14px;
   &__title {
@@ -389,14 +397,6 @@ td {
 
 .ea-number .el-input__inner {
   text-align: left;
-}
-
-.ea-list {
-  .loading-text {
-    color: $--color-secondary-text;
-    text-align: center;
-    font-size: inherit;
-  }
 }
 
 .file-upload-dialog {
@@ -772,6 +772,23 @@ td {
   margin-bottom: 8px !important;
 }
 
+.ea-form .el-form-item__content {
+  & > .el-input-number,
+  & > .el-input,
+  & > .ea-select,
+  & > .el-select {
+    width: 100%;
+  }
+}
+.ea-form .el-form-item.hidden-label {
+  > .el-form-item__label {
+    display: none;
+  }
+  > .el-form-item__content {
+    width: 100%;
+  }
+}
+
 .ea-select-container {
   display: flex;
   justify-content: flex-start;
@@ -824,22 +841,5 @@ td {
   }
   &.is-checked .el-switch__core::after {
     margin-left: -13px;
-  }
-}
-
-.ea-form .el-form-item__content {
-  & > .el-input-number,
-  & > .el-input,
-  & > .ea-select,
-  & > .el-select {
-    width: 100%;
-  }
-}
-.ea-form .el-form-item.hidden-label {
-  > .el-form-item__label {
-    display: none;
-  }
-  > .el-form-item__content {
-    width: 100%;
   }
 }

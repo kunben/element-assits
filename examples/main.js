@@ -10,6 +10,7 @@ Vue.use(Element, { size: 'small' })
 // Vue.use(Element, { size: 'medium' })
 Vue.use(ElementAssits)
 Vue.config.productionTip = false
+Vue.prototype.$log = console.log
 
 new Vue({
   el: '#app',

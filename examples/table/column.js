@@ -95,7 +95,9 @@ export const column = [
     label: '状态',
     prop: 'lockFlag',
     render: renderCell(statusList, (h, { label, value }) => {
-      return label ? h('el-tag', label) : h('span', value)
+      return label ? h('el-tag', {
+        props: { disableTransitions: true }
+      }, label) : h('span', value)
     })
   }
 ]

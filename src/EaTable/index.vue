@@ -1,21 +1,23 @@
 <template>
 <div class="ea-table">
-  <SearchBar
-    v-if="theForm.show"
-    v-bind="theForm.attrs"
-    :column="theForm.attrs.column"
-    :model="theForm.attrs.model"
-    @search="handleSearch"
-    @refresh="handleRefresh"
-    @reset="handleReset">
-    <slot name="top-menu" />
-  </SearchBar>
-  <slot name="table" :data="data">
+  <slot name="search">
+    <SearchBar
+      v-if="theForm.show"
+      v-bind="theForm.attrs"
+      :column="theForm.attrs.column"
+      :model="theForm.attrs.model"
+      @search="handleSearch"
+      @refresh="handleRefresh"
+      @reset="handleReset">
+      <slot name="top-menu" />
+    </SearchBar>
+  </slot>
+  <slot name="table" :data="tableData">
     <div v-loading="loading === undefined ? innerLoading : loading">
       <el-table
         ref="table"
         :class="{'is-dense': dense}"
-        :data="data"
+        :data="tableData"
         v-bind="{
           border: true,
           stripe: true,
@@ -27,16 +29,18 @@
         <slot name="before-column" />
         <el-table-column
           v-if="theIndex.show"
-          v-bind="{ label: '序号', align: 'center', fixed: true, width: 50 + Math.ceil((String(page.current).length - 1) * 7), ...theIndex.attrs }"
+          v-bind="{ label: '序号', align: 'center', fixed: false, width: 50 + Math.ceil((String(page.current).length - 1) * 7), ...theIndex.attrs }"
           type="index">
           <template #default="{$index}">
             {{ (asyncPageCurrent - 1) * page.pageSize + $index + 1 }}
           </template>
         </el-table-column>
+        <slot name="after-index-column" />
         <el-table-column
           v-if="theSelection.show"
-          v-bind="{ align: 'center', fixed: true, width: 50, ...theSelection.attrs }"
+          v-bind="{ align: 'center', fixed: false, width: 50, ...theSelection.attrs }"
           type="selection" />
+        <slot name="after-selection-column" />
         <el-table-column
           v-for="item in rawColumn.filter(m => m.show !== false)"
           :key="item.key"
@@ -44,13 +48,14 @@
           :prop="item.prop"
           v-bind="item.bind"
           v-on="item.on">
-          <template v-if="item.bind.render" #default="{row, column}">
-            <component :is="generateRender(row, item, column)" />
+          <template v-if="item.bind.render" #default="{row, column: elColumn}">
+            <component :is="generateRender(row, item, elColumn)" :key="cellKey" />
           </template>
         </el-table-column>
+        <slot name="before-action-column" />
         <el-table-column
           v-if="theOperation.show"
-          v-bind="{ label: '操作', align: 'center', fixed: 'right', ...theOperation.attrs }">
+          v-bind="{ label: '操作', align: 'center', fixed: false, ...theOperation.attrs }">
           <template #default="scope">
             <component
               :is="theOperation.render"
@@ -118,16 +123,6 @@ export default {
       pageSize: 10,
       total: 0
     }
-
-    // local page
-    let originalData = []
-    if (this.pageRequest) {
-      this.data.splice(0)
-    } else {
-      originalData = cloneDeep(this.data)
-      this.data.splice(page.pageSize)
-      page.total = originalData.length
-    }
     return {
       uuid,
       rawColumn: [],
@@ -136,9 +131,9 @@ export default {
       errMsg: undefined,
       asyncPageCurrent: 1,
       page,
-      originalData,
-      refreshTimer: null,
-      searchForm: {}
+      tableData: [],
+      searchForm: {},
+      cellKey: Date.now()
     }
   },
   computed: {
@@ -326,8 +321,9 @@ export default {
     getList () {
       if (!this.pageRequest) {
         const start = (this.page.current - 1) * this.page.pageSize
-        const data = this.originalData.slice(start, start + this.page.pageSize)
-        this.data.splice(0, this.data.length, ...data)
+        const data = this.data.slice(start, start + this.page.pageSize)
+        this.tableData = data
+        this.page.total = this.data.length
         this.asyncPageCurrent = this.page.current
         return void(0)
       }
@@ -335,7 +331,7 @@ export default {
       this.errMsg = undefined
       this.pageRequest(this.page, this.theForm.attrs.model).then(res => {
         const { data, total, current } = res || {}
-        this.data.splice(0, this.data.length, ...data)
+        this.tableData = data || []
         this.page.total = total || 0
         this.asyncPageCurrent = current || this.page.current
       }).catch(err => {
@@ -346,12 +342,7 @@ export default {
     },
     // 隐式刷新表格
     hideRefresh () {
-      clearTimeout(this.refreshTimer)
-      this.refreshTimer = setTimeout(() => {
-        if (this.data.length <= 0) return void(0)
-        const [one] = this.data.splice(0, 1)
-        this.$nextTick(() => this.data.unshift(one))
-      }, 0)
+      this.cellKey = Date.now()
     },
     // 表格搜索
     handleSearch () {
@@ -372,7 +363,7 @@ export default {
     },
     // 表格清空
     handleClear () {
-      this.data.splice(0)
+      this.tableData = []
       this.page.total = 0
     },
     handleSizeChange (size) {

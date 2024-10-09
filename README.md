@@ -49,17 +49,18 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 | loading | 表格加载状态 | Boolean | undefined |
 | initRequest | 是否初始化发送请求 | Boolean | true |
 | innerForm | 内部 - 表单（搜索栏） | Boolean \| Object | undefined |
-| innerForm.limit|限制默认显示的搜索条件数量|Number \| auto \| all|auto|
-| innerForm.referenceItemWidth|单项参考宽度|Number|180|
-| innerForm.maxItemWidth|单项最大宽度|Number|240|
-| innerForm.loading|控制更多按钮加载状态|Boolean|false|
-| innerForm.column[].exclusiveDoubleCells|允许某一项独占两格|Boolean|false|
-| innerIndex | 内部 - 索引 | Boolean \| Object | true|
+| &nbsp;&nbsp;&nbsp;&nbsp;.model | 搜索表单的值 | Object | undefined |
+| &nbsp;&nbsp;&nbsp;&nbsp;.limit|限制默认显示的搜索条件数量|Number \| auto \| all|auto|
+| &nbsp;&nbsp;&nbsp;&nbsp;.referenceItemWidth|单项参考宽度|Number|180|
+| &nbsp;&nbsp;&nbsp;&nbsp;.maxItemWidth|单项最大宽度|Number|240|
+| &nbsp;&nbsp;&nbsp;&nbsp;.loading|控制更多按钮加载状态|Boolean|false|
+| &nbsp;&nbsp;&nbsp;&nbsp;.column[].exclusiveDoubleCells|允许某一项独占两格|Boolean|false|
 | innerSelection | 内部 - 选中列 | Boolean \| Object | undefined|
-| innerSelection.data|选中的行|Array| [] |
+| &nbsp;&nbsp;&nbsp;&nbsp;.data | 选中的行 | Array | undefined |
+| innerIndex | 内部 - 索引 | Boolean \| Object | true|
 | innerPagination | 内部 - 分页 | Boolean \| Object | undefined|
 | innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined|
-| innerOperation.maxNumOfBtn|最大显示的按钮数，溢出折叠|Number|3|
+| &nbsp;&nbsp;&nbsp;&nbsp;.maxNumOfBtn|最大显示的按钮数，溢出折叠|Number|3|
 #### methods
 | 方法名 | 说明 | 参数 |
 |:---|:---|:---|
@@ -68,12 +69,16 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 #### slots
 | 插槽名  | 默认值 | 说明 |
 |:---|:---|:---|
+| search | 搜索栏 | 如果想自定义搜索栏时
 | table | 表格 | 如果不想用表格来渲染数据，此处可自定义渲染数据的方式
 | top-menu | 无 | 顶部菜单
 | row-menu | 无 | 行菜单，需要 initOperation 至少为true
 | bottom-menu | 无 | 底部菜单
-| before-column | 无 | 表格内部列之前
-| after-column | 无 | 表格内部列之后
+| before-column | 无 | 表格内部所有列之前
+| after-index-column | 无 | 表格内部索引列之后
+| after-selection-column | 无 | 表格多选列之后
+| before-action-column | 无 | 表格内部操作列之前
+| after-column | 无 | 表格内部所有列之后
 | footer | bottom-menu&分页 | 表格底部
 #### events
 | 事件名  | 说明 | 参数 |
@@ -113,6 +118,10 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 | 方法 | 说明 | 参数 |
 |:---|:---|:---|
 |setData|设置表单数据对象的值|要设置的数据对象|
+#### events
+| 事件名  | 说明 | 参数 |
+|:---|:---|:---|
+|change| 表单值变化事件 | 当前表单的值 |
 
 ### 按钮 EaButton
 继承el-button, 简化按钮配置
