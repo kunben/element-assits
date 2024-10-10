@@ -1,4 +1,4 @@
-import { isArray, isFunction } from 'lodash-es'
+import { isArray, isFunction, isBoolean, isPlainObject, omit } from 'lodash-es'
 
 // 随机 key
 export const uuid = (max = 16) => {
@@ -146,12 +146,21 @@ export function renderCell (promise, props, callback) {
   if (isArray(promise)) promise = Promise.resolve(promise)
   if (!isPromise(promise)) promise = Promise.resolve([])
 
-  const defaultProps = { label: 'label', value: 'value' }
+  const defaultProps = {
+    label: 'label',
+    value: 'value',
+    style: 'style',
+    tag: false
+  }
   if (isFunction(props)) {
     callback = props
     props = defaultProps
-  } else {
+  } else if (isBoolean(props)) {
+    props = { ...defaultProps, tag: props }
+  } else if (isPlainObject(props)) {
     props = { ...defaultProps, ...props }
+  } else {
+    props = defaultProps
   }
 
   return (h, { column, value, that, hideRefresh }) => {
@@ -165,12 +174,22 @@ export function renderCell (promise, props, callback) {
         hideRefresh && hideRefresh()
       })
     } else if (column.__mapping) {
-      const __label = column.__mapping[value] && column.__mapping[value][props.label]
+      const __item = column.__mapping[value]
+      const __label = __item && __item[props.label]
       if (callback) return callback(h, {
         label: __label,
         value,
-        item: column.__mapping[value]
+        item: __item
       })
+      else if (props.tag && __label) {
+        return h('el-tag', {
+          style: __item[props.style],
+          props: {
+            disableTransitions: true,
+            ...omit(__item, [props.label, props.value, props.style])
+          }
+        }, __label)
+      }
       return h('span', __label || value)
     }
     if (callback) return callback(h, { value })
