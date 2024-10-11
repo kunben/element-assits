@@ -8,7 +8,8 @@
     :inner-operation="{maxNumOfBtn: 3 }"
     :inner-selection="{data: selectedRows}">
     <template #top-menu>
-      <el-button type="primary" @click="handleTest">测试</el-button>
+      <el-button type="primary" @click="handleTest2">测试数据变更</el-button>
+      <el-button type="primary" @click="handleTest">测试搜索表单</el-button>
       <el-button type="primary" icon="el-icon-plus">新增</el-button>
     </template>
     <template #row-menu="scope">
@@ -29,7 +30,7 @@
 </template>
 
 <script>
-import { data } from './data'
+import { data, data2 } from './data'
 import { column, searchColumn } from './column'
 export default {
   data () {
@@ -45,6 +46,9 @@ export default {
   methods: {
     handleTest () {
       this.searchForm.deptId = 999
+    },
+    handleTest2 () {
+      this.data.push(...data2)
     },
     handleEdit (scope) {
       console.log(scope)

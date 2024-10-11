@@ -13,12 +13,12 @@
       :icon="$listeners.cancel ? 'el-icon-circle-check' : ''"
       :class="$listeners.cancel ? '' : 'single-btn'"
       :loading="confirmLoading"
-      @click="$emit('confirm')">确定</el-button>
+      @click="$emit('confirm')">{{ confirmText }}</el-button>
     <el-button
       v-if="$listeners.cancel"
       type="default"
       icon="el-icon-circle-close"
-      @click="$emit('cancel')">取消</el-button>
+      @click="$emit('cancel')">{{ cancelText }}</el-button>
   </template>
   <template v-for="(value, name) in $scopedSlots" #[name]="data">
     <slot :name="name" v-bind="data" />
@@ -39,7 +39,9 @@ export default {
     margin: { type: String, default: undefined },
     bodyPadding: { type: String, default: undefined },
     bodyMinHeight: { type: String, default: undefined },
-    allowDrag: { type: Boolean, default: true }
+    allowDrag: { type: Boolean, default: true },
+    confirmText: { type: String, default: '确定' },
+    cancelText: { type: String, default: '取消' }
   },
   data () {
     return {

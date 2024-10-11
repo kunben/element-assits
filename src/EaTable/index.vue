@@ -189,6 +189,11 @@ export default {
       handler (n) {
         this.columnWatcher(n)
       }
+    },
+    data: {
+      handler () {
+        this.handleRefresh()
+      }
     }
   },
   mounted () {
