@@ -197,6 +197,24 @@ $--color-border-extralight: #F2F6FC !default;
   }
 }
 
+.el-dialog.ea-modal {
+  &.is-closing {
+    margin: 0 0 50px !important;
+  }
+  &.is-fullscreen {
+    border-radius: 0;
+    margin: 0;
+  }
+  .el-dialog__header {
+    color: #555;
+    font-size: 18px;
+    .el-dialog__title {
+      color: inherit;
+      font-size: inherit;
+    }
+  }
+}
+
 .ea-button-tooltip + .ea-button-tooltip {
   margin-left: 10px;
 }
@@ -258,24 +276,6 @@ td {
         background-color: $--color-danger;
         i { color: #fff }
       }
-    }
-  }
-}
-
-.el-dialog.ea-modal {
-  &.is-closing {
-    margin: 0 0 50px !important;
-  }
-  &.is-fullscreen {
-    border-radius: 0;
-    margin: 0;
-  }
-  .el-dialog__header {
-    color: #555;
-    font-size: 18px;
-    .el-dialog__title {
-      color: inherit;
-      font-size: inherit;
     }
   }
 }
@@ -343,10 +343,6 @@ td {
   }
 }
 
-.ea-number .el-input__inner {
-  text-align: left;
-}
-
 .ea-list {
   .loading-text {
     color: $--color-secondary-text;
@@ -397,6 +393,67 @@ td {
       }
     }
   }
+}
+
+.ea-number .el-input__inner {
+  text-align: left;
+}
+
+.ea-data-tree-body {
+  &.ea-data-tree-body__border {
+    border: 1px solid $--color-border-light;
+  }
+}
+
+.ea-data-tree-row {
+  height: 32px;
+  line-height: 32px;
+  display: flex;
+  justify-content: flex-start;
+  position: relative;
+  padding-left: 20px;
+  &.odd { background-color: #F8F8F8; }
+  &:hover { background-color: #EBEEF5; }
+  .ea-data-tree-cell {
+    flex: 0 0 auto;
+    height: 100%;
+    font-size: 14px;
+    box-sizing: border-box;
+    padding: 0 8px;
+    position: relative;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    word-break: break-all;
+    & > .ea-data-tree-checkbox {
+      position: absolute;
+      top: 0;
+    }
+  }
+  .ea-data-tree-icon {
+    cursor: pointer;
+    position: absolute;
+    height: 100%;
+    color: #CCC;
+    display: flex;
+    align-items: center;
+    z-index: 1;
+    &:hover {
+      color: #333;
+    }
+  }
+}
+
+.ea-data-tree-checkbox .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+  background-color: $--color-secondary-text;
+  border-color: $--color-secondary-text;
+}
+
+.ea-data-tree-empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: $--color-secondary-text;
 }
 
 .vjs-table {
@@ -597,63 +654,6 @@ td {
 .ea-icon-conf:before { content: "\e600" }
 .ea-icon-more:before { content: "\e60e" }
 .eafont.ea-icon-conf.has { color: #000 }
-
-.ea-data-tree-body {
-  &.ea-data-tree-body__border {
-    border: 1px solid $--color-border-light;
-  }
-}
-
-.ea-data-tree-row {
-  height: 32px;
-  line-height: 32px;
-  display: flex;
-  justify-content: flex-start;
-  position: relative;
-  padding-left: 20px;
-  &.odd { background-color: #F8F8F8; }
-  &:hover { background-color: #EBEEF5; }
-  .ea-data-tree-cell {
-    flex: 0 0 auto;
-    height: 100%;
-    font-size: 14px;
-    box-sizing: border-box;
-    padding: 0 8px;
-    position: relative;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    word-break: break-all;
-    & > .ea-data-tree-checkbox {
-      position: absolute;
-      top: 0;
-    }
-  }
-  .ea-data-tree-icon {
-    cursor: pointer;
-    position: absolute;
-    height: 100%;
-    color: #CCC;
-    display: flex;
-    align-items: center;
-    z-index: 1;
-    &:hover {
-      color: #333;
-    }
-  }
-}
-
-.ea-data-tree-checkbox .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-  background-color: $--color-secondary-text;
-  border-color: $--color-secondary-text;
-}
-
-.ea-data-tree-empty {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: $--color-secondary-text;
-}
 
 .file-upload-dialog {
   // 拖拽区域铺满

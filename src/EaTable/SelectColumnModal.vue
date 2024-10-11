@@ -26,7 +26,7 @@ export default {
     rawColumn: { type: Array, required: true }
   },
   data () {
-    const { size } = this.$ELEMENT || { size: 'small' }
+    const size = this.$ELEMENT && this.$ELEMENT.size || 'small'
     const treeData = this.column
     const defaultCheckedKeys = this.rawColumn.filter(m => m.show !== false).map(m => m.prop)
     return {

@@ -1,4 +1,7 @@
 import { isArray, isFunction, isBoolean, isPlainObject, omit } from 'lodash-es'
+import { getBridge } from './bridge'
+import { Message } from 'element-ui'
+import SpareVue from 'vue'
 
 // 随机 key
 export const uuid = (max = 16) => {
@@ -60,8 +63,7 @@ export async function asyncLoad (_importFunc, ...options) {
   }
   asyncLoad.prevHashes.push(theHash)
   // dependence
-  const { default: Vue } = await import('vue')
-  const { Message } = await import('element-ui')
+  const Vue = getBridge() || SpareVue
   // before load
   const msg = Message({
     message: '正在载入组件，请稍后...',
@@ -102,7 +104,7 @@ export async function asyncLoad (_importFunc, ...options) {
   // create component
   const TheClass = Vue.extend({
     name: 'AsyncContainer',
-    parent: this, // bind context. if it exists
+    parent: this instanceof Vue ? this : undefined, // bind context. if it exists
     mounted () {
       const end = () => {
         document.body.removeChild(this.$el)

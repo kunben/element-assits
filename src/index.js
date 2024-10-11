@@ -18,30 +18,35 @@ import EaFileUpload from './EaFileUpload'
 import EaJsonSchema from './EaJsonSchema'
 import EaDataTree from './EaDataTree'
 import { uuid, recursive, recursiveFilter, asyncLoad, renderCell } from './util'
+import { setBridge } from './bridge'
 
-const install = Vue => {
-  // 注册组件
-  Vue.component('EaForm', EaForm)
-  Vue.component('EaTable', EaTable)
-  Vue.component('EaDataTable', EaDataTable)
-  Vue.component('EaSelect', EaSelect)
-  Vue.component('EaVirtualScroll', EaVirtualScroll)
-  Vue.component('EaPopover', EaPopover)
-  Vue.component('EaModal', EaModal)
-  Vue.component('EaButton', EaButton)
-  Vue.component('EaSplit', EaSplit)
-  Vue.component('EaTree', EaTree)
-  Vue.component('EaList', EaList)
-  Vue.component('EaDesc', EaDesc)
-  Vue.component('EaScrollbar', EaScrollbar)
-  Vue.component('EaNumber', EaNumber)
-  Vue.component('EaRadio', EaRadio)
-  Vue.component('EaCheckbox', EaCheckbox)
-  Vue.component('EaFileUpload', EaFileUpload)
-  Vue.component('EaJsonSchema', EaJsonSchema)
-  Vue.component('EaDataTree', EaDataTree)
+const install = (Vue, options) => {
+  if (!options || (options.components !== false)) {
+    // 注册组件
+    Vue.component('EaForm', EaForm)
+    Vue.component('EaTable', EaTable)
+    Vue.component('EaDataTable', EaDataTable)
+    Vue.component('EaSelect', EaSelect)
+    Vue.component('EaVirtualScroll', EaVirtualScroll)
+    Vue.component('EaPopover', EaPopover)
+    Vue.component('EaModal', EaModal)
+    Vue.component('EaButton', EaButton)
+    Vue.component('EaSplit', EaSplit)
+    Vue.component('EaTree', EaTree)
+    Vue.component('EaList', EaList)
+    Vue.component('EaDesc', EaDesc)
+    Vue.component('EaScrollbar', EaScrollbar)
+    Vue.component('EaNumber', EaNumber)
+    Vue.component('EaRadio', EaRadio)
+    Vue.component('EaCheckbox', EaCheckbox)
+    Vue.component('EaFileUpload', EaFileUpload)
+    Vue.component('EaJsonSchema', EaJsonSchema)
+    Vue.component('EaDataTree', EaDataTree)
+  }
   // 挂载原型方法
   Vue.prototype.$asyncLoad = asyncLoad
+  // 共享 Vue
+  setBridge(Vue)
 }
 
 export {

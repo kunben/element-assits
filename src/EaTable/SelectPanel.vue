@@ -44,7 +44,7 @@ export default {
     },
     size: {
       type: String,
-      default: 'small'
+      default: undefined
     },
     notActive: {
       type: Boolean,
@@ -54,7 +54,7 @@ export default {
   data () {
     const cloneOptions = cloneDeep(this.options)
     cloneOptions.forEach(m => m.show = false)
-    const { size: endSize } = { size: this.size } || this.$ELEMENT
+    const endSize = this.size || (this.$ELEMENT && this.$ELEMENT.size) || 'small'
     return {
       endSize,
       cloneOptions
