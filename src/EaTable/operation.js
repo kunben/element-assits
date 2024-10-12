@@ -22,8 +22,8 @@ export class AutoFitOpt {
   add ({ $index }, nodes) {
     if (this.isTrigger) return void(0)
     this.o[$index] = nodes.map(m => {
-      const text = get(m, 'componentOptions.children[0].text')
-      return Math.max(text.length, 2) * 14 + 14 + 9
+      const text = get(m, 'componentInstance.$el.innerText')
+      return Math.max(text && text.length, 2) * 14 + 14 + 9
     }).reduce((acc, m) => acc + m, 0) + 14*3 + 20
     if (this.o.every(Boolean)) {
       this.isTrigger = true
@@ -49,12 +49,14 @@ export function checkOperation (maxNumOfBtn = 3) {
       data () {
         const usedNodes = flatSlots.bind(that)(this.scope).filter(m => m.tag)
         const children = usedNodes.slice(0, maxNumOfBtn - 1)
-        that.fitOpt?.add(this.scope, children)
         const moreChildren = usedNodes.slice(maxNumOfBtn - 1)
         return {
           children,
           moreChildren
         }
+      },
+      mounted () {
+        that.fitOpt?.add(this.scope, this.children)
       },
       render (h) {
         return h('div', [
