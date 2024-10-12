@@ -98,8 +98,8 @@
 import SearchBar from './SearchBar.vue'
 import { columnMenu, middleRender } from './theader'
 import { uuid } from '../util'
-import { omit, isArray, isPlainObject, cloneDeep } from 'lodash-es'
-import { innerToThe, checkOperation } from './operation'
+import { get, omit, isArray, isPlainObject, cloneDeep } from 'lodash-es'
+import { AutoFitOpt, innerToThe, checkOperation } from './operation'
 export default {
   components: { SearchBar },
   inheritAttrs: false,
@@ -123,6 +123,7 @@ export default {
       pageSize: 10,
       total: 0
     }
+    const optWidth = get(this.innerOperation, 'width') || 180
     return {
       uuid,
       rawColumn: [],
@@ -133,7 +134,9 @@ export default {
       page,
       tableData: [],
       searchForm: {},
-      cellKey: Date.now()
+      cellKey: Date.now(),
+      fitOpt: undefined,
+      optWidth
     }
   },
   computed: {
@@ -153,7 +156,7 @@ export default {
       return { show, attrs }
     },
     theOperation () {
-      let show, attrs = { width: 180 }, render
+      let show, render, attrs = { width: this.optWidth }
       if (this.innerOperation === undefined) {
         // 没有显示设置operation (是否显示操作栏由插槽决定)
         const { showAction, collapseBtnRender } = checkOperation.bind(this)()
@@ -169,7 +172,8 @@ export default {
         const _show = this.innerOperation.show
         show = _show === undefined ? showAction : Boolean(_show)
         render = collapseBtnRender
-        Object.assign(attrs, omit(this.innerOperation, ['show', 'maxNumOfBtn']))
+        const excludesFields = ['show', 'maxNumOfBtn', 'enableAutoWidth', 'width']
+        Object.assign(attrs, omit(this.innerOperation, excludesFields))
       }
       return { show, render, attrs }
     },
@@ -193,6 +197,14 @@ export default {
     data: {
       handler () {
         this.handleRefresh()
+      }
+    },
+    tableData: {
+      handler () {
+        if (!this.innerOperation?.enableAutoWidth) return void(0)
+        this.fitOpt = new AutoFitOpt(this.tableData, num => {
+          this.optWidth = num
+        })
       }
     }
   },

@@ -1,6 +1,6 @@
 // 根据插槽决定是否显示操作栏，以及如何显示
 
-import { omit, isPlainObject } from 'lodash-es'
+import { get, omit, isPlainObject } from 'lodash-es'
 
 export function innerToThe (inner) {
   let show, attrs
@@ -11,6 +11,25 @@ export function innerToThe (inner) {
     attrs = omit(inner, 'show')
   }
   return { show, attrs }
+}
+
+export class AutoFitOpt {
+  constructor (list, callback) {
+    this.o = new Array(list.length).fill(0)
+    this.isTrigger = false
+    this.callback = callback
+  }
+  add ({ $index }, nodes) {
+    if (this.isTrigger) return void(0)
+    this.o[$index] = nodes.map(m => {
+      const text = get(m, 'componentOptions.children[0].text')
+      return Math.max(text.length, 2) * 14 + 14 + 9
+    }).reduce((acc, m) => acc + m, 0) + 14*3 + 20
+    if (this.o.every(Boolean)) {
+      this.isTrigger = true
+      this.callback(Math.max(...this.o))
+    }
+  }
 }
 
 // 检查操作栏（maxNumOfBtn，按钮最大数量，小于等于0，不限制）
@@ -30,6 +49,7 @@ export function checkOperation (maxNumOfBtn = 3) {
       data () {
         const usedNodes = flatSlots.bind(that)(this.scope).filter(m => m.tag)
         const children = usedNodes.slice(0, maxNumOfBtn - 1)
+        that.fitOpt?.add(this.scope, children)
         const moreChildren = usedNodes.slice(maxNumOfBtn - 1)
         return {
           children,
