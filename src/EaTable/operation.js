@@ -86,11 +86,15 @@ export function checkOperation (maxNumOfBtn = 3) {
 }
 
 function flatSlots (scope) {
+  // vue 2.6 开始，$scopedSlots API 有变化
+  // https://v2.cn.vuejs.org/v2/api/#vm-scopedSlots
+  const version = this.$root.constructor.version
+  const v2 = (version.match(/\.(\d+)\./) || [])[1]
   let a = this.$slots['row-menu']
   let b = this.$scopedSlots['row-menu']
   a = Array.isArray(a) ? a : (a && a()) || []
   b = Array.isArray(b) ? b : (b && b(scope)) || []
-  return [...a, ...b]
+  return v2 >= 6 ? b : [...a, ...b]
 }
 
 let popClose = undefined

@@ -62,7 +62,6 @@ function addResizer (el, position) {
   const resizer = document.createElement('div')
   resizer.style.position = 'absolute'
   setResizerSelf(resizer, position)
-  el.style.userSelect = 'none'
   el.appendChild(resizer)
   // 状态 - 弹窗初始位置
   let initX = el.offsetLeft
