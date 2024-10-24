@@ -351,6 +351,9 @@ export default {
         this.tableData = data || []
         this.page.total = total || 0
         this.asyncPageCurrent = current || this.page.current
+        if (isArray(this.tableData) && !this.tableData.length && this.page.current > 1) {
+          this.handleCurrentChange(this.page.current - 1)
+        }
       }).catch(err => {
         this.errMsg = err && err.message
       }).finally(() => {
