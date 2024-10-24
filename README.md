@@ -215,7 +215,7 @@ el-scrollbar 衍生，优化样式
 | getChecked | 获取选中项 | 无 |
 | setChecked | 设置选中项 | 选中项schema路径列表 |
 | getSchemaPath | 获取schema路径 | __state.prefix |
-| getDataPath | 获取data路径 | __state.prefix |
+| getDataPath | 获取data路径 | __state.prefix, callback |
 
 
 ### 下拉框 EaSelect

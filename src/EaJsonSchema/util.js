@@ -181,10 +181,10 @@ export function prefixToRealPath (prefix, rawList) {
   return realPath
 }
 // prefix to dataPath
-export function prefixToDataPath (prefix, rawList) {
+export function prefixToDataPath (prefix, rawList, callback = e => e) {
   return prefix.split('.').reduce((acc, item) => {
     const found = rawList.find(m => m.__state.uuid === item)
-    acc.push(found.prop)
+    acc.push(callback(found.prop, found))
     return acc
   }, [])
 }

@@ -397,8 +397,8 @@ export default {
       return prefixToRealPath(prefix, this.rawList)
     },
     // expose 6 转换prefix为真实的data路径
-    getDataPath (prefix) {
-      return prefixToDataPath(prefix, this.rawList)
+    getDataPath (prefix, callback) {
+      return prefixToDataPath(prefix, this.rawList, callback)
     }
   }
 }
