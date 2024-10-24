@@ -117,10 +117,10 @@ export default {
       const __on = {}
       if (isFunction(item.on)) Object.assign(__on, item.on(...params))
       else if (isPlainObject(item.on)) Object.assign(__on, item.on)
-      const __bind = { clearable: true, placeholder: item.label }
-      Object.assign(__bind, isFunction(item.bind) ? item.bind(...params) : item.bind)
       const __label = isFunction(item.label) ? item.label(...params) : item.label
       const __labelTooltip = isFunction(item.labelTooltip) ? item.labelTooltip(...params) : item.labelTooltip
+      const __bind = { clearable: true, placeholder: __label }
+      Object.assign(__bind, isFunction(item.bind) ? item.bind(...params) : item.bind)
       return Object.assign({}, item, __item, {
         __key,
         __label,
