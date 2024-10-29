@@ -85,7 +85,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 #### events
 | 事件名  | 说明 | 参数 |
 |:---|:---|:---|
-|search-reset| 搜索重置事件|callback 重置表单并搜索（不监听时默认行为） <br> reset 仅重置表单<br> search 仅搜索 |
+|search-reset| 搜索重置事件|params.callback 重置表单并搜索（不监听时默认行为） <br> params.reset 仅重置表单<br> params.search 仅搜索 |
 #### column-attributes
 | 属性名 | 类型 | 默认值 | 说明 |
 |:---|:---|:---|:---|

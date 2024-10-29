@@ -376,7 +376,7 @@ export default {
     // 表格重置
     handleReset ({ callback, reset, search }) {
       if (this.$listeners['search-reset']) {
-        this.$emit('search-reset', callback, reset, search)
+        this.$emit('search-reset', { callback, reset, search })
       } else {
         callback && callback()
       }
