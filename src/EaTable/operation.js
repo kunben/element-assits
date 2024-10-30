@@ -19,12 +19,12 @@ export class AutoFitOpt {
     this.isTrigger = false
     this.callback = callback
   }
-  add ({ $index }, nodes) {
+  add ({ $index }, nodes, hasMore) {
     if (this.isTrigger) return void(0)
     this.o[$index] = nodes.map(m => {
-      const text = get(m, 'componentInstance.$el.innerText')
-      return Math.max(text && text.length, 2) * 14 + 14 + 9
-    }).reduce((acc, m) => acc + m, 0) + 14*3 + 20
+      const el = get(m, 'componentInstance.$el')
+      return Math.max((el && el.offsetWidth || 0) + 10, 50)
+    }).reduce((acc, m) => acc + m, 0) + 20 + (hasMore ? 50 : 0)
     if (this.o.every(Boolean)) {
       this.isTrigger = true
       this.callback(Math.max(...this.o))
@@ -42,21 +42,21 @@ export function checkOperation (maxNumOfBtn = 3) {
     // 有关按钮限制
     // 1. 如果不能大于0，则返回空渲染函数，将会使用插槽，渲染全部按钮
     if (!(maxNumOfBtn > 0)) throw new Error()
-    if (maxNumOfBtn === nodes.length) throw new Error()
     // 2. 大于 0 时，限制按钮数量
     collapseBtnRender = {
       props: { scope: { type: Object, default: undefined } },
       data () {
         const usedNodes = flatSlots.bind(that)(this.scope).filter(m => m.tag)
-        const children = usedNodes.slice(0, maxNumOfBtn - 1)
-        const moreChildren = usedNodes.slice(maxNumOfBtn - 1)
+        const start = usedNodes.length > maxNumOfBtn ? (maxNumOfBtn - 1) : maxNumOfBtn
+        const children = usedNodes.slice(0, start)
+        const moreChildren = usedNodes.slice(start)
         return {
           children,
           moreChildren
         }
       },
       mounted () {
-        that.fitOpt?.add(this.scope, this.children)
+        that.fitOpt?.add(this.scope, this.children, this.moreChildren.length)
       },
       render (h) {
         return h('div', [

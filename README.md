@@ -178,7 +178,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 ### 开关 EaSwitch
 额外支 size="mini" 尺寸
 
-### 滚动容器 EaScroll
+### 滚动容器 EaScrollbar
 el-scrollbar 衍生，优化样式
 #### props
 | 属性名 | 说明 | 类型 | 默认值 |
