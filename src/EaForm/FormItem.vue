@@ -1,5 +1,6 @@
 <template>
 <el-form-item
+  ref="ElFormItem"
   :label="column.__label"
   :prop="column.prop"
   :rules="column.__rules"
@@ -18,7 +19,7 @@
     v-model="top.model[column.prop]"
     v-bind="column.__bind"
     v-on="column.__on"
-    @change="top.$emit('change', top.model)"
+    @change="top.$emit('change', top.model);$refs.ElFormItem.$emit('el.form.change');"
     @keyup.native.enter="top.$emit('enter')" />
 </el-form-item>
 </template>
