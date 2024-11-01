@@ -55,9 +55,14 @@ export const findParentComponent = (ins, pName) => {
 
 // 异步载入组件
 export async function asyncLoad (_importFunc, ...options) {
+  const importFunc = (
+    isFunction(_importFunc)
+    ? _importFunc
+    : () => Promise.resolve({ default: _importFunc })
+  )
   // hash
   asyncLoad.prevHashes = asyncLoad.prevHashes || []
-  const theHash = Function.prototype.toString.call(_importFunc)
+  const theHash = Function.prototype.toString.call(importFunc)
   if (asyncLoad.prevHashes.includes(theHash)) {
     return void(0)
   }
@@ -72,11 +77,6 @@ export async function asyncLoad (_importFunc, ...options) {
     type: 'info',
     duration: 0
   })
-  const importFunc = (
-    isFunction(_importFunc)
-    ? _importFunc
-    : () => Promise.resolve({ default: _importFunc })
-  )
   // async load
   const { default: asyncComponent } = await importFunc().catch(() => {
     msg.type = 'error'

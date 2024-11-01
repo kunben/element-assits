@@ -3,10 +3,14 @@
   :visible.sync="visible"
   :close-on-click-modal="false"
   :title="title"
+  v-bind="$attrs"
   custom-class="file-upload-dialog"
   width="720px"
-  append-to-body>
-  <slot name="title" />
+  append-to-body
+  v-on="$listeners">
+  <template #title>
+    <slot name="title" />
+  </template>
   <el-upload
     ref="upload"
     drag
@@ -20,7 +24,9 @@
     :on-exceed="handleExceed"
     :on-error="httpError"
     :on-success="httpSuccess"
-    :http-request="httpRequestMiddleware">
+    :http-request="httpRequestMiddleware"
+    v-bind="innerUploadBind"
+    v-on="innerUploadOn">
     <i class="el-icon-upload" />
     <div v-if="$scopedSlots.content"><slot name="content" /></div>
     <div v-else class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
@@ -46,6 +52,7 @@
 
 <script>
 export default {
+  inheritAttrs: false,
   props: {
     title: { type: String, default: '文件上传' },
     multiple: { type: Boolean, default: false },
@@ -54,7 +61,9 @@ export default {
     maxSize: { type: Number, default: 100 },
     httpRequest: { type: Function, required: true },
     httpTemplate: { type: Function, default: undefined },
-    httpFinally: { type: Function, default: undefined }
+    httpFinally: { type: Function, default: undefined },
+    innerUploadBind: { type: Object, default: undefined },
+    innerUploadOn: { type: Object, default: undefined }
   },
   data () {
     return {

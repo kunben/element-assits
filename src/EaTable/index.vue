@@ -12,8 +12,8 @@
       <slot name="top-menu" />
     </SearchBar>
   </slot>
-  <slot name="table" :data="tableData">
-    <div v-loading="loading === undefined ? innerLoading : loading">
+  <div v-loading="loading === undefined ? innerLoading : loading">
+    <slot name="table" :data="tableData">
       <el-table
         ref="table"
         :class="{'is-dense': dense}"
@@ -72,8 +72,8 @@
           <slot name="empty" />
         </template>
       </el-table>
-    </div>
-  </slot>
+    </slot>
+  </div>
   <slot name="footer">
     <div class="ea-table__footer">
       <div><slot name="bottom-menu" /></div>
@@ -342,11 +342,11 @@ export default {
         this.tableData = data
         this.page.total = this.data.length
         this.asyncPageCurrent = this.page.current
-        return void(0)
+        return Promise.resolve()
       }
       this.innerLoading = true
       this.errMsg = undefined
-      this.pageRequest(this.page, this.theForm.attrs.model).then(res => {
+      return this.pageRequest(this.page, this.theForm.attrs.model).then(res => {
         const { data, total, current } = res || {}
         this.tableData = data || []
         this.page.total = total || 0
@@ -367,11 +367,11 @@ export default {
     // 表格搜索
     handleSearch () {
       this.page.current = 1
-      this.getList()
+      return this.getList()
     },
     // 表格刷新
     handleRefresh () {
-      this.getList()
+      return this.getList()
     },
     // 表格重置
     handleReset ({ callback, reset, search }) {

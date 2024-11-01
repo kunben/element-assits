@@ -335,3 +335,5 @@ el-scrollbar 衍生，优化样式
 |httpRequest|文件上传|Function|必填|
 |httpTemplate|模板下载|Function|undefined|
 |httpFinally|请求完成|Function|undefined|
+|innerUploadBind|绑定至el-upload|Object|undefined|
+|innerUploadOn|绑定至el-upload|Object|undefined|
