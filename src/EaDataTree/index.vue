@@ -10,6 +10,7 @@
       v-show="Object.values(item.__state.show).every(Boolean)"
       slot="item"
       slot-scope="{item, index}"
+      :style="{height: itemSize + 'px', lineHeight: itemSize + 'px'}"
       :class="{'ea-data-tree-row': 1, 'odd': stripe && index % 2}">
       <i
         v-if="item.__state.hasChildren"
@@ -38,6 +39,7 @@
           <span>{{ item[endProps.label] }}</span>
         </slot>
       </span>
+      <slot name="row" :item="item" :index="index" />
     </div>
   </EaVirtualScroll>
   <div
@@ -154,12 +156,11 @@ export default {
 }
 
 .ea-data-tree-row {
-  height: 32px;
-  line-height: 32px;
   display: flex;
   justify-content: flex-start;
   position: relative;
   padding-left: 20px;
+  box-sizing: border-box;
   &.odd { background-color: #F8F8F8; }
   &:hover { background-color: #EBEEF5; }
   .ea-data-tree-cell {

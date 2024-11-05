@@ -272,11 +272,18 @@ el-scrollbar 衍生，优化样式
 |checkbox|是否显示多选框|Boolean|false|
 |disableCheckbox|是否禁止多选框|Boolean|false|
 |noDataText|无数据时的文本|String|暂无数据|
+|border|是否显示边框|Boolean|false|
+|stripe|是否需要斑马纹|Boolean|false|
 #### methods
 | 方法名 | 说明 | 参数 |
 |:---|:---|:---|
 | getChecked | 获取选中项 | 无 |
 | setChecked | 设置选中项 | (树)数据（以`props.value`匹配） |
+#### slots
+| 插槽名  | 默认值 | 说明 |
+|:---|:---|:---|
+| default | 单项（行） | 自定义行内容，跟随枝干 |
+| row | 单项（行） | 自定义行内容，脱离枝干 |
 
 ### 列表 EaList
 #### props
