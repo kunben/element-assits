@@ -412,7 +412,7 @@ export default {
   // 表格头部样式美化
   .el-table {
     th {
-      background-color: $--color-border-extralight;
+      background-color: $--background-color-base;
       color: $--color-primary-text;
       .cell {
         min-height: 30px;
@@ -430,7 +430,7 @@ export default {
     }
     &.el-table--small {
       td, th {
-        height: 48px;
+        height: 50px;
       }
     }
     &.is-dense {
