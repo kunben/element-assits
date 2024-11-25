@@ -6,9 +6,22 @@
     :loading="loading"
     :filter-method="filterMethod"
     :popper-class="'ea-select-popover' + (popperClass ? (' ' + popperClass) : '')"
+    :multiple="multiple"
     :no-data-text="originalOptions.length ? noMatchText : noDataText"
+    :collapse-tags="collapseTags === undefined ? showCheckAll : collapseTags"
     v-bind="$attrs"
     v-on="{...$listeners, input: handleInput, 'visible-change': handleVisibleChange}">
+    <template #prefix>
+      <slot name="prefix" />
+    </template>
+    <template #empty>
+      <slot name="empty" />
+    </template>
+    <div v-if="multiple && showCheckAll" class="tools">
+      <el-button type="text" @click="handleSelectAll(1)">全选</el-button>
+      <el-button type="text" @click="handleSelectAll(0)">取消全选</el-button>
+    </div>
+    <slot name="before-option" />
     <VirtualScroll ref="vs" :options="options" :item-size="34">
       <template #item="{item}">
         <el-option
@@ -32,6 +45,7 @@
         </el-option>
       </template>
     </VirtualScroll>
+    <slot name="after-option" />
   </el-select>
   <i v-if="loading" class="el-icon-loading async-loading" />
 </div>
@@ -53,12 +67,13 @@ export default {
     itemMaxWidth: { type: [Number, Array], default: 150 },
     popperClass: { type: String, default: undefined },
     noDataText: { type: String, default: '无数据' },
-    noMatchText: { type: String, default: '无匹配数据' }
+    noMatchText: { type: String, default: '无匹配数据' },
+    multiple: { type: Boolean, default: false },
+    showCheckAll: { type: Boolean, default: false },
+    collapseTags: { type: Boolean, default: undefined }
   },
   data () {
     return {
-      checkAll: false,
-      indeterminate: false,
       loading: false,
       options: []
     }
@@ -152,6 +167,9 @@ export default {
           this.options = cloneDeep(this.originalOptions)
         }, 280)
       }
+    },
+    handleSelectAll (bool) {
+      this.$emit('input', bool ? this.options.map(m => m[this.endProps.value]) : [])
     }
   }
 }
@@ -185,6 +203,10 @@ export default {
       color: #8492a6;
       margin-left: 8px;
     }
+  }
+  .tools {
+    padding: 0 20px;
+    margin-bottom: -5px;
   }
 }
 </style>

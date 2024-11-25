@@ -8,6 +8,8 @@ export const searchColumn = [
     bind: form => ({
       props: { desc: 'desc' },
       filterable: true,
+      showCheckAll: true,
+      multiple: true,
       data: new Array(1000).fill(0).map((m, i) => ({
         label: '某某银行' + i,
         value: i,

@@ -232,6 +232,14 @@ el-scrollbar 衍生，优化样式
 |props|配置选项|Object|undefined|
 |itemMaxWidth|单项[label,value]最大宽度|Number \| Array|150|
 |popperClass|弹出框自定义css类|String|undefined|
+|showCheckAll|多选时是否显示全选按钮|Boolean|false|
+#### slots
+| 插槽名  | 默认值 | 说明 |
+|:---|:---|:---|
+| prefix | 无 | 输入框前缀 |
+| empty | 无 | 空数据 |
+| before-option | 无 | 选项之前 |
+| after-option | 无 | 选项之后 |
 
 ### 分割面板 EaSplit
 分割面板，允许拖拽
