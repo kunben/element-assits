@@ -54,6 +54,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 | &nbsp;&nbsp;&nbsp;&nbsp;.referenceItemWidth|单项参考宽度|Number|180|
 | &nbsp;&nbsp;&nbsp;&nbsp;.maxItemWidth|单项最大宽度|Number|240|
 | &nbsp;&nbsp;&nbsp;&nbsp;.loading|控制更多按钮加载状态|Boolean|false|
+| &nbsp;&nbsp;&nbsp;&nbsp;.defaultShowAll|搜索条件是否默认展开|Boolean|false|
 | &nbsp;&nbsp;&nbsp;&nbsp;.column[].exclusiveDoubleCells|允许某一项独占两格|Boolean|false|
 | innerSelection | 内部 - 选中列 | Boolean \| Object | undefined|
 | &nbsp;&nbsp;&nbsp;&nbsp;.data | 选中的行 | Array | undefined |

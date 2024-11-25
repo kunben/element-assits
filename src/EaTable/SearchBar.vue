@@ -61,6 +61,10 @@ export default {
     maxItemWidth: {
       type: Number,
       default: 240
+    },
+    defaultShowAll: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -69,11 +73,12 @@ export default {
         ? this.limit
         : 2
     )
+    const showAll = this.defaultShowAll
     return {
       allColumn: [],
       rawColumn: [],
       defaultCount,
-      showAll: false
+      showAll
     }
   },
   computed: {
@@ -84,7 +89,11 @@ export default {
       return (
         this.loading
           ? 'el-icon-loading'
-          : this.showAll ? 'el-icon-arrow-up' : 'el-icon-more'
+          : (
+            this.showAll && (this.allLength > this.defaultCount)
+              ? 'el-icon-arrow-up'
+              : 'el-icon-more'
+          )
       )
     },
     moreTooltip () {
