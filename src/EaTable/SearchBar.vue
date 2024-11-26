@@ -78,7 +78,8 @@ export default {
       allColumn: [],
       rawColumn: [],
       defaultCount,
-      showAll
+      showAll,
+      isInit: false
     }
   },
   computed: {
@@ -191,6 +192,13 @@ export default {
       }
 
       this.resetSearchCount()
+
+      if (!this.isInit) {
+        this.isInit = true
+        this.$nextTick(() => {
+          this.$emit('init')
+        })
+      }
     },
     getWidth (el) {
       if (!(el instanceof HTMLElement)) return void(0)

@@ -165,7 +165,7 @@ export function renderCell (promise, props, callback) {
     props = defaultProps
   }
 
-  return (h, { column, value, that, hideRefresh }) => {
+  return (h, { row, column, value, that, hideRefresh }) => {
     if (!column.__mapping && !column.__fetch) {
       column.__fetch = promise.then(list => {
         const __mapping = {}
@@ -179,8 +179,8 @@ export function renderCell (promise, props, callback) {
       const __item = column.__mapping[value]
       const __label = __item && __item[props.label]
       if (callback) return callback(h, {
+        row, column, value, that, hideRefresh,
         label: __label,
-        value,
         item: __item
       })
       else if (props.tag && __label) {

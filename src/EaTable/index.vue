@@ -3,6 +3,7 @@
   <slot name="search">
     <SearchBar
       v-if="theForm.show"
+      ref="shbr"
       v-bind="theForm.attrs"
       :column="theForm.attrs.column"
       :model="theForm.attrs.model"
@@ -136,7 +137,8 @@ export default {
       searchForm: {},
       cellKey: Date.now(),
       fitOpt: undefined,
-      optWidth
+      optWidth,
+      isInit: false
     }
   },
   computed: {
@@ -209,7 +211,14 @@ export default {
     }
   },
   mounted () {
-    this.initRequest && this.handleSearch()
+    const init = () => {
+      this.initRequest && this.handleSearch()
+    }
+    if (this.$refs.shbr) {
+      this.$refs.shbr.$once('init', init)
+    } else {
+      init()
+    }
   },
   methods: {
     middleRender,
