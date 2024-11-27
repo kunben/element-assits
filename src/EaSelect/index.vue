@@ -8,7 +8,8 @@
     :popper-class="'ea-select-popover' + (popperClass ? (' ' + popperClass) : '')"
     :multiple="multiple"
     :no-data-text="originalOptions.length ? noMatchText : noDataText"
-    :collapse-tags="collapseTags === undefined ? showCheckAll : collapseTags"
+    :collapse-tags="isCollapseTags"
+    :class="{'is-collapse-tags': isCollapseTags }"
     v-bind="$attrs"
     v-on="{...$listeners, input: handleInput, 'visible-change': handleVisibleChange}">
     <template #prefix>
@@ -88,6 +89,9 @@ export default {
           ? [this.itemMaxWidth, this.itemMaxWidth]
           : this.itemMaxWidth
       )
+    },
+    isCollapseTags () {
+      return this.collapseTags === undefined ? this.showCheckAll : this.collapseTags
     }
   },
   watch: {
@@ -187,6 +191,9 @@ export default {
     top: 10px;
     right: 28px;
     color: #999;
+  }
+  .is-collapse-tags .el-select__tags > span > .el-tag:first-child {
+    max-width: calc(100% - 80px);
   }
 }
 .ea-select-popover {
