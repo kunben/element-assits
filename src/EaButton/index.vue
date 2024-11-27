@@ -5,10 +5,10 @@
   :open-delay="disabled ? 0 : 700"
   placement="top"
   effect="light"
-  :class="{'ea-button-tooltip': 1, 'text': binds.type === 'text'}">
+  :class="{'ea-button-tooltip': 1, 'text': binds.value?.type === 'text'}">
   <span>
     <el-button
-      v-bind="binds"
+      v-bind="binds.value"
       :disabled="disabled"
       :class="{
         'ea-button': 1,
@@ -16,13 +16,13 @@
         [customType || '']: 1
       }"
       v-on="$listeners">
-      <slot name="default">{{ text }}</slot>
+      <slot name="default">{{ binds.text }}</slot>
     </el-button>
   </span>
 </el-tooltip>
 <el-button
   v-else
-  v-bind="binds"
+  v-bind="binds.value"
   :disabled="disabled"
   :class="{
     'ea-button': 1,
@@ -30,7 +30,7 @@
     [customType || '']: 1
   }"
   v-on="$listeners">
-  <slot name="default">{{ text }}</slot>
+  <slot name="default">{{ binds.text }}</slot>
 </el-button>
 </template>
 
@@ -44,30 +44,29 @@ export default {
     type: { type: String, default: undefined },
     icon: { type: String, default: undefined }
   },
-  data () {
-    const parseFeat = () => {
-      const arr = typeof this.feat === 'string' ? this.feat.split('|') : []
-      return {
-        type: this.type || arr[0],
-        icon: this.icon || arr[1],
-        text: arr[2]
+  computed: {
+    binds () {
+      const parseFeat = () => {
+        const arr = typeof this.feat === 'string' ? this.feat.split('|') : []
+        return {
+          type: this.type || arr[0],
+          icon: this.icon || arr[1],
+          text: arr[2]
+        }
       }
-    }
-    const { type, icon, text } = parseFeat()
-    const binds = Object.assign(
-      this.customType ? {
-        plain: true,
-        size: 'mini',
-        type: 'primary'
-      } : {
-        type,
-        icon
-      },
-      this.$attrs
-    )
-    return {
-      binds,
-      text
+      const { type, icon, text } = parseFeat()
+      const value = Object.assign(
+        this.customType ? {
+          plain: true,
+          size: 'mini',
+          type: 'primary'
+        } : {
+          type,
+          icon
+        },
+        this.$attrs
+      )
+      return { value, text }
     }
   }
 }
