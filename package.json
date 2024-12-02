@@ -1,6 +1,6 @@
 {
   "name": "element-assits",
-  "version": "0.0.62",
+  "version": "0.0.63",
   "description": "element-ui 的扩展组件库",
   "main": "lib/index.js",
   "type": "module",

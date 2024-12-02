@@ -193,6 +193,7 @@ export default {
     color: #999;
   }
   .is-collapse-tags .el-select__tags > span > .el-tag:first-child {
+    min-width: 36px;
     max-width: calc(100% - 80px);
   }
 }

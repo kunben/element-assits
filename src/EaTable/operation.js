@@ -1,6 +1,7 @@
 // 根据插槽决定是否显示操作栏，以及如何显示
 
 import { get, omit, isPlainObject } from 'lodash-es'
+import { getBridge } from '../bridge'
 
 export function innerToThe (inner) {
   let show, attrs
@@ -88,7 +89,7 @@ export function checkOperation (maxNumOfBtn = 3) {
 function flatSlots (scope) {
   // vue 2.6 开始，$scopedSlots API 有变化
   // https://v2.cn.vuejs.org/v2/api/#vm-scopedSlots
-  const version = this.$root.constructor.version
+  const version = getBridge().version
   const v2 = (version.match(/\.(\d+)\./) || [])[1]
   let a = this.$slots['row-menu']
   let b = this.$scopedSlots['row-menu']
