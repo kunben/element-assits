@@ -41,5 +41,14 @@ export const column = [
     label: '状态',
     prop: 'lockFlag',
     component: 'el-switch'
+  },
+  {
+    title: '其它',
+    children: [
+      { label: 'A', prop: 'A' },
+      { label: 'B', prop: 'B' },
+      { label: 'C', prop: 'C' },
+      { label: 'D', prop: 'D' }
+    ]
   }
 ]

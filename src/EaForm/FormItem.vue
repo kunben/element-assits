@@ -6,8 +6,8 @@
   :rules="column.__rules"
   :style="column.style"
   :class="{'hidden-label': top.labelWidth === '0'}">
-  <template #label>
-    {{ column.__label }}
+  <template #label><!-- 裁剪空格
+     -->{{ column.__label }}
     <el-tooltip
       v-if="column.__labelTooltip"
       v-bind="tooltip(column.__labelTooltip)">

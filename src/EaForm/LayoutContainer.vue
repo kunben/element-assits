@@ -4,7 +4,7 @@
     <FormItem :key="m.key" :column="m" />
   </template>
 </span>
-<div v-else>
+<div v-else :class="{'form-group': !root}">
   <div v-if="title" class="form-group-title">
     <span>{{ title }}</span>
   </div>
@@ -32,6 +32,10 @@ export default {
   name: 'LayoutContainer',
   components: { FormItem },
   props: {
+    root: {
+      type: Boolean,
+      default: false
+    },
     title: {
       type: String,
       default: undefined

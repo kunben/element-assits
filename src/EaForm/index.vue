@@ -10,7 +10,11 @@
   v-on="$listeners"
   @submit.native.prevent>
   <slot name="content-before" />
-  <LayoutContainer :column="dealtColumn" :inline="inline" :dense="dense" />
+  <LayoutContainer
+    :root="true"
+    :column="dealtColumn"
+    :inline="inline"
+    :dense="dense" />
   <slot />
 </el-form>
 </template>
