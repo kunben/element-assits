@@ -346,8 +346,13 @@ export default {
     },
     getList () {
       if (!this.pageRequest) {
-        const start = (this.page.current - 1) * this.page.pageSize
-        const data = this.data.slice(start, start + this.page.pageSize)
+        let data = []
+        if (this.thePagination.show) {
+          const start = (this.page.current - 1) * this.page.pageSize
+          data = this.data.slice(start, start + this.page.pageSize)
+        } else {
+          data = this.data
+        }
         this.tableData = data
         this.page.total = this.data.length
         this.asyncPageCurrent = this.page.current
