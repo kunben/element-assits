@@ -56,6 +56,10 @@ new Vue({
       {
         path: '/virtual-tree',
         component: () => import('./virtual-tree/index.vue')
+      },
+      {
+        path: '/other',
+        component: () => import('./other/index.vue')
       }
     ]
   })
