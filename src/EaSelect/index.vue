@@ -142,7 +142,7 @@ export default {
     },
     cacheCurrent () {
       const found = this.options.find(m => m[this.endProps.value] === this.value)
-      const cachedOptions = this.$refs.sel.cachedOptions
+      const cachedOptions = this.$refs.sel?.cachedOptions || []
       const cachedFound = cachedOptions.find(m => m.value === this.value)
       if (found && !cachedFound) {
         cachedOptions.push({

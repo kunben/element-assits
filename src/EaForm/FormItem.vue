@@ -52,6 +52,7 @@ export default {
   & > .el-input-number,
   & > .el-input,
   & > .ea-select,
+  & > .el-date-editor,
   & > .el-select {
     width: 100%;
   }

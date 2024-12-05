@@ -46,6 +46,14 @@ export const recursiveFilter = (data, callback, childrenProp = 'children') => {
   return result[0][childrenProp]
 }
 
+// 递归查找指定父元素
+export const findParentDom = (dom, cn) => {
+  if (!dom || !cn) return void(0)
+  const dcn = dom.className || ''
+  if (dcn.split(' ').includes(cn)) return dom
+  return findParentDom(dom?.parentElement, cn)
+}
+
 // 递归查找指定父组件
 export const findParentComponent = (ins, pName) => {
   if (!ins || !pName) return void(0)

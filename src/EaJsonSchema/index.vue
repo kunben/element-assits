@@ -103,7 +103,7 @@
 </template>
 
 <script>
-import { uuid as createUUID } from '@/util'
+import { uuid as createUUID, findParentDom } from '@/util'
 import { column as rawColumn, ItemState, translateSchema, translateList, getRange, prefixToRealPath, prefixToDataPath } from './util'
 import { translateSelection, getSubNodes, isContinuousPath, setItemChecked } from './selection'
 import { cloneDeep } from 'lodash-es'
@@ -266,9 +266,19 @@ export default {
       // 高级配置
       else if (type === 'conf') {
         evt.stopPropagation()
+        // FIX: 重复点击同一行，悬浮框错位和数据更新不及时的问题
+        // 由于每次高级配置之后需要更新 CellAction
+        // 所以evt.target会被替换为新元素，导致悬浮框错位
+        // (1) 因此，这里以不变的vjs-cell父节点作为悬浮框参考元素
+        const dom = findParentDom(evt.target, 'vjs-cell')
+        // 另外每当悬浮框关闭时才会更新数据
+        // (2) 因此，这里手动关闭前一个悬浮框，提前更新数据，避免更新不及时的问题
+        if (this.showAdvancedConfRow?.close) {
+          this.showAdvancedConfRow.close()
+        }
         this.$asyncLoad(() => import('../EaPopover'), {
           attrs: { popperClass: 'ea-popover-no-margin', placement: 'right' },
-          props: { reference: evt.target },
+          props: { reference: dom },
           scopedSlots: {
             default: ({ close }) => {
               this.showAdvancedConfRow = { row: item, index, close }

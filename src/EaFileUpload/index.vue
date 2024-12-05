@@ -51,7 +51,9 @@
 </template>
 
 <script>
+import EaModal from '../EaModal'
 export default {
+  components: { EaModal },
   inheritAttrs: false,
   props: {
     title: { type: String, default: '文件上传' },
