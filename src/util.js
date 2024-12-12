@@ -77,6 +77,21 @@ export async function asyncLoad (_importFunc, ...options) {
   asyncLoad.prevHashes.push(theHash)
   // dependence
   const Vue = getBridge() || SpareVue
+  // style
+  const checkStyle = () => {
+    const hsId = '__async-load-component-css'
+    const hs = document.getElementById(hsId)
+    if (hs) return void(0)
+    const css = document.createElement('style')
+    css.id = hsId
+    css.innerHTML = `
+      .async-load-component { min-width: 212px; }
+      .async-load-component.el-message-fade-leave-active { transition: none !important; }
+      .async-load-component .el-message__content { margin-left: 8px; color: #666; }
+    `
+    document.head.appendChild(css)
+  }
+  checkStyle()
   // before load
   const msg = Message({
     message: '正在载入组件，请稍后...',
@@ -95,20 +110,6 @@ export async function asyncLoad (_importFunc, ...options) {
   }).finally(() => {
     asyncLoad.prevHashes = asyncLoad.prevHashes.filter(m => m !== theHash)
   })
-  // style
-  const checkStyle = () => {
-    const hsId = '__async-load-component-css'
-    const hs = document.getElementById(hsId)
-    if (hs) return void(0)
-    const css = document.createElement('style')
-    css.id = hsId
-    css.innerHTML = `
-      .async-load-component { min-width: 212px; }
-      .async-load-component.el-message-fade-leave-active { transition: none !important; }
-      .async-load-component .el-message__content { margin-left: 8px; color: #666; }
-    `
-    document.head.appendChild(css)
-  }
   // create component
   const TheClass = Vue.extend({
     name: 'AsyncContainer',
@@ -134,7 +135,6 @@ export async function asyncLoad (_importFunc, ...options) {
     }
   })
   const TheIns = new TheClass()
-  checkStyle()
   msg.close()
   // mount component
   TheIns.$mount()

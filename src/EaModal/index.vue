@@ -2,6 +2,8 @@
 <el-dialog
   v-bind="{closeOnClickModal: false, appendToBody: true, ...$attrs}"
   :custom-class="_customClass"
+  :top="top"
+  :fullscreen="fullscreen"
   v-on="$listeners"
   @opened="handleOpened"
   @closed="handleClosed">
@@ -36,23 +38,19 @@ export default {
   props: {
     customClass: { type: String, default: undefined },
     confirmLoading: { type: Boolean, default: false },
-    margin: { type: String, default: undefined },
+    margin: { type: String, default: '15vh auto' },
+    top: { type: String, default: '15vh' },
+    fullscreen: { type: Boolean, default: false },
     bodyPadding: { type: String, default: undefined },
     bodyMinHeight: { type: String, default: undefined },
     allowDrag: { type: Boolean, default: true },
     confirmText: { type: String, default: '确定' },
     cancelText: { type: String, default: '取消' }
   },
-  data () {
-    return {
-      isClosing: false
-    }
-  },
   computed: {
     _customClass () {
       const ps = this.customClass ? (' ' + this.customClass) : ''
-      const cs = this.isClosing ? ' is-closing' : ''
-      return 'ea-modal' + ps + cs
+      return 'ea-modal' + ps
     }
   },
   mounted () {
@@ -60,30 +58,26 @@ export default {
     setTimeout(() => {
       const dgDom = this.$el.querySelector('.el-dialog')
       const dbDom = this.$el.querySelector('.el-dialog__body')
-      if (dgDom && this.margin) dgDom.style.margin = this.margin
+      if (dgDom && !this.fullscreen && this.margin) dgDom.style.margin = this.margin
+      if (dgDom && !this.fullscreen && this.top) {
+        dgDom.style.marginTop = this.top
+        dgDom.style.marginBottom = this.top
+      }
       if (dbDom && this.bodyPadding) dbDom.style.padding = this.bodyPadding
       if (dbDom && this.bodyMinHeight) dbDom.style.minHeight = this.bodyMinHeight
     }, 0)
   },
   methods: {
     handleOpened () {
-      this.$emit('opened')
       if (!this.allowDrag) return void(0)
-      this.isClosing = true
       const destroyDP = addDragPosition(this.$el)
       const destroyDS = addDragSize(this.$el)
       this.$on('hook:destroyed', () => {
         destroyDP()
         destroyDS()
       })
-      const dgDom = this.$el.querySelector('.el-dialog')
-      const pla = document.createElement('div')
-      pla.style.height = '75px'
-      pla.style.marginBottom = '75px'
-      dgDom.parentElement.appendChild(pla)
     },
     handleClosed () {
-      this.$emit('closed')
       this.$parent && this.$parent.$emit('closed')
     }
   }
@@ -92,8 +86,8 @@ export default {
 
 <style lang="scss">
 .el-dialog.ea-modal {
-  &.is-closing {
-    margin: 0 0 50px !important;
+  &.no-margin {
+    margin: 0 !important;
   }
   &.is-fullscreen {
     border-radius: 0;

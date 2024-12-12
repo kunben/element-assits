@@ -1,6 +1,10 @@
 export function addDragPosition (el) {
   const dialog = el.querySelector('.el-dialog')
   const header = el.querySelector('.el-dialog__header')
+  const pla = document.createElement('div') // 底部元素垫片
+  pla.className = 'el-dialog__pla'
+  dialog.parentElement?.appendChild(pla)
+
   dialog.style.overflow = 'auto'
   header.style.cursor = 'all-scroll'
   // 状态 - 弹窗初始位置
@@ -27,7 +31,9 @@ export function addDragPosition (el) {
   // 初始化元素
   dialog.style.left = initX + 'px'
   dialog.style.top = initY + 'px'
-  dialog.style.margin = 0
+  dialog.classList.add('no-margin')
+  pla.style.height = initY + 'px' // 承接上一个元素的 relative + margin
+  pla.style.marginBottom = initY + 'px' // 真正的 margin
   header.addEventListener('mousedown', (evt) => {
     initX = dialog.offsetLeft
     initY = dialog.offsetTop
