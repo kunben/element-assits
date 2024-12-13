@@ -230,6 +230,7 @@ el-scrollbar 衍生，优化样式
 |asyncParams|异步参数|undefined|undefined|
 |asyncData|异步数据，允许异步参数|Function|undefined|
 |props|配置选项|Object|undefined|
+|props.desc|描述列字段名，将影响过滤方法|String|undefined|
 |itemMaxWidth|单项[label,value]最大宽度|Number \| Array|150|
 |popperClass|弹出框自定义css类|String|undefined|
 |showCheckAll|多选时是否显示全选按钮|Boolean|false|

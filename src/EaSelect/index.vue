@@ -134,10 +134,11 @@ export default {
     filterMethod (text) {
       this.options = cloneDeep(this.originalOptions).filter(m => {
         if (!text) return true
-        const props = this.endProps
-        const label = isNil(m[props.label]) ? '' : String(m[props.label])
-        const value = isNil(m[props.value]) ? '' : String(m[props.value])
-        return label.indexOf(text) > -1 || value.indexOf(text) > -1
+        const prop = this.endProps.label
+        const visibleProp = this.endProps.desc ? this.endProps.desc : this.endProps.value
+        const label = isNil(m[prop]) ? '' : String(m[prop])
+        const visibleLabel = isNil(m[visibleProp]) ? '' : String(m[visibleProp])
+        return label.indexOf(text) > -1 || visibleLabel.indexOf(text) > -1
       })
     },
     cacheCurrent () {
