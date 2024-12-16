@@ -25,7 +25,12 @@ export const searchColumn = [
       //     desc: '比较长的描述' + i
       //   }))
       // }
-    })
+    }),
+    on: {
+      'obj-change': evt => {
+        console.log(evt)
+      }
+    }
   },
   {
     label: '用户名',

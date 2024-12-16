@@ -156,11 +156,19 @@ export default {
     },
     handleInput (evt) {
       this.$emit('input', evt)
-      if (this.label !== undefined || this.$listeners['obj-change']) {
-        const found = this.options.find(m => m[this.endProps.value] === evt)
-        if (found) {
-          this.$emit('update:label', found[this.endProps.label])
+      if (this.$listeners && this.$listeners['obj-change']) {
+        if (!this.multiple) {
+          const found = this.options.find(m => m[this.endProps.value] === evt)
           this.$emit('obj-change', found)
+        } else {
+          const founds = this.options.filter(m => evt.includes(m[this.endProps.value]))
+          this.$emit('obj-change', founds)
+        }
+      }
+      if (this.$listeners && this.$listeners['update:label']) {
+        if (!this.multiple) {
+          const found = this.options.find(m => m[this.endProps.value] === evt)
+          this.$emit('update:label', found[this.endProps.label])
         }
       }
     },
