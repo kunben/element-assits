@@ -106,6 +106,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 |column[].label|标签名|String \| Function|必填|
 |column[].prop|属性名|String|必填|
 |column[].labelTooltip|名称描述tips|String \| Object|
+|column[].labelWidth|独立设置标签宽度|String|
 |column[].required|是否必填|Boolean|false|
 |column[].component|所用组件|String \| Component|el-input|
 |column[].rules|校验规则|Array \| Function|
@@ -269,6 +270,16 @@ el-scrollbar 衍生，优化样式
 |asyncData|异步数据|Function|undefined|
 |filterNodeMethod|过滤方法|Function|undefined|
 |emptyText|空数据时文字描述|String|暂无数据|
+|title|标题|String|undefined|
+|border|是否显示边框|Boolean|false|
+#### slots
+| 插槽名  | 默认值 | 说明 |
+|:---|:---|:---|
+| default | 无 |自定义树节点的内容，参数为 { node, data }|
+| input-prefix | 无  |搜索框前缀|
+| input-append | 无 |搜索框后缀|
+| header | 无 |自定义标题|
+| header-append | 无 |自定义标题后缀|
 
 ### 虚拟树 EaDataTree
 #### props

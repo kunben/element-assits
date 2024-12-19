@@ -47,10 +47,16 @@ export default {
     confirmText: { type: String, default: '确定' },
     cancelText: { type: String, default: '取消' }
   },
+  data () {
+    return {
+      noMargin: false
+    }
+  },
   computed: {
     _customClass () {
       const ps = this.customClass ? (' ' + this.customClass) : ''
-      return 'ea-modal' + ps
+      const cs = this.noMargin ? ' no-margin' : ''
+      return 'ea-modal' + ps + cs
     }
   },
   mounted () {
@@ -72,6 +78,7 @@ export default {
       if (!this.allowDrag) return void(0)
       const destroyDP = addDragPosition(this.$el)
       const destroyDS = addDragSize(this.$el)
+      this.noMargin = true
       this.$on('hook:destroyed', () => {
         destroyDP()
         destroyDS()

@@ -1,5 +1,7 @@
 <template>
-<EaTree :data="testData" />
+<div style="width: 400px">
+  <EaTree :data="testData" />
+</div>
 </template>
 
 <script>

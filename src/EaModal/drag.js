@@ -31,7 +31,6 @@ export function addDragPosition (el) {
   // 初始化元素
   dialog.style.left = initX + 'px'
   dialog.style.top = initY + 'px'
-  dialog.classList.add('no-margin')
   pla.style.height = initY + 'px' // 承接上一个元素的 relative + margin
   pla.style.marginBottom = initY + 'px' // 真正的 margin
   header.addEventListener('mousedown', (evt) => {

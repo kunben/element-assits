@@ -3,7 +3,7 @@
   <slot name="title">
     <div v-if="title" class="ea-desc__title">{{ title }}</div>
   </slot>
-  <div class="ea-desc__list">
+  <div :key="listkey" class="ea-desc__list">
     <div
       v-for="m in initColumn"
       :key="m.prop"
@@ -28,6 +28,7 @@
 </template>
 
 <script>
+import { uuid } from '../util'
 export default {
   props: {
     title: { type: String, default: undefined },
@@ -40,7 +41,8 @@ export default {
   },
   data () {
     return {
-      initColumn: []
+      initColumn: [],
+      listkey: uuid()
     }
   },
   computed: {
@@ -70,7 +72,9 @@ export default {
         render: h => column.render(h, {
           row: data,
           column: column,
-          value: data[column.prop]
+          value: data[column.prop],
+          that: this,
+          hideRefresh: () => this.listkey = uuid()
         })
       }
     },

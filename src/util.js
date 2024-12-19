@@ -160,6 +160,7 @@ export function renderCell (promise, props, callback) {
     label: 'label',
     value: 'value',
     style: 'style',
+    filter: n => n.value,
     tag: false
   }
   if (isFunction(props)) {
@@ -174,6 +175,7 @@ export function renderCell (promise, props, callback) {
   }
 
   return (h, { row, column, value, that, hideRefresh }) => {
+    value = props.filter({ value, row, column, that })
     if (!column.__mapping && !column.__fetch) {
       column.__fetch = promise.then(list => {
         const __mapping = {}

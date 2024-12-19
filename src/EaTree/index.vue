@@ -1,5 +1,5 @@
 <template>
-<div class="ea-tree">
+<div :class="{'ea-tree': 1, 'ea-tree--border': border}">
   <el-input v-model="filterText" :placeholder="inputPlaceholder">
     <template #prefix>
       <slot name="input-prefix" />
@@ -8,21 +8,29 @@
       <slot name="input-append" />
     </template>
   </el-input>
-  <EaScrollbar :style="{height: fitHeight + 'px', marginTop: '18px'}">
-    <el-tree
-      ref="tree"
-      class="ea-tree-real"
-      :data="options || data"
-      :empty-text="endEmptyText"
-      :filter-node-method="filterNodeMethod || defaultFilterNodeMethod"
-      :props="endProps"
-      v-bind="$attrs"
-      v-on="$listeners">
-      <template v-if="$scopedSlots.default || $slots.default" #default="attrs">
-        <slot v-bind="attrs" />
-      </template>
-    </el-tree>
-  </EaScrollbar>
+  <div class="ea-tree__main">
+    <slot name="header">
+      <div v-if="title" class="ea-tree__header">
+        <span class="ea-tree__header__text">{{ title }}</span>
+        <slot name="header-append" />
+      </div>
+    </slot>
+    <EaScrollbar :style="{height: fitHeight + 'px'}">
+      <el-tree
+        ref="tree"
+        class="ea-tree-real"
+        :data="options || data"
+        :empty-text="endEmptyText"
+        :filter-node-method="filterNodeMethod || defaultFilterNodeMethod"
+        :props="endProps"
+        v-bind="$attrs"
+        v-on="$listeners">
+        <template v-if="$scopedSlots.default || $slots.default" #default="attrs">
+          <slot v-bind="attrs" />
+        </template>
+      </el-tree>
+    </EaScrollbar>
+  </div>
 </div>
 </template>
 
@@ -60,6 +68,14 @@ export default {
     emptyText: {
       type: String,
       default: '暂无数据'
+    },
+    title: {
+      type: String,
+      default: undefined
+    },
+    border: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -113,7 +129,8 @@ export default {
   },
   methods: {
     resizeFunc () {
-      this.fitHeight = window.innerHeight - this.remainingHeight
+      const rh = this.remainingHeight + (this.title ? 60 : 0)
+      this.fitHeight = window.innerHeight - rh
     },
     defaultFilterNodeMethod (text, data) {
       if (!text) return true
@@ -128,13 +145,36 @@ export default {
 
 <style lang="scss">
 .ea-tree {
-  .ea-tree-real {
-    .el-tree-node > .el-tree-node__content{
-      border-radius: 4px;
+  .ea-tree__main {
+    margin-top: 18px;
+    .ea-tree__header {
+      height: 50px;
+      padding-left: 24px;
+      padding-right: 14px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: $--background-color-base;
+      .ea-tree__header__text {
+        font-weight: bold;
+      }
     }
+  }
+  .ea-tree-real {
     .el-tree-node.is-current > .el-tree-node__content {
       color: $--color-primary;
-      background-color: rgba($--color-primary, 0.1);
+    }
+  }
+  &.ea-tree--border {
+    .ea-tree__main {
+      border: 1px solid $--color-border-lighter;
+    }
+    .ea-tree__header {
+      border-bottom: 1px solid $--color-border-lighter;
+    }
+    .ea-tree-real {
+      margin: 10px 0;
     }
   }
 }
