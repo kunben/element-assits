@@ -45,9 +45,9 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 |:---|:---|:---|:---|
 | column | 列信息数组| Array | [] |
 | data | 表格数据 | Array | [] |
-| pageRequest | 分页请求 | Function | undefined |
+| pageRequest | 分页请求 | Function <br>() => Promise<{data:any[], total:number}> | undefined |
 | loading | 表格加载状态 | Boolean | undefined |
-| initRequest | 是否初始化发送请求 | Boolean | true |
+| initRequest | 是否初始化发送请求 | Boolean \| Function <br> boolean \| (search: () => void) => void | true |
 | innerForm | 内部 - 表单（搜索栏） | Boolean \| Object | undefined |
 | &nbsp;&nbsp;&nbsp;&nbsp;.model | 搜索表单的值 | Object | undefined |
 | &nbsp;&nbsp;&nbsp;&nbsp;.limit|限制默认显示的搜索条件数量|Number \| auto \| all|auto|

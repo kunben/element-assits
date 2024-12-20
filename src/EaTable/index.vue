@@ -99,7 +99,7 @@
 import SearchBar from './SearchBar.vue'
 import { columnMenu, middleRender } from './theader'
 import { uuid } from '../util'
-import { get, omit, isArray, isPlainObject, cloneDeep } from 'lodash-es'
+import { get, omit, isArray, isPlainObject, isFunction, cloneDeep } from 'lodash-es'
 import { AutoFitOpt, innerToThe, checkOperation } from './operation'
 export default {
   components: { SearchBar },
@@ -108,7 +108,7 @@ export default {
     column: { type: Array, default: () => [] },
     data: { type: Array, default: () => [] },
     loading: { type: Boolean, default: undefined },
-    initRequest: { type: Boolean, default: true },
+    initRequest: { type: [Boolean, Function], default: true },
     pageRequest: { type: Function, default: undefined },
     columnControl: { type: Boolean, default: true },
     dense: { type: Boolean, default: false },
@@ -212,7 +212,11 @@ export default {
   },
   mounted () {
     const init = () => {
-      this.initRequest && this.handleSearch()
+      if (isFunction(this.initRequest)) {
+        this.initRequest(() => this.handleSearch())
+      } else {
+        this.initRequest && this.handleSearch()
+      }
     }
     if (this.$refs.shbr) {
       this.$refs.shbr.$once('init', init)
