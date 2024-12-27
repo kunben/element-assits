@@ -5,7 +5,8 @@
   <EaVirtualScroll
     :enable-virtual-scroll="true"
     :options="list"
-    :item-size="itemSize">
+    :item-size="itemSize"
+    :redundancy="redundancy">
     <div
       v-show="Object.values(item.__state.show).every(Boolean)"
       slot="item"
@@ -65,6 +66,7 @@ export default {
     stripe: { type: Boolean, default: false },
     maxHeight: { type: Number, default: 500 },
     itemSize: { type: Number, default: 32 },
+    redundancy: { type: Number, default: 60 },
     checkbox: { type: Boolean, default: false },
     props: { type: Object, default: undefined },
     disableCheckbox: { type: Boolean, default: false },

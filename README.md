@@ -290,6 +290,7 @@ el-scrollbar 衍生，优化样式
 |height|组件高度|Number \| String| auto |
 |maxHeight|当自动高度时，限制最大高度|Number| 500 |
 |itemSize|单项高度|Number|32|
+|redundancy|渲染总数，影响流畅度和性能|Number|60|
 |checkbox|是否显示多选框|Boolean|false|
 |disableCheckbox|是否禁止多选框|Boolean|false|
 |noDataText|无数据时的文本|String|暂无数据|
