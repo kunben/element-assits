@@ -4,11 +4,10 @@
   :style="{height: endHeight + 'px'}">
   <EaVirtualScroll
     :enable-virtual-scroll="true"
-    :options="list"
+    :options="list.filter(m => Object.values(m.__state.show).every(Boolean))"
     :item-size="itemSize"
     :redundancy="redundancy">
     <div
-      v-show="Object.values(item.__state.show).every(Boolean)"
       slot="item"
       slot-scope="{item, index}"
       :style="{height: itemSize + 'px', lineHeight: itemSize + 'px'}"
@@ -75,27 +74,51 @@ export default {
   },
   emits: ['selection-change'],
   data () {
-    const endProps = {
-      label: 'label',
-      value: 'value',
-      children: 'children',
-      uuid: '__uuid',
-      ...this.props
-    }
-    // 当前显示的数据（为折叠服务）
-    const list = translateTree(this.data, endProps)
-    // 背后的真实数据（全数据）
-    const rawList = [...list]
     return {
-      rawList,
-      list,
-      endProps
+      rawList: [],
+      list: []
     }
   },
   computed: {
+    endProps () {
+      return {
+        label: 'label',
+        value: 'value',
+        children: 'children',
+        uuid: '__uuid',
+        ...this.props
+      }
+    },
     endHeight () {
       if (typeof this.height === 'number') return this.height
       return Math.min(this.maxHeight, (this.list.length || 3) * this.itemSize)
+    }
+  },
+  watch: {
+    data: {
+      immediate: true,
+      handler (n) {
+        const temp = translateTree(n, this.endProps)
+        // 当前显示的数据（为折叠服务）
+        this.list = temp
+        // 背后的真实数据（全数据）
+        const oldRawList = [...this.rawList]
+        const oldRawListMapping = oldRawList.reduce((acc, m) => {
+          acc[m.__uuid] = m
+          return acc
+        }, {})
+        const newRawList = [...temp]
+
+        newRawList.forEach(item => {
+          const oldItem = oldRawListMapping[item.__uuid]
+          if (oldItem) {
+            item.__state.inherit(oldItem.__state)
+          }
+        })
+
+        this.rawList = newRawList
+        this.syncUpdate()
+      }
     }
   },
   methods: {

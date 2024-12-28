@@ -1,13 +1,17 @@
 <template>
-<EaDataTree
-  :data="data"
-  :checkbox="true"
-  style="width:800px;margin: 0 auto;"
-  :props="{ hasChildren: '__hasChildren'}"
-  :load-method="loadMethod" />
+<div>
+  <el-button type="primary" @click="handleUpdateData">更新数据</el-button>
+  <EaDataTree
+    :data="data"
+    :checkbox="true"
+    style="width:800px;margin: 0 auto;"
+    :props="{ hasChildren: '__hasChildren'}"
+    :load-method="loadMethod" />
+</div>
 </template>
 
 <script>
+import { cloneDeep } from 'lodash-es'
 import EaDataTree from '../../src/EaDataTree'
 export default {
   components: { EaDataTree },
@@ -37,7 +41,7 @@ export default {
         {
           label: 'klm',
           value: 7,
-          children: new Array(500).fill(0).map((m, i) => ({
+          children: new Array(30).fill(0).map((m, i) => ({
             label: 'M--' + i,
             value: i
           }))
@@ -62,6 +66,11 @@ export default {
           }
         }, 700)
       })
+    },
+    handleUpdateData () {
+      const temp = cloneDeep(this.data)
+      temp.push({ label: '新数据', value: '33333' })
+      this.data = temp
     }
   }
 }
