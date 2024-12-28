@@ -286,7 +286,11 @@ el-scrollbar 衍生，优化样式
 | 属性名 | 说明 | 类型 | 默认值 |
 |:---|:---|:---|:---|
 |data|(树)数据|Array|[]|
-|props|配置项|Object|`{ label: 'label', value: 'value', children: 'children' }`|
+|props|配置项|Object|见下文|
+|&nbsp;&nbsp;&nbsp;&nbsp;props.label|显示名称|String|label|
+|&nbsp;&nbsp;&nbsp;&nbsp;props.value|实际值|String|value|
+|&nbsp;&nbsp;&nbsp;&nbsp;props.children|子集|String|children|
+|&nbsp;&nbsp;&nbsp;&nbsp;props.hasChildren|手动指定是否含有子集<br>配合 loadMethod 使用|String|undefined|
 |height|组件高度|Number \| String| auto |
 |maxHeight|当自动高度时，限制最大高度|Number| 500 |
 |itemSize|单项高度|Number|32|
@@ -294,6 +298,7 @@ el-scrollbar 衍生，优化样式
 |checkbox|是否显示多选框|Boolean|false|
 |disableCheckbox|是否禁止多选框|Boolean|false|
 |noDataText|无数据时的文本|String|暂无数据|
+|loadMethod|展开节点时异步加载的方法|Function<br> () => Promise\<any[]\>|undefined|
 |border|是否显示边框|Boolean|false|
 |stripe|是否需要斑马纹|Boolean|false|
 #### methods
@@ -301,6 +306,10 @@ el-scrollbar 衍生，优化样式
 |:---|:---|:---|
 | getChecked | 获取选中项 | 无 |
 | setChecked | 设置选中项 | (树)数据（以`props.value`匹配） |
+#### events
+| 事件名  | 说明 | 参数 |
+|:---|:---|:---|
+|expand| 操作展开收起时 | 操作的节点 |
 #### slots
 | 插槽名  | 默认值 | 说明 |
 |:---|:---|:---|

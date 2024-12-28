@@ -1,5 +1,10 @@
 <template>
-<EaDataTree :data="data" :checkbox="true" style="width:800px;margin: 0 auto;" />
+<EaDataTree
+  :data="data"
+  :checkbox="true"
+  style="width:800px;margin: 0 auto;"
+  :props="{ hasChildren: '__hasChildren'}"
+  :load-method="loadMethod" />
 </template>
 
 <script>
@@ -9,8 +14,8 @@ export default {
   data () {
     return {
       data: [
-        { label: 'abc', value: 1 },
-        { label: 'def', value: 2 },
+        { label: 'abc', value: 1, __hasChildren: true },
+        { label: 'def', value: 2, __hasChildren: true },
         {
           label: 'hij',
           value: 3,
@@ -22,9 +27,9 @@ export default {
               value: 6,
               children: [
                 { label: 'J11', value: 7 },
-                { label: 'J22', value: 7 },
-                { label: 'J33', value: 7 },
-                { label: 'J44', value: 7 }
+                { label: 'J22', value: 8 },
+                { label: 'J33', value: 9 },
+                { label: 'J44', value: 10 }
               ]
             }
           ]
@@ -38,6 +43,25 @@ export default {
           }))
         }
       ]
+    }
+  },
+  methods: {
+    loadMethod (item) {
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (item.value == 1) {
+            resolve([
+              { label: 'abc-1', value: '1' },
+              { label: 'abc-2', value: '1' }
+            ])
+          } else {
+            resolve([
+              { label: 'def-1', value: '44' },
+              { label: 'def-2', value: '55' }
+            ])
+          }
+        }, 700)
+      })
     }
   }
 }

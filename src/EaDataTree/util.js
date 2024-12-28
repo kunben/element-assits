@@ -11,9 +11,13 @@ class ItemState {
     // 当前行是否拥有下一级
     this.hasChildren = false
     // 当前行是否显示，不同树层级控制的状态集合（只有当所有层级都为真时才显示）
-    this.show = { [uuidPath]: true }
+    this.show = { [level]: true }
     // 当前行是否展开
     this.isExpanded = false
+    // 是否正在展开加载
+    this.expandLoading = false
+    // 是否已经展开加载过了
+    this.expandLoaded = false
     // 当前行 是否选中
     this.checked = false
     // 当前行 是否半选
@@ -21,18 +25,31 @@ class ItemState {
     // 当前行 的父节点
     this.parent = parent
   }
+  inherit (srcState) {
+    this.level = srcState.level
+    this.hasChildren = srcState.hasChildren
+    this.isExpanded = srcState.isExpanded
+    this.expandLoading = srcState.expandLoading
+    this.expandLoaded = srcState.expandLoaded
+    this.checked = srcState.checked
+    this.indeterminate = srcState.indeterminate
+    this.show = srcState.show
+  }
 }
 
 export function translateTree (tree, props, uuidPath = [], parent = null, level = -1, result = []) {
   level ++
   for (let m of tree) {
+    if (!m[props.uuid]) m[props.uuid] = createUUID()
     const uuid = createUUID()
     const currentUuidPath = [...uuidPath, uuid]
     const item = { ...m, __state: new ItemState(level, uuid, currentUuidPath.join('.'), parent) }
+    item.__state.hasChildren = m[props.hasChildren]
     result.push(item)
     if (Array.isArray(m[props.children]) && m[props.children].length) {
       item.__state.hasChildren = true
       item.__state.isExpanded = true
+      item.__state.expandLoaded = true
       translateTree(m[props.children], props, currentUuidPath, item, level, result)
     }
   }

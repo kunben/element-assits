@@ -17,7 +17,7 @@
         v-if="item.__state.hasChildren"
         :class="{
           'ea-data-tree-icon': 1,
-          ['el-icon-caret-' + ['right', 'bottom'][Number(item.__state.isExpanded)]]: 1
+          [calcExpandIcon(item)]: 1
         }"
         :style="{left: item.__state.level * 20 + 'px'}"
         @click="handleCollapse(item, index)" />
@@ -70,7 +70,8 @@ export default {
     checkbox: { type: Boolean, default: false },
     props: { type: Object, default: undefined },
     disableCheckbox: { type: Boolean, default: false },
-    noDataText: { type: String, default: '暂无数据' }
+    noDataText: { type: String, default: '暂无数据' },
+    loadMethod: { type: Function, default: () => Promise.resolve() }
   },
   emits: ['selection-change'],
   data () {
@@ -78,6 +79,7 @@ export default {
       label: 'label',
       value: 'value',
       children: 'children',
+      uuid: '__uuid',
       ...this.props
     }
     // 当前显示的数据（为折叠服务）
@@ -105,28 +107,79 @@ export default {
     },
     // 展开 & 收起
     handleCollapse (item) {
+      this.$emit('expand', item)
       const ind = this.rawList.findIndex(m => m.__state.uuidPath === item.__state.uuidPath)
       const found = this.rawList[ind]
       const range = getRange(found, ind, this.rawList)
 
       if (item.__state.isExpanded) {
+        // 收起
         found.__state.isExpanded = false
         this.rawList.slice(range[0], range[1]).forEach(m => {
-          m.__state.show[item.__state.uuidPath] = false
+          m.__state.show[item.__state.level] = false
         })
+        this.syncUpdate()
       } else {
-        found.__state.isExpanded = true
-        this.rawList.slice(range[0], range[1]).forEach(m => {
-          m.__state.show[item.__state.uuidPath] = true
-        })
+        // 展开
+        if (found.__state.expandLoaded) {
+          // 已经展开加载过了，直接展开
+          found.__state.isExpanded = true
+          this.rawList.slice(range[0], range[1]).forEach(m => {
+            m.__state.show[item.__state.level] = true
+          })
+          this.syncUpdate()
+        } else {
+          // 还未曾展开加载，执行加载方法
+          found.__state.expandLoading = true
+          this.loadMethod(item).then(list => {
+            if (!Array.isArray(list)) throw new Error('loadMethod doesn\'t receive an array')
+            // (1) 修改data
+            const uuidAttr = this.endProps.uuid
+            const childrenAttr = this.endProps.children
+            const fd = this.data.find(m => m[uuidAttr] === item[uuidAttr])
+            fd[childrenAttr] = list
+            // (2) 重置 rawList **并继承状态**
+            const oldRawListMapping = this.rawList.reduce((acc, m) => {
+              acc[m[uuidAttr]] = m
+              return acc
+            }, {})
+            const newRawList = translateTree(this.data, this.endProps)
+            newRawList.forEach(m => {
+              if (oldRawListMapping[m[uuidAttr]]) {
+                m.__state.inherit(oldRawListMapping[m[uuidAttr]].__state)
+              }
+            })
+            this.rawList = newRawList
+            // (3) 更正展开状态
+            const _ind = this.rawList.findIndex(m => m[uuidAttr] === item[uuidAttr])
+            const _found = this.rawList[_ind]
+            const _range = getRange(_found, _ind, this.rawList)
+            this.rawList.slice(_range[0], _range[1]).forEach(m => {
+              m.__state.show[item.__state.level] = true
+            })
+            _found.__state.isExpanded = true
+            _found.__state.expandLoading = false
+            _found.__state.expandLoaded = true
+            // (4) 同步渲染列表
+            this.syncUpdate()
+          }).finally(() => {
+            found.__state.isExpanded = true
+            found.__state.expandLoading = false
+            found.__state.expandLoaded = true
+          })
+        }
       }
-      this.syncUpdate()
     },
     // 操作单选
     handleItemCheckChange (evt, item) {
       setItemChecked(this, item, evt, this.rawList)
       this.syncUpdate()
       this.$emit('selection-change', item)
+    },
+    // expand-icon
+    calcExpandIcon (item) {
+      if (item.__state.expandLoading) return 'el-icon-loading'
+      return 'el-icon-caret-' + ['right', 'bottom'][Number(item.__state.isExpanded)]
     },
     // expose 1 获取选中项
     getChecked (containIndeterminate) {
