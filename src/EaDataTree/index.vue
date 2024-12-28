@@ -136,7 +136,16 @@ export default {
             // (1) 修改data
             const uuidAttr = this.endProps.uuid
             const childrenAttr = this.endProps.children
-            const fd = this.data.find(m => m[uuidAttr] === item[uuidAttr])
+
+            // const fd = this.data.find(m => m[uuidAttr] === item[uuidAttr])
+            let fd
+            recursive(this.data, m => {
+              if (m[uuidAttr] === item[uuidAttr]) {
+                fd = m
+                return false
+              }
+            }, this.endProps.children)
+
             fd[childrenAttr] = list
             // (2) 重置 rawList **并继承状态**
             const oldRawListMapping = this.rawList.reduce((acc, m) => {
