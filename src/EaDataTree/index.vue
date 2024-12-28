@@ -106,7 +106,7 @@ export default {
       })
     },
     // 展开 & 收起
-    handleCollapse (item) {
+    async handleCollapse (item) {
       this.$emit('expand', item)
       const ind = this.rawList.findIndex(m => m.__state.uuidPath === item.__state.uuidPath)
       const found = this.rawList[ind]
@@ -119,6 +119,7 @@ export default {
           m.__state.show[item.__state.level] = false
         })
         this.syncUpdate()
+        return found
       } else {
         // 展开
         if (found.__state.expandLoaded) {
@@ -128,10 +129,11 @@ export default {
             m.__state.show[item.__state.level] = true
           })
           this.syncUpdate()
+          return found
         } else {
           // 还未曾展开加载，执行加载方法
           found.__state.expandLoading = true
-          this.loadMethod(item).then(list => {
+          return this.loadMethod(item).then(list => {
             if (!Array.isArray(list)) throw new Error('loadMethod doesn\'t receive an array')
             // (1) 修改data
             const uuidAttr = this.endProps.uuid
@@ -156,6 +158,9 @@ export default {
             newRawList.forEach(m => {
               if (oldRawListMapping[m[uuidAttr]]) {
                 m.__state.inherit(oldRawListMapping[m[uuidAttr]].__state)
+              } else {
+                // 其它项的选中状态继承父级
+                m.__state.checked = item.__state.checked
               }
             })
             this.rawList = newRawList
@@ -171,6 +176,7 @@ export default {
             _found.__state.expandLoaded = true
             // (4) 同步渲染列表
             this.syncUpdate()
+            return _found
           }).finally(() => {
             found.__state.isExpanded = true
             found.__state.expandLoading = false
