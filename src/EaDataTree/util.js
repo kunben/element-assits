@@ -40,7 +40,6 @@ class ItemState {
 export function translateTree (tree, props, uuidPath = [], parent = null, level = -1, result = []) {
   level ++
   for (let m of tree) {
-    if (!m[props.uuid]) m[props.uuid] = createUUID()
     const uuid = createUUID()
     const currentUuidPath = [...uuidPath, uuid]
     const item = { ...m, __state: new ItemState(level, uuid, currentUuidPath.join('.'), parent) }

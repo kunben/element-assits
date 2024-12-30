@@ -70,9 +70,10 @@ export default {
     props: { type: Object, default: undefined },
     disableCheckbox: { type: Boolean, default: false },
     noDataText: { type: String, default: '暂无数据' },
-    loadMethod: { type: Function, default: () => Promise.resolve() }
+    loadMethod: { type: Function, default: () => Promise.resolve() },
+    rowKey: { type: String, default: undefined }
   },
-  emits: ['selection-change'],
+  emits: ['selection-change', 'expand', 'expanded'],
   data () {
     return {
       rawList: [],
@@ -85,7 +86,6 @@ export default {
         label: 'label',
         value: 'value',
         children: 'children',
-        uuid: '__uuid',
         ...this.props
       }
     },
@@ -142,6 +142,7 @@ export default {
           m.__state.show[item.__state.level] = false
         })
         this.syncUpdate()
+        this.$emit('expanded', { state: false, node: found })
         return found
       } else {
         // 展开
@@ -152,6 +153,7 @@ export default {
             m.__state.show[item.__state.level] = true
           })
           this.syncUpdate()
+          this.$emit('expanded', { state: true, node: found })
           return found
         } else {
           // 还未曾展开加载，执行加载方法
@@ -159,7 +161,7 @@ export default {
           return this.loadMethod(item).then(list => {
             if (!Array.isArray(list)) throw new Error('loadMethod doesn\'t receive an array')
             // (1) 修改data
-            const uuidAttr = this.endProps.uuid
+            const uuidAttr = this.rowKey || this.endProps.value
             const childrenAttr = this.endProps.children
 
             // const fd = this.data.find(m => m[uuidAttr] === item[uuidAttr])
@@ -199,6 +201,7 @@ export default {
             _found.__state.expandLoaded = true
             // (4) 同步渲染列表
             this.syncUpdate()
+            this.$emit('expanded', { state: true, isAsync: true, node: found, data: list })
             return _found
           }).finally(() => {
             found.__state.isExpanded = true
@@ -231,10 +234,20 @@ export default {
         m.__state.checked = false
         m.__state.indeterminate = false
       })
-      const vttr = this.endProps.value
+      const vttr = this.rowKey || this.endProps.value
       recursive(data, item => {
         const found = this.rawList.find(m => m[vttr] === item[vttr])
         if (found) found.__state.checked = true
+      })
+    },
+    setCheckedKeys (keys) {
+      const uniqKey = this.rowKey || this.endProps.value
+      const rawListMapping = this.rawList.reduce((acc, m) => {
+        acc[m[uniqKey]] = m
+        return acc
+      }, {})
+      keys.forEach(m => {
+        setItemChecked(this, rawListMapping[m], true, this.rawList)
       })
     }
   }

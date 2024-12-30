@@ -299,6 +299,7 @@ el-scrollbar 衍生，优化样式
 |disableCheckbox|是否禁止多选框|Boolean|false|
 |noDataText|无数据时的文本|String|暂无数据|
 |loadMethod|展开节点时异步加载的方法|Function<br> () => Promise\<any[]\>|undefined|
+|rowKey|行唯一key|String|props.value|
 |border|是否显示边框|Boolean|false|
 |stripe|是否需要斑马纹|Boolean|false|
 #### methods
@@ -306,10 +307,13 @@ el-scrollbar 衍生，优化样式
 |:---|:---|:---|
 | getChecked | 获取选中项 | 无 |
 | setChecked | 设置选中项 | (树)数据（以`props.value`匹配） |
+| setCheckedKeys | 设置选中项 | rowKey数组（以`rowKey`匹配） |
 #### events
 | 事件名  | 说明 | 参数 |
 |:---|:---|:---|
-|expand| 操作展开收起时 | 操作的节点 |
+|selection-change|选中项变化|:---|
+|expand| 操作展开收起时 | 操作的节点(node) |
+|expanded| 操作展开收起后 | 操作的节点(state, node, isAsync, data) |
 #### slots
 | 插槽名  | 默认值 | 说明 |
 |:---|:---|:---|
