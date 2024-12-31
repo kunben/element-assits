@@ -55,7 +55,8 @@
 import EaScrollbar from '../EaScrollbar'
 import EaVirtualScroll from '../EaSelect/VirtualScroll.vue'
 import { translateTree, getRange, setItemChecked } from './util'
-import { recursive } from '@/util'
+import { recursive, recursiveFilter } from '@/util'
+import { cloneDeep } from 'lodash-es'
 export default {
   components: { EaScrollbar, EaVirtualScroll },
   props: {
@@ -98,26 +99,7 @@ export default {
     data: {
       immediate: true,
       handler (n) {
-        const temp = translateTree(n, this.endProps)
-        // 当前显示的数据（为折叠服务）
-        this.list = temp
-        // 背后的真实数据（全数据）
-        const oldRawList = [...this.rawList]
-        const oldRawListMapping = oldRawList.reduce((acc, m) => {
-          acc[m.__uuid] = m
-          return acc
-        }, {})
-        const newRawList = [...temp]
-
-        newRawList.forEach(item => {
-          const oldItem = oldRawListMapping[item.__uuid]
-          if (oldItem) {
-            item.__state.inherit(oldItem.__state)
-          }
-        })
-
-        this.rawList = newRawList
-        this.syncUpdate()
+        this.dataWatcher(n)
       }
     }
   },
@@ -127,6 +109,50 @@ export default {
       this.list = this.rawList.filter(m => {
         return Object.values(m.__state.show).every(Boolean)
       })
+    },
+    dataWatcher (n, o, inheritCk = false) {
+      const temp = translateTree(n, this.endProps)
+      // 当前显示的数据（为折叠服务）
+      this.list = temp
+      // 背后的真实数据（全数据）
+      const oldRawList = [...this.rawList]
+      const oldRawListMapping = oldRawList.reduce((acc, m) => {
+        acc[m.__uuid] = m
+        return acc
+      }, {})
+      const newRawList = [...temp]
+
+      newRawList.forEach(item => {
+        const oldItem = oldRawListMapping[item.__uuid]
+        if (oldItem) {
+          item.__state.inherit(oldItem.__state)
+        } else {
+          item.__state.inheritShow()
+          inheritCk && item.__state.inheritChecked()
+        }
+      })
+
+      this.rawList = newRawList
+      this.syncUpdate()
+    },
+    filter (keyword, callback) {
+      const rowKey = this.rowKey || this.endProps.value
+      callback = callback || (m => {
+        if (!keyword) return true
+        return m[this.endProps.label].indexOf(keyword) > -1
+      })
+      const cloneData = cloneDeep(this.data)
+      const d = recursiveFilter(cloneData, m => callback(m))
+      const keys = []
+      recursive(d, m => keys.push(m[rowKey]))
+      this.rawList.forEach(item => {
+        if (!keys.includes(item[rowKey])) {
+          item.__state.show['filter'] = false
+        } else {
+          item.__state.show['filter'] = true
+        }
+      })
+      this.syncUpdate()
     },
     // 展开 & 收起
     async handleCollapse (item) {
@@ -164,7 +190,6 @@ export default {
             const uuidAttr = this.rowKey || this.endProps.value
             const childrenAttr = this.endProps.children
 
-            // const fd = this.data.find(m => m[uuidAttr] === item[uuidAttr])
             let fd
             recursive(this.data, m => {
               if (m[uuidAttr] === item[uuidAttr]) {
@@ -174,21 +199,8 @@ export default {
             }, this.endProps.children)
 
             fd[childrenAttr] = list
-            // (2) 重置 rawList **并继承状态**
-            const oldRawListMapping = this.rawList.reduce((acc, m) => {
-              acc[m[uuidAttr]] = m
-              return acc
-            }, {})
-            const newRawList = translateTree(this.data, this.endProps)
-            newRawList.forEach(m => {
-              if (oldRawListMapping[m[uuidAttr]]) {
-                m.__state.inherit(oldRawListMapping[m[uuidAttr]].__state)
-              } else {
-                // 其它项的选中状态继承父级
-                m.__state.checked = item.__state.checked
-              }
-            })
-            this.rawList = newRawList
+            // (2) 同步数据
+            this.dataWatcher(this.data, null, true)
             // (3) 更正展开状态
             const _ind = this.rawList.findIndex(m => m[uuidAttr] === item[uuidAttr])
             const _found = this.rawList[_ind]
@@ -201,12 +213,13 @@ export default {
             _found.__state.expandLoaded = true
             // (4) 同步渲染列表
             this.syncUpdate()
-            this.$emit('expanded', { state: true, isAsync: true, node: found, data: list })
+            this.$emit('expanded', { state: true, isAsync: true, node: _found, data: list })
             return _found
-          }).finally(() => {
+          }).catch(() => {
             found.__state.isExpanded = true
             found.__state.expandLoading = false
             found.__state.expandLoaded = true
+            this.$emit('expanded', { state: true, isAsync: true, node: found, data: [] })
           })
         }
       }
@@ -222,13 +235,13 @@ export default {
       if (item.__state.expandLoading) return 'el-icon-loading'
       return 'el-icon-caret-' + ['right', 'bottom'][Number(item.__state.isExpanded)]
     },
-    // expose 1 获取选中项
+    // 获取选中项
     getChecked (containIndeterminate) {
       return this.rawList.filter(m => {
         return m.__state.checked || (containIndeterminate && m.__state.indeterminate)
       })
     },
-    // expose 2 设置选中的节点 force 是否强制设置（反之仅设置符合关联关系的节点）
+    // 设置选中的节点 force 是否强制设置（反之仅设置符合关联关系的节点）
     setChecked (data) {
       this.rawList.forEach(m => {
         m.__state.checked = false
@@ -240,6 +253,7 @@ export default {
         if (found) found.__state.checked = true
       })
     },
+    // 通过rowKey设置选中项
     setCheckedKeys (keys) {
       const uniqKey = this.rowKey || this.endProps.value
       const rawListMapping = this.rawList.reduce((acc, m) => {

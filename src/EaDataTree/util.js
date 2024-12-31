@@ -11,7 +11,10 @@ class ItemState {
     // 当前行是否拥有下一级
     this.hasChildren = false
     // 当前行是否显示，不同树层级控制的状态集合（只有当所有层级都为真时才显示）
-    this.show = { [level]: true }
+    this.show = {
+      [level]: true,
+      filter: true
+    }
     // 当前行是否展开
     this.isExpanded = false
     // 是否正在展开加载
@@ -34,6 +37,18 @@ class ItemState {
     this.checked = srcState.checked
     this.indeterminate = srcState.indeterminate
     this.show = srcState.show
+  }
+  inheritShow (step) {
+    step = step || this
+    if (step.parent) {
+      this.show[step.parent.__state.level] = step.parent.__state.isExpanded
+      this.inheritShow(step.parent)
+    }
+  }
+  inheritChecked () {
+    if (this.parent) {
+      this.checked = this.parent.__state.checked
+    }
   }
 }
 
@@ -102,6 +117,7 @@ export function setItemChecked (that, item, evt, rawList) {
   // 既然点选了当前项，则首先取消当前项的半选状态
   item.__state.indeterminate = false
   item.__state.checked = evt
+  that.$emit('selection-change', item)
   // 获得可被选择的子孙项
   const list = getSubNodes(item, rawList)
   // 使所有子孙项和当前项的选中结果一致
