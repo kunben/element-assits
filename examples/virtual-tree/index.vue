@@ -6,10 +6,12 @@
     ref="edt"
     :data="data"
     :checkbox="true"
-    style="width:800px;margin: 0 auto;"
+    style="width:400px;margin: 0 auto;"
     :props="{ hasChildren: '__hasChildren'}"
     :load-method="loadMethod"
-    row-key="__uuid" />
+    row-key="__uuid"
+    border
+    stripe />
 </div>
 </template>
 
@@ -21,7 +23,7 @@ export default {
   components: { EaDataTree },
   data () {
     const data = [
-      { label: 'abc', value: 1, __hasChildren: true },
+      { label: 'abc1111111111111111111111111111111111111111111111111111', value: 1, __hasChildren: true },
       { label: 'def', value: 2, __hasChildren: true },
       {
         label: 'hij',
@@ -47,7 +49,7 @@ export default {
       {
         label: 'klm',
         value: 7,
-        children: new Array(30).fill(0).map((m, i) => ({
+        children: new Array(300).fill(0).map((m, i) => ({
           label: 'M--' + i,
           value: i
         }))
@@ -75,10 +77,7 @@ export default {
               { label: 'abc-2', value: '1', __uuid: uuid() }
             ])
           } else {
-            resolve([
-              { label: 'def-1', value: '44', __uuid: uuid() },
-              { label: 'def-2', value: '55', __uuid: uuid() }
-            ])
+            resolve([])
           }
         }, 700)
       })

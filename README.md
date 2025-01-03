@@ -307,8 +307,8 @@ el-scrollbar 衍生，优化样式
 |:---|:---|:---|
 | getChecked | 获取选中项 | 无 |
 | setChecked | 设置选中项 | (树)数据（以`props.value`匹配） |
-| setCheckedKeys | 设置选中项 | rowKey数组（以`rowKey`匹配） |
-| filter | 过滤树 | keyword:string, callback: () => boolean |
+| setCheckedKeys | 设置选中项 | rowKey: string[]（以`rowKey`匹配）, state: boolean |
+| filter | 过滤树 | keyword:string 或 callback: () => boolean |
 #### events
 | 事件名  | 说明 | 参数 |
 |:---|:---|:---|

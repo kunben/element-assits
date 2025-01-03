@@ -122,7 +122,7 @@ export function setItemChecked (that, item, evt, rawList) {
   const list = getSubNodes(item, rawList)
   // 使所有子孙项和当前项的选中结果一致
   list.forEach(m => {
-    if (m.__state.checked === evt) return void(0)
+    if (m.__state.indeterminate === false && m.__state.checked === evt) return void(0)
     m.__state.indeterminate = false
     m.__state.checked = evt
     that.$emit('selection-change', m)

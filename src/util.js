@@ -34,7 +34,7 @@ export const recursiveFilter = (data, callback, childrenProp = 'children') => {
   const result = [{ [childrenProp]: data, __root: true }]
   recursive(result, (item, path) => {
     if (item.__root) return void(0)
-    if (callback(item)) {
+    if (callback(item, path)) {
       [...path, item].forEach(m => m.__show = true)
     }
   }, childrenProp)

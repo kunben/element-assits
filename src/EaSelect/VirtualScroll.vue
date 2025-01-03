@@ -1,5 +1,9 @@
 <template>
-<div v-if="isNeedVs" ref="container" :style="{height: options.length * itemSize + 'px'}">
+<div
+  v-if="isNeedVs"
+  ref="container"
+  class="virtual-scroll-container"
+  :style="{height: options.length * itemSize + 'px', display: 'inline-block', minWidth: '100%'}">
   <div ref="wrapper" :style="{position: 'relative', top: showCurrent * itemSize + 'px'}">
     <template v-for="(item, ind) in options.slice(showCurrent, showCurrent + redundancy)">
       <slot name="item" :item="item" :index="showCurrent + ind">

@@ -56,7 +56,7 @@ import EaScrollbar from '../EaScrollbar'
 import EaVirtualScroll from '../EaSelect/VirtualScroll.vue'
 import { translateTree, getRange, setItemChecked } from './util'
 import { recursive, recursiveFilter } from '@/util'
-import { cloneDeep } from 'lodash-es'
+import { cloneDeep, isFunction } from 'lodash-es'
 export default {
   components: { EaScrollbar, EaVirtualScroll },
   props: {
@@ -135,14 +135,21 @@ export default {
       this.rawList = newRawList
       this.syncUpdate()
     },
-    filter (keyword, callback) {
+    filter (keyword) {
+      let callback
+      if (typeof keyword === 'string') {
+        callback = m => {
+          if (!keyword) return true
+          return m[this.endProps.label].indexOf(keyword) > -1
+        }
+      } else if (isFunction(keyword)) {
+        callback = keyword
+      } else {
+        return void(0)
+      }
       const rowKey = this.rowKey || this.endProps.value
-      callback = callback || (m => {
-        if (!keyword) return true
-        return m[this.endProps.label].indexOf(keyword) > -1
-      })
       const cloneData = cloneDeep(this.data)
-      const d = recursiveFilter(cloneData, m => callback(m))
+      const d = recursiveFilter(cloneData, (...p) => callback(...p))
       const keys = []
       recursive(d, m => keys.push(m[rowKey]))
       this.rawList.forEach(item => {
@@ -186,6 +193,11 @@ export default {
           found.__state.expandLoading = true
           return this.loadMethod(item).then(list => {
             if (!Array.isArray(list)) throw new Error('loadMethod doesn\'t receive an array')
+            if (!list.length) {
+              found.__state.hasChildren = false
+              this.$emit('expanded', { state: true, isAsync: true, node: found, data: list })
+              return found
+            }
             // (1) 修改data
             const uuidAttr = this.rowKey || this.endProps.value
             const childrenAttr = this.endProps.children
@@ -254,14 +266,14 @@ export default {
       })
     },
     // 通过rowKey设置选中项
-    setCheckedKeys (keys) {
+    setCheckedKeys (keys, target = true) {
       const uniqKey = this.rowKey || this.endProps.value
       const rawListMapping = this.rawList.reduce((acc, m) => {
         acc[m[uniqKey]] = m
         return acc
       }, {})
       keys.forEach(m => {
-        setItemChecked(this, rawListMapping[m], true, this.rawList)
+        setItemChecked(this, rawListMapping[m], target, this.rawList)
       })
     }
   }
