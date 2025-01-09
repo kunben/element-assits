@@ -187,7 +187,13 @@ export default {
 
       if (enableAutoWidth && !fixedWidth && (typeof minWidth !== 'string')) {
         // 当 启用自动宽度 并且 没有设置固定宽度 并且 最小宽度非字符串格式 时，应用自动宽度
-        attrs.width = Math.max(this.optWidth || 0, minWidth || 120)
+        if (this.optWidth) {
+          // 自动宽度是一个有效的值
+          attrs.width = Math.max(this.optWidth, minWidth || 120)
+        } else {
+          // 自动宽度不是一个有效的值
+          attrs.width = typeof minWidth === 'number' ? (minWidth + 'px') : minWidth
+        }
       } else {
         // 反之 应用固定宽度 (采用默认模式)
         attrs.width = fixedWidth
