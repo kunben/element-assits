@@ -5,7 +5,7 @@
     :data="data"
     :inner-form="{ column: searchColumn, model: searchForm }"
     :inner-pagination="true"
-    :inner-operation="{maxNumOfBtn: 3, width: 200, enableAutoWidth: true }"
+    :inner-operation="{maxNumOfBtn: 3}"
     :inner-selection="{data: selectedRows}">
     <template #top-menu>
       <el-button type="primary" @click="handleTest2">测试数据变更</el-button>

@@ -17,7 +17,7 @@
     <slot name="table" :data="tableData">
       <el-table
         ref="table"
-        :class="{'is-dense': dense}"
+        :class="{'is-dense': dense, 'is-unready': !isReady}"
         :data="tableData"
         v-bind="{
           border: true,
@@ -76,7 +76,7 @@
     </slot>
   </div>
   <slot name="footer">
-    <div class="ea-table__footer">
+    <div class="ea-table__footer" :class="{'is-unready': !isReady}">
       <div><slot name="bottom-menu" /></div>
       <el-pagination
         v-if="thePagination.show && page.total"
@@ -99,7 +99,7 @@
 import SearchBar from './SearchBar.vue'
 import { columnMenu, middleRender } from './theader'
 import { uuid } from '../util'
-import { get, omit, isArray, isPlainObject, isFunction, cloneDeep } from 'lodash-es'
+import { omit, isArray, isPlainObject, isFunction, cloneDeep } from 'lodash-es'
 import { AutoFitOpt, innerToThe, checkOperation } from './operation'
 export default {
   components: { SearchBar },
@@ -124,7 +124,6 @@ export default {
       pageSize: 10,
       total: 0
     }
-    const optWidth = get(this.innerOperation, 'width') || 180
     return {
       uuid,
       rawColumn: [],
@@ -137,8 +136,9 @@ export default {
       searchForm: {},
       cellKey: Date.now(),
       fitOpt: undefined,
-      optWidth,
-      isInit: false
+      optWidth: undefined,
+      isInit: false,
+      isReady: false
     }
   },
   computed: {
@@ -158,9 +158,9 @@ export default {
       return { show, attrs }
     },
     theOperation () {
-      let show, render, attrs = { width: this.optWidth }
+      let show, render, attrs = { width: undefined }
       if (this.innerOperation === undefined) {
-        // 没有显示设置operation (是否显示操作栏由插槽决定)
+        // 没有显式设置operation (是否显示操作栏由插槽决定)
         const { showAction, collapseBtnRender } = checkOperation.bind(this)()
         show = showAction
         render = collapseBtnRender
@@ -174,9 +174,30 @@ export default {
         const _show = this.innerOperation.show
         show = _show === undefined ? showAction : Boolean(_show)
         render = collapseBtnRender
-        const excludesFields = ['show', 'maxNumOfBtn', 'enableAutoWidth', 'width']
-        Object.assign(attrs, omit(this.innerOperation, excludesFields))
+        Object.assign(attrs, omit(
+          this.innerOperation,
+          ['show', 'maxNumOfBtn', 'enableAutoWidth', 'width', 'minWidth']
+        ))
       }
+
+      // 是否启用自动宽度（默认启用）
+      const enableAutoWidth = this.innerOperation?.enableAutoWidth !== false
+      // 设置的固定宽度
+      const fixedWidth = this.innerOperation?.width
+      // 设置的最小宽度
+      const minWidth = this.innerOperation?.minWidth
+
+      if (enableAutoWidth && !fixedWidth && (typeof minWidth !== 'string')) {
+        // 当 启用自动宽度 并且 没有设置固定宽度 并且 最小宽度非字符串格式 时，应用自动宽度
+        attrs.width = Math.max(this.optWidth || 0, minWidth || 120)
+      } else {
+        // 反之 应用固定宽度 (采用默认模式)
+        attrs.width = fixedWidth
+        attrs.minWidth = minWidth
+      }
+
+      attrs.className = [attrs.className, 'operation-column'].filter(Boolean).join(' ')
+
       return { show, render, attrs }
     },
     thePagination () {
@@ -203,7 +224,7 @@ export default {
     },
     tableData: {
       handler () {
-        if (!this.innerOperation?.enableAutoWidth) return void(0)
+        if (this.innerOperation?.enableAutoWidth === false) return void(0)
         this.fitOpt = new AutoFitOpt(this.tableData, num => {
           this.optWidth = num
         })
@@ -211,6 +232,7 @@ export default {
     }
   },
   mounted () {
+    // init
     const init = () => {
       if (isFunction(this.initRequest)) {
         this.initRequest(() => this.handleSearch())
@@ -223,6 +245,22 @@ export default {
     } else {
       init()
     }
+    // ready
+    const time = 60
+    setTimeout(() => {
+      if (!this.innerLoading) {
+        this.isReady = true
+      } else {
+        const unWatch = this.$watch(() => this.innerLoading, n => {
+          if (n === false) {
+            unWatch()
+            setTimeout(() => {
+              this.isReady = true
+            }, time)
+          }
+        })
+      }
+    }, time)
   },
   methods: {
     middleRender,
@@ -429,6 +467,7 @@ export default {
 .ea-table {
   // 表格头部样式美化
   .el-table {
+    transition: opacity 0.28s;
     th {
       background-color: $--background-color-base;
       color: $--color-primary-text;
@@ -461,6 +500,18 @@ export default {
         }
       }
     }
+    &.is-unready {
+      opacity: 0;
+      .operation-column > div {
+        height: 32px;
+        overflow: hidden;
+      }
+      &.is-dense {
+        .operation-column > div {
+          height: 24px;
+        }
+      }
+    }
   }
   // 列的更多菜单项
   .theader-th-cell {
@@ -483,12 +534,16 @@ export default {
   .ea-table__footer {
     display: flex;
     justify-content: space-between;
+    transition: opacity 0.28s;
     .ea-table__footer-right {
       margin-left: auto;
       padding-right: 0;
     }
     > * {
       margin-top: 12px;
+    }
+    &.is-unready {
+      opacity: 0;
     }
   }
 

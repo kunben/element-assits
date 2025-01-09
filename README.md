@@ -62,7 +62,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 | innerPagination | 内部 - 分页 | Boolean \| Object | undefined|
 | innerOperation | 内部 - 操作栏（尾列）| Boolean \| Object | undefined|
 | &nbsp;&nbsp;&nbsp;&nbsp;.maxNumOfBtn|最大显示的按钮数，溢出折叠|Number|3|
-| &nbsp;&nbsp;&nbsp;&nbsp;.enableAutoWidth|是否自动计算宽度（当按钮动态时）|Boolean|false|
+| &nbsp;&nbsp;&nbsp;&nbsp;.enableAutoWidth|是否自动计算宽度（当按钮动态时）|Boolean|true|
 
 #### methods
 | 方法名 | 说明 | 参数 |
