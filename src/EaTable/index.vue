@@ -81,11 +81,9 @@
       <el-pagination
         v-if="thePagination.show && page.total"
         class="ea-table__footer-right"
-        layout="total, sizes, prev, pager, next, jumper"
         :page-size="page.pageSize"
         :current-page="page.current"
         :total="page.total"
-        :page-sizes="[10, 20, 50, 100]"
         v-bind="thePagination.attrs"
         background
         @size-change="handleSizeChange"
@@ -121,7 +119,7 @@ export default {
   data () {
     const page = {
       current: 1,
-      pageSize: 10,
+      pageSize: this.innerPagination?.pageSize || 10,
       total: 0
     }
     return {
@@ -201,7 +199,10 @@ export default {
       return { show, render, attrs }
     },
     thePagination () {
-      return innerToThe(this.innerPagination)
+      return innerToThe(this.innerPagination, {
+        pageSizes: [10, 20, 50, 100],
+        layout: 'total, sizes, prev, pager, next, jumper'
+      })
     },
     theIndex () {
       return innerToThe(this.innerIndex)

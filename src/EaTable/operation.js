@@ -3,13 +3,13 @@
 import { get, omit, isPlainObject } from 'lodash-es'
 import { getBridge } from '../bridge'
 
-export function innerToThe (inner) {
-  let show, attrs
+export function innerToThe (inner, defaultAttrs = {}) {
+  let show, attrs = defaultAttrs
   if (!isPlainObject(inner)) {
     show = Boolean(inner)
   } else {
-    show = inner.show !== false,
-    attrs = omit(inner, 'show')
+    show = inner.show !== false
+    Object.assign(attrs, omit(inner, 'show'))
   }
   return { show, attrs }
 }
