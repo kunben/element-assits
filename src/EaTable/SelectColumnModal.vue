@@ -49,13 +49,6 @@ export default {
 
 <style lang="scss">
 .ea-table-modal {
-  overflow: visible;
-  right: unset;
-  right: initial;
-  bottom: unset;
-  bottom: initial;
-  width: 100%;
-  height: 0;
   .el-dialog {
     background: #fdfdfd;
     box-shadow: 0 0 16px 0 rgba(0, 0, 0, 0.15);
