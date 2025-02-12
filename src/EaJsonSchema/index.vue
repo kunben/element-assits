@@ -332,11 +332,11 @@ export default {
       this.syncUpdate()
     },
     // 操作单选
-    handleItemCheckChange (evt, item) {
-      setItemChecked(this, item, evt, this.rawList)
+    handleItemCheckChange (evt, item, silent) {
+      setItemChecked(this, item, evt, this.rawList, silent)
       this.syncUpdate()
       const _item = translateSelection([item], this.rawList)[0]
-      this.$emit('selection-change', _item)
+      !silent && this.$emit('selection-change', _item)
     },
     // json-schema changed
     schemaChange () {
@@ -366,10 +366,14 @@ export default {
       return translateSelection(selectedRows, this.rawList)
     },
     // expose 4 设置选中的节点 force 是否强制设置（反之仅设置符合关联关系的节点）
-    setChecked (paths, force = false) {
+    setChecked (paths, force = false, silent = false) {
+      const __mapping = this.rawList.reduce((acc, m) => {
+        acc[m.__state.uuid] = m
+        return acc
+      }, {})
       const mapping = this.rawList.filter(m => !m.__state.isTemp).reduce((pacc, item) => {
         const realPrefix = item.__state.prefix.split('.').reduce((acc, m) => {
-          const found = this.rawList.find(n => n.__state.uuid === m)
+          const found = __mapping[m]
           acc.push(found.prop)
           if (found.type === 'object') acc.push('properties')
           return acc
@@ -386,7 +390,7 @@ export default {
       if (force) {
         paths.forEach(path => {
           const item = mapping[path]
-          this.handleItemCheckChange(true, item)
+          this.handleItemCheckChange(true, item, silent)
         })
       } else {
         // 过滤为连续的项（符合关联关系的，只设置叶子节点）
@@ -398,7 +402,7 @@ export default {
           }
           return !m.__state.hasChildren
         }).forEach(item => {
-          this.handleItemCheckChange(true, item)
+          this.handleItemCheckChange(true, item, silent)
         })
       }
     },

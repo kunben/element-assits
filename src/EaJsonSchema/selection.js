@@ -21,7 +21,7 @@ export function filterCanChecked (list) {
   })
 }
 
-export function checkIndeterminateStatus (that, item, rawList) {
+export function checkIndeterminateStatus (that, item, rawList, silent) {
   if (item) {
     const list = filterCanChecked(getSubNodes(item, rawList))
     if (list.every(m => m.__state.checked)) {
@@ -35,7 +35,7 @@ export function checkIndeterminateStatus (that, item, rawList) {
       item.__state.checked = false
     }
     const _item = translateSelection([item], rawList)[0]
-    that.$emit('selection-change', _item)
+    !silent && that.$emit('selection-change', _item)
     checkIndeterminateStatus(that, item.__state.parent, rawList)
   } else {
     const allList = filterCanChecked(rawList)
@@ -52,7 +52,7 @@ export function checkIndeterminateStatus (that, item, rawList) {
   }
 }
 
-export function setItemChecked (that, item, evt, rawList) {
+export function setItemChecked (that, item, evt, rawList, silent) {
   // 既然点选了当前项，则首先取消当前项的半选状态
   item.__state.indeterminate = false
   item.__state.checked = evt
@@ -64,10 +64,10 @@ export function setItemChecked (that, item, evt, rawList) {
     m.__state.indeterminate = false
     m.__state.checked = evt
     const t = translateSelection([m], rawList)[0]
-    that.$emit('selection-change', t)
+    !silent && that.$emit('selection-change', t)
   })
   // 此后，递归检查上级的选中状态
-  checkIndeterminateStatus(that, item.__state.parent, rawList)
+  checkIndeterminateStatus(that, item.__state.parent, rawList, silent)
 }
 
 export function translateSelection (selectedRows, rawList) {
