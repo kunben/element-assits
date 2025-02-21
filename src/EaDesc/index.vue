@@ -29,6 +29,7 @@
 
 <script>
 import { uuid } from '../util'
+import { isNil } from 'lodash-es'
 export default {
   props: {
     title: { type: String, default: undefined },
@@ -37,7 +38,8 @@ export default {
     labelWidth: { type: [Number, String], default: 100 },
     split: { type: Number, default: 2 },
     diff: { type: Array, default: undefined },
-    gutter: { type: Number, default: 0 }
+    gutter: { type: Number, default: 0 },
+    isNilCellText: { type: String, default: undefined }
   },
   data () {
     return {
@@ -50,6 +52,10 @@ export default {
       return typeof this.labelWidth === 'number'
         ? ( this.labelWidth + 'px' )
         : this.labelWidth
+    },
+    theIsNilCellText () {
+      const gt = this.$ELEMENT_ASSITS?.isNilCellText
+      return gt === undefined ? this.isNilCellText : gt
     }
   },
   watch: {
@@ -69,13 +75,19 @@ export default {
   methods: {
     getComponent (column, data) {
       return {
-        render: h => column.render(h, {
-          row: data,
-          column: column,
-          value: data[column.prop],
-          that: this,
-          hideRefresh: () => this.listkey = uuid()
-        })
+        render: h => {
+          const value = data[column.prop]
+          if (this.theIsNilCellText !== undefined && isNil(value)) {
+            return h('span', this.theIsNilCellText)
+          }
+          return column.render(h, {
+            row: data,
+            column: column,
+            value,
+            that: this,
+            hideRefresh: () => this.listkey = uuid()
+          })
+        }
       }
     },
     getRatio (span) {

@@ -97,7 +97,7 @@
 import SearchBar from './SearchBar.vue'
 import { columnMenu, middleRender } from './theader'
 import { uuid } from '../util'
-import { omit, isArray, isPlainObject, isFunction, cloneDeep } from 'lodash-es'
+import { omit, isArray, isPlainObject, isFunction, cloneDeep, isNil } from 'lodash-es'
 import { AutoFitOpt, innerToThe, checkOperation } from './operation'
 export default {
   components: { SearchBar },
@@ -114,7 +114,8 @@ export default {
     innerIndex: { type: [Boolean, Object], default: true },
     innerSelection: { type: [Boolean, Object], default: false },
     innerPagination: { type: [Boolean, Object], default: true },
-    innerOperation: { type: [Boolean, Object], default: undefined }
+    innerOperation: { type: [Boolean, Object], default: undefined },
+    isNilCellText: { type: String, default: undefined }
   },
   data () {
     const page = {
@@ -215,6 +216,10 @@ export default {
     },
     theSelection () {
       return innerToThe(this.innerSelection)
+    },
+    theIsNilCellText () {
+      const gt = this.$ELEMENT_ASSITS?.isNilCellText
+      return gt === undefined ? this.isNilCellText : gt
     }
   },
   watch: {
@@ -379,12 +384,16 @@ export default {
     generateRender (row, column, _column) {
       return {
         render: (h) => {
+          const value = row[column.prop]
+          if (this.theIsNilCellText !== undefined && isNil(value)) {
+            return h('span', this.theIsNilCellText)
+          }
           return column.bind.render(
             h,
             {
               row,
               column,
-              value: row[column.prop],
+              value,
               _column,
               that: this,
               hideRefresh: () => this.hideRefresh()
@@ -429,8 +438,16 @@ export default {
     },
     // 表格搜索
     handleSearch () {
+      const isEmptyData = this.tableData?.length === 0
+      if (isEmptyData) this.isReady = false
       this.page.current = 1
-      return this.getList()
+      return this.getList().finally(() => {
+        if (isEmptyData) {
+          setTimeout(() => {
+            this.isReady = true
+          }, 60)
+        }
+      })
     },
     // 表格刷新
     handleRefresh () {

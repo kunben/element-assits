@@ -19,7 +19,10 @@ import ElementAssits from 'element-assits'
 import 'element-assits/lib/style.scss'
 
 Vue.use(Element)
-Vue.use(ElementAssits)
+Vue.use(ElementAssits, {
+  components: true, // 是否全局注册所有组件，默认true
+  isNilCellText: undefined // 当表格和描述列表单元格为undefined或null时的替代字符
+})
 // ...
 ```
 使用：  
@@ -48,6 +51,7 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 | pageRequest | 分页请求 | Function <br>() => Promise<{data:any[], total:number}> | undefined |
 | loading | 表格加载状态 | Boolean | undefined |
 | initRequest | 是否初始化发送请求 | Boolean \| Function <br> boolean \| (search: () => void) => void | true |
+| isNilCellText | 当单元格内容为空时的替代字符 | String | undefined (不启用) |
 | innerForm | 内部 - 表单（搜索栏） | Boolean \| Object | undefined |
 | &nbsp;&nbsp;&nbsp;&nbsp;.model | 搜索表单的值 | Object | undefined |
 | &nbsp;&nbsp;&nbsp;&nbsp;.limit|限制默认显示的搜索条件数量|Number \| auto \| all|auto|
@@ -365,6 +369,7 @@ el-scrollbar 衍生，优化样式
 |split|分割数量|Number|2|
 |diff|有差异的列信息|Array|undefined|
 |gutter|间隔|Number|0|
+|isNilCellText|当单元格内容为空时的替代字符|String|undefined (不启用)|
 
 ### 弹窗文件上传 EaFileUpload
 #### props

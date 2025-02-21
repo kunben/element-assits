@@ -45,6 +45,12 @@ const install = (Vue, options) => {
   }
   // 挂载原型方法
   Vue.prototype.$asyncLoad = asyncLoad
+  // 全局配置
+  if (options?.isNilCellText) {
+    Vue.prototype.$ELEMENT_ASSITS = {
+      isNilCellText: options.isNilCellText
+    }
+  }
   // 共享 Vue
   setBridge(Vue)
 }
