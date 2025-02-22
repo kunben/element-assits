@@ -52,6 +52,14 @@
           <template v-if="item.bind.render" #default="{row, column: elColumn}">
             <component :is="generateRender(row, item, elColumn)" :key="cellKey" />
           </template>
+          <template v-else #default="{row, column: elColumn}">
+            <template v-if="getIsNilCellTextByColumn(elColumn) && isNil(row[elColumn.property])">
+              {{ getIsNilCellTextByColumn(elColumn) }}
+            </template>
+            <template v-else>
+              {{ row[elColumn.property] }}
+            </template>
+          </template>
         </el-table-column>
         <slot name="before-action-column" />
         <el-table-column
@@ -115,7 +123,7 @@ export default {
     innerSelection: { type: [Boolean, Object], default: false },
     innerPagination: { type: [Boolean, Object], default: true },
     innerOperation: { type: [Boolean, Object], default: undefined },
-    isNilCellText: { type: String, default: undefined }
+    isNilCellText: { type: [Boolean, String], default: undefined }
   },
   data () {
     const page = {
@@ -125,6 +133,7 @@ export default {
     }
     return {
       uuid,
+      isNil,
       rawColumn: [],
       columnMenu,
       innerLoading: false,
@@ -219,7 +228,7 @@ export default {
     },
     theIsNilCellText () {
       const gt = this.$ELEMENT_ASSITS?.isNilCellText
-      return gt === undefined ? this.isNilCellText : gt
+      return this.isNilCellText === undefined ? gt : this.isNilCellText
     }
   },
   watch: {
@@ -381,12 +390,16 @@ export default {
         default: break
       }
     },
+    getIsNilCellTextByColumn (column) {
+      return column.isNilCellText === undefined ? this.theIsNilCellText : column.isNilCellText
+    },
     generateRender (row, column, _column) {
       return {
         render: (h) => {
           const value = row[column.prop]
-          if (this.theIsNilCellText !== undefined && isNil(value)) {
-            return h('span', this.theIsNilCellText)
+          const isNilCellText = this.getIsNilCellTextByColumn(column)
+          if (isNilCellText && isNil(value)) {
+            return h('span', isNilCellText)
           }
           return column.bind.render(
             h,

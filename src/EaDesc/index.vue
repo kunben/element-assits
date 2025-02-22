@@ -14,7 +14,12 @@
         <slot :name="m.prop" :row="data[m.prop]">
           <div v-if="m.render"><component :is="getComponent(m, data)" /></div>
           <div v-else :class="{ 'value-no-wrap': m.__isTooLength }">
-            {{ data[m.prop] }}
+            <template v-if="getIsNilCellTextByColumn(m) && isNil(data[m.prop])">
+              {{ getIsNilCellTextByColumn(m) }}
+            </template>
+            <template v-else>
+              {{ data[m.prop] }}
+            </template>
             <span
               v-if="m.__isTooLength"
               class="click-see-more"
@@ -39,7 +44,7 @@ export default {
     split: { type: Number, default: 2 },
     diff: { type: Array, default: undefined },
     gutter: { type: Number, default: 0 },
-    isNilCellText: { type: String, default: undefined }
+    isNilCellText: { type: [Boolean, String], default: undefined }
   },
   data () {
     return {
@@ -55,7 +60,7 @@ export default {
     },
     theIsNilCellText () {
       const gt = this.$ELEMENT_ASSITS?.isNilCellText
-      return gt === undefined ? this.isNilCellText : gt
+      return this.isNilCellText === undefined ? gt : this.isNilCellText
     }
   },
   watch: {
@@ -73,12 +78,16 @@ export default {
     }
   },
   methods: {
+    getIsNilCellTextByColumn (column) {
+      return column.isNilCellText === undefined ? this.theIsNilCellText : column.isNilCellText
+    },
     getComponent (column, data) {
       return {
         render: h => {
           const value = data[column.prop]
-          if (this.theIsNilCellText !== undefined && isNil(value)) {
-            return h('span', this.theIsNilCellText)
+          const isNilCellText = this.getIsNilCellTextByColumn(column)
+          if (isNilCellText && isNil(value)) {
+            return h('span', isNilCellText)
           }
           return column.render(h, {
             row: data,
