@@ -18,15 +18,15 @@
 </template>
 
 <script>
-import { allColumns } from './util'
 import EaForm from '../EaForm'
 export default {
   components: { EaForm },
   props: {
-    row: { type: Object, required: true }
+    row: { type: Object, required: true },
+    advancedConfColumn: { type: Object, required: true }
   },
   data () {
-    const column = allColumns.matchType(this.row.type)
+    const column = this.advancedConfColumn.matchType(this.row.type)
     return {
       form: {},
       column

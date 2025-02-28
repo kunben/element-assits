@@ -205,8 +205,8 @@ export function getRange (item, index, list) {
   return [start, end]
 }
 
-class TypesColumn {
-  constructor () {
+export class TypesColumn {
+  constructor (callback) {
     this.string = [
       { label: '默认值', prop: 'default', span: 24 },
       { label: '最小长度', prop: 'minLength', component: EaNumber },
@@ -284,6 +284,7 @@ class TypesColumn {
       { label: '最小元素个数', prop: 'minItems', component: EaNumber },
       { label: '最大元素个数', prop: 'maxItems', component: EaNumber }
     ]
+    callback && callback(this)
   }
   matchType (type) {
     const columnType = type === 'integer' ? 'number' : type
@@ -300,5 +301,3 @@ class TypesColumn {
     })
   }
 }
-
-export const allColumns = new TypesColumn()

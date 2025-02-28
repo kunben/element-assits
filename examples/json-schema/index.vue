@@ -28,6 +28,7 @@
     style="margin-top:12px"
     :allow-edit="allowEdit"
     :checkbox="checkbox"
+    :advanced-conf-chunk="advancedConfChunk"
     @input="handleInput" />
 </div>
 </template>
@@ -66,6 +67,9 @@ export default {
     },
     handleInput (e) {
       console.log(e)
+    },
+    advancedConfChunk (ins) {
+      console.log(ins)
     }
   }
 }

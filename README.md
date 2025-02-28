@@ -214,6 +214,7 @@ el-scrollbar 衍生，优化样式
 |disableCheckbox|是否禁用选择（只读）|Boolean|false|
 |columnFormat|对原有的column进行过滤|Function|column => column|
 |rootAlias|根节点别名|String|root|
+|advancedConfChunk|高级配置构造函数回调，可自由设置高级配置表单|Function|undefined|
 #### methods
 | 方法名 | 说明 | 参数 |
 |:---|:---|:---|

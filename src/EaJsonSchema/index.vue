@@ -93,6 +93,7 @@
               :key="item.__state.actionKey"
               :row="item"
               :allow-edit="allowEdit"
+              :advanced-conf-column="advancedConfColumn"
               @edit="handleRowEdit($event, item, index)" />
           </span>
         </template>
@@ -104,7 +105,7 @@
 
 <script>
 import { uuid as createUUID, findParentDom } from '@/util'
-import { column as rawColumn, ItemState, translateSchema, translateList, getRange, prefixToRealPath, prefixToDataPath } from './util'
+import { column as rawColumn, ItemState, translateSchema, translateList, getRange, prefixToRealPath, prefixToDataPath, TypesColumn } from './util'
 import { translateSelection, getSubNodes, isContinuousPath, setItemChecked } from './selection'
 import { cloneDeep } from 'lodash-es'
 import CellAction from './CellAction.vue'
@@ -122,7 +123,8 @@ export default {
     checkbox: { type: Boolean, default: false },
     disableCheckbox: { type: Boolean, default: false },
     columnFormat: { type: Function, default: e => e },
-    rootAlias: { type: String, default: 'root' }
+    rootAlias: { type: String, default: 'root' },
+    advancedConfChunk: { type: Function, default: undefined }
   },
   emits: ['input', 'selection-change'],
   data () {
@@ -132,10 +134,13 @@ export default {
     const rawList = [...list]
     // 列信息
     const column = this.columnFormat(cloneDeep(rawColumn))
+    // 高级配置列信息
+    const advancedConfColumn = new TypesColumn(this.advancedConfChunk)
     return {
       column,
       rawList,
       list,
+      advancedConfColumn,
       headerLeft: 0,
       showAdvancedConfRow: undefined,
       globalChecked: false,
@@ -283,7 +288,7 @@ export default {
             default: ({ close }) => {
               this.showAdvancedConfRow = { row: item, index, close }
               return this.$createElement(AdvancedConf, {
-                props: { row: item },
+                props: { row: item, advancedConfColumn: this.advancedConfColumn },
                 on: {
                   done: form => {
                     Object.assign(item, form)

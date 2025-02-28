@@ -47,14 +47,14 @@
 </template>
 
 <script>
-import { allColumns } from './util'
 export default {
   props: {
     row: { type: Object, required: true },
-    allowEdit: { type: Boolean, default: true }
+    allowEdit: { type: Boolean, default: true },
+    advancedConfColumn: { type: Object, required: true }
   },
   data () {
-    const isNotEmpty = allColumns.computeNotEmpty(this.row)
+    const isNotEmpty = this.advancedConfColumn.computeNotEmpty(this.row)
     return {
       isNotEmpty,
       showConfirm: false
