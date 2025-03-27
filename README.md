@@ -153,6 +153,23 @@ Vue 原型上挂载了 `$asyncLoad` 方法（与asyncLoad相同）
 |bodyPadding|内容 padding|String|undefined|
 |bodyMinHeight|内容最小高度|String|undefined|
 |allowDrag|是否允许拖拽|Boolean|true|
+|confirmText|确定按钮文本|String|'确定'|
+|cancelText|取消按钮文本|String|'取消'|
+
+### 抽屉 EaDrawer
+继承 el-drawer，允许少量修改布局，简化按钮  
+绑定confirm事件，出现确定按钮；绑定cancel事件，出现取消按钮
+#### props
+| 属性名 | 说明 | 类型 | 默认值 |
+|:---|:---|:---|:---|
+|customClass|自定义css类|String|undefined|
+|confirmLoading|确定按钮的加载状态|Boolean|false|
+|width|抽屉宽度|String|'720px'|
+|bodyPadding|内容 padding|String|'20px'|
+|headerHeight|标题高度|String|'70px'|
+|footerHeight|底部高度|String|'70px'|
+|confirmText|确定按钮文本|String|'确定'|
+|cancelText|取消按钮文本|String|'取消'|
 
 ### 数字输入框 EaNumber
 使样式与 el-input 相似

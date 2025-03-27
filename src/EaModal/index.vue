@@ -20,6 +20,7 @@
       v-if="$listeners.cancel"
       type="default"
       icon="el-icon-circle-close"
+      :disabled="confirmLoading"
       @click="$emit('cancel')">{{ cancelText }}</el-button>
   </template>
   <template v-for="(value, name) in $scopedSlots" #[name]="data">

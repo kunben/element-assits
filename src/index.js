@@ -5,6 +5,7 @@ import EaTable from './EaTable'
 import EaDataTable from './EaDataTable'
 import EaPopover from './EaPopover'
 import EaModal from './EaModal'
+import EaDrawer from './EaDrawer'
 import EaButton from './EaButton'
 import EaSplit from './EaSplit'
 import EaTree from './EaTree'
@@ -30,6 +31,7 @@ const install = (Vue, options) => {
     Vue.component('EaVirtualScroll', EaVirtualScroll)
     Vue.component('EaPopover', EaPopover)
     Vue.component('EaModal', EaModal)
+    Vue.component('EaDrawer', EaDrawer)
     Vue.component('EaButton', EaButton)
     Vue.component('EaSplit', EaSplit)
     Vue.component('EaTree', EaTree)
@@ -63,6 +65,7 @@ export {
   EaDataTable,
   EaPopover,
   EaModal,
+  EaDrawer,
   EaButton,
   EaSplit,
   EaTree,
