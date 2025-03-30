@@ -155,7 +155,6 @@ export default {
       }
     },
     handleInput (evt) {
-      this.$emit('input', evt)
       if (this.$listeners && this.$listeners['obj-change']) {
         if (!this.multiple) {
           const found = this.options.find(m => m[this.endProps.value] === evt)
@@ -171,6 +170,7 @@ export default {
           this.$emit('update:label', found[this.endProps.label])
         }
       }
+      this.$emit('input', evt)
     },
     handleVisibleChange (evt) {
       this.$emit('visible-change', evt)
