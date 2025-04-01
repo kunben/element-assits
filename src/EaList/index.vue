@@ -57,7 +57,7 @@ export default {
   },
   methods: {
     handleSearch () {
-      this.page.current = 1
+      this.pager.current = 1
       this.options = []
       this.getList()
     },
