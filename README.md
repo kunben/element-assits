@@ -271,7 +271,7 @@ el-scrollbar 衍生，优化样式
 #### props
 | 属性名 | 说明 | 类型 | 默认值 |
 |:---|:---|:---|:---|
-|default|默认分割比例|Number|0.2
+|default|默认分割比例（左侧面板所占比例，等于1即占满，超过1视为固定宽度(px)）|Number|0.2
 |min|最小分割比例|Number|0.2
 |max|最大分割比例|Number|0.5
 #### slots

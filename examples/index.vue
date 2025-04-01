@@ -9,6 +9,7 @@
   <p><router-link to="/virtual-scroll">虚拟滚动</router-link></p>
   <p><router-link to="/json-schema">json-schema</router-link></p>
   <p><router-link to="/virtual-tree">虚拟树</router-link></p>
+  <p><router-link to="/split">分割面板</router-link></p>
   <p><router-link to="/other">其它</router-link></p>
 </div>
 </template>

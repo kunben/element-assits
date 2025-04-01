@@ -32,29 +32,77 @@ export default {
     max: { type: Number, default: 0.5 }
   },
   data () {
-    const leftRate = this.default || 0.2
     return {
       isDown: false,
       domPageX: 0,
       domWidth: 0,
-      leftRate,
+      leftRate: 0.2,
+      defaultLeftRate: null,
       centerWidth: 0
     }
   },
   computed: {
+    // 因为 default 不能直接用于模板，因此此处取别名
     defaultAlias () {
       return this.default
     }
   },
-  mounted () {
-    const scContainer = this.$refs.sc_container
-    this.domPageX = getDomPageX(scContainer)
-    this.domWidth = getDomWidth(scContainer)
-    if (this.$refs.scc) {
-      this.centerWidth = getDomWidth(this.$refs.scc)
+  watch: {
+    // 允许 default 手动控制面板比例
+    default: {
+      immediate: true,
+      handler (n) {
+        this.defaultWather(n)
+      }
     }
   },
+  mounted () {
+    // 初始化参与计算的各dom尺寸
+    this.getDomSize()
+    // 当使用固定宽度时，需要在可用尺寸(TODO:应检测容器)变化时更新比例
+    const globalResize = () => {
+      if (this.leftRate === this.defaultLeftRate) {
+        this.defaultWather(this.default)
+      }
+    }
+    this.$once('hook:mounted', () => {
+      window.addEventListener('resize', globalResize)
+    })
+    this.$once('hook:destroyed', () => {
+      window.removeEventListener('resize', globalResize)
+    })
+  },
   methods: {
+    defaultWather (n) {
+      // 无效的default不做变更
+      if (!Number.isFinite(n)) return void(0)
+      // default 小于等于 1 视为比例
+      else if (n <= 1) this.leftRate = n
+      // default 大于 1 视为固定数值
+      else {
+        new Promise(resolve => {
+          if (this.$refs.sc_container) {
+            resolve()
+          } else {
+            this.$once('hook:mounted', resolve)
+          }
+        }).then(() => {
+          // 在保证获得正确的dom尺寸后，计算比例
+          this.getDomSize()
+          const fullRate = (n + (this.centerWidth / 2)) / this.domWidth
+          this.defaultLeftRate = fullRate.toFixed(2) - 0
+          this.leftRate = this.defaultLeftRate
+        })
+      }
+    },
+    getDomSize () {
+      const container = this.$refs.sc_container
+      this.domPageX = getDomPageX(container)
+      this.domWidth = getDomWidth(container)
+      if (this.$refs.scc) {
+        this.centerWidth = getDomWidth(this.$refs.scc)
+      }
+    },
     handleMousedown (evt) {
       if (!evt || evt.buttons != 1) return null
       this.isDown = true
