@@ -431,7 +431,9 @@ export default {
       }
       this.innerLoading = true
       this.errMsg = undefined
+      const timestamp = this.timestamp = Date.now()
       return this.pageRequest(this.page, this.theForm.attrs.model).then(res => {
+        if (timestamp !== this.timestamp) return void(0)
         const { data, total, current } = res || {}
         this.tableData = data || []
         this.page.total = total || 0
@@ -440,8 +442,10 @@ export default {
           this.handleCurrentChange(this.page.current - 1)
         }
       }).catch(err => {
+        if (timestamp !== this.timestamp) return void(0)
         this.errMsg = err && err.message
       }).finally(() => {
+        if (timestamp !== this.timestamp) return void(0)
         this.innerLoading = false
       })
     },

@@ -3,6 +3,7 @@
 /examples
 /src
 .eslintrc.cjs
+.npmrc
 index.html
 jsconfig.json
 vite.config.js
