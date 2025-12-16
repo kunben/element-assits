@@ -23,11 +23,9 @@ export const recursive = (data, callback, childrenProp = 'children', path = []) 
   for (let i = 0; i < data.length; i ++) {
     if (callback && callback(data[i], path) === false) return false
     if (data[i][childrenProp] && data[i][childrenProp].length) {
-      path.push(data[i])
-      if (recursive(data[i][childrenProp], callback, childrenProp, path) === false) return false
+      if (recursive(data[i][childrenProp], callback, childrenProp, [...path, data[i]]) === false) return false
     }
   }
-  path.pop()
 }
 
 export const recursiveFilter = (data, callback, childrenProp = 'children') => {
