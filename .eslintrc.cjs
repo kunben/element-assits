@@ -7,7 +7,8 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
-    'plugin:vue/recommended'
+    'plugin:vue/recommended',
+    'plugin:@typescript-eslint/recommended'
   ],
   ignorePatterns: [
     'docker',
@@ -41,7 +42,7 @@ module.exports = {
     // 强制文件以换行符（LF）结尾
     'eol-last': ['error'],
     // 不允许尾随空格
-    'no-trailing-spaces': ['error'],
+    'no-trailing-spaces': ['error', { ignoreComments: true }],
     // 冒号前不允许有空格，冒号后必须有空格
     'key-spacing': ['error'],
     // 不允许尾随逗号

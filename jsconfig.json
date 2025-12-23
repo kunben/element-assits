@@ -1,5 +1,15 @@
 {
-  "vueCompilerOptions": {
-	  "target": 2
+  "include": ["./types/*"],
+  "compilerOptions": {
+    "baseUrl": "../",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "lib":["ESNext", "DOM"],
+    "module": "esnext",
+    "moduleResolution": "bundler",
   },
+  "vueCompilerOptions": {
+    "target": 2.7
+  }
 }

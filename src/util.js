@@ -200,7 +200,7 @@ export function renderCell (promise, props, callback) {
           }
         }, __label)
       }
-      return h('span', __label || value)
+      return h('span', { style: __item && __item[props.style] }, __label || value)
     }
     if (callback) return callback(h, { value })
     return h('span', value)
