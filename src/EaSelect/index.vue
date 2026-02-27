@@ -28,7 +28,8 @@
         <el-option
           :key="item[endProps.value]"
           :label="item[endProps.label]"
-          :value="item[endProps.value]">
+          :value="item[endProps.value]"
+          :disabled="endProps.disabled && item[endProps.disabled] || false">
           <template v-if="endProps.desc">
             <span
               class="select-item-value"
