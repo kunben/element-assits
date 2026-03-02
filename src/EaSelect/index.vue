@@ -143,17 +143,20 @@ export default {
       })
     },
     cacheCurrent () {
-      const found = this.options.find(m => m[this.endProps.value] === this.value)
+      const value = Array.isArray(this.value) ? this.value : [this.value]
+      const founds = this.options.filter(m => value.includes(m[this.endProps.value]))
       const cachedOptions = this.$refs.sel?.cachedOptions || []
-      const cachedFound = cachedOptions.find(m => m.value === this.value)
-      if (found && !cachedFound) {
-        cachedOptions.push({
-          currentLabel: found[this.endProps.label],
-          label: found[this.endProps.label],
-          currentValue: found[this.endProps.value],
-          value: found[this.endProps.value]
-        })
-      }
+      founds.forEach(found => {
+        const cachedFound = cachedOptions.find(m => m.value === found[this.endProps.value])
+        if (!cachedFound) {
+          cachedOptions.push({
+            currentLabel: found[this.endProps.label],
+            label: found[this.endProps.label],
+            currentValue: found[this.endProps.value],
+            value: found[this.endProps.value]
+          })
+        }
+      })
     },
     handleInput (evt) {
       if (this.$listeners && this.$listeners['obj-change']) {
@@ -205,6 +208,8 @@ export default {
   .is-collapse-tags .el-select__tags > span > .el-tag:first-child {
     min-width: 36px;
     max-width: calc(100% - 80px);
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 .ea-select-popover {
