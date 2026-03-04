@@ -5,22 +5,20 @@
   @mousemove="handleMousemove"
   @mouseup="isDown = false"
   @mouseleave="isDown = false">
-  <div class="sc-left" :style="{width: `calc(${leftRate * 100}% - ${centerWidth / 2}px)`}">
+  <div v-if="defaultAlias !== 0" class="sc-left" :style="{width: `calc(${leftRate * 100}% - ${centerWidth / 2}px)`}">
     <slot name="left" />
   </div>
-  <template v-if="defaultAlias !== 1">
-    <div ref="scc" class="sc-center">
-      <div class="sc-bamboo" @mousedown="handleMousedown">
-        <i v-for="m in 8" :key="m" class="sc-texture" />
-      </div>
-      <div v-if="$slots.center" class="sc-on-bamboo" @mousedown.stop>
-        <slot name="center" />
-      </div>
+  <div v-if="defaultAlias !== 0 && defaultAlias !== 1" ref="scc" class="sc-center">
+    <div class="sc-bamboo" @mousedown="handleMousedown">
+      <i v-for="m in 8" :key="m" class="sc-texture" />
     </div>
-    <div class="sc-right" :style="{width: `calc(${(1 - leftRate) * 100}% - ${centerWidth / 2}px)`}">
-      <slot name="right" />
+    <div v-if="$slots.center" class="sc-on-bamboo" @mousedown.stop>
+      <slot name="center" />
     </div>
-  </template>
+  </div>
+  <div v-if="defaultAlias !== 1" class="sc-right" :style="{width: `calc(${(1 - leftRate) * 100}% - ${centerWidth / 2}px)`}">
+    <slot name="right" />
+  </div>
 </div>
 </template>
 
@@ -38,7 +36,9 @@ export default {
       domWidth: 0,
       leftRate: 0.2,
       defaultLeftRate: null,
-      centerWidth: 0
+      centerWidth: 0,
+      defaultToMin: this.min,
+      defaultToMax: this.max
     }
   },
   computed: {
@@ -92,6 +92,12 @@ export default {
           const fullRate = (n + (this.centerWidth / 2)) / this.domWidth
           this.defaultLeftRate = fullRate.toFixed(2) - 0
           this.leftRate = this.defaultLeftRate
+          if (this.defaultLeftRate > this.max) {
+            this.defaultToMax = this.defaultLeftRate
+          }
+          if (this.defaultLeftRate < this.min) {
+            this.defaultToMin = this.defaultLeftRate
+          }
         })
       }
     },
@@ -110,7 +116,7 @@ export default {
     handleMousemove (evt) {
       if (!this.isDown) return null
       const relativeX = evt.pageX - this.domPageX
-      this.leftRate = Math.min(Math.max(relativeX / this.domWidth, this.min), this.max)
+      this.leftRate = Math.min(Math.max(relativeX / this.domWidth, this.defaultToMin), this.defaultToMax)
     }
   }
 }
