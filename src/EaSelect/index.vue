@@ -139,7 +139,8 @@ export default {
         const visibleProp = this.endProps.desc ? this.endProps.desc : this.endProps.value
         const label = isNil(m[prop]) ? '' : String(m[prop])
         const visibleLabel = isNil(m[visibleProp]) ? '' : String(m[visibleProp])
-        return label.indexOf(text) > -1 || visibleLabel.indexOf(text) > -1
+        text = text.toLowerCase()
+        return label.toLowerCase().indexOf(text) > -1 || visibleLabel.toLowerCase().indexOf(text) > -1
       })
     },
     cacheCurrent () {
